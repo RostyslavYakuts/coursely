@@ -1,0 +1,9 @@
+@import 'products-filter';
+.recommended-slide{
+  display:flex!important;
+}
+.recommended-pagination{
+  .swiper-pagination-bullet-active{
+    background: $brand;
+  }
+}

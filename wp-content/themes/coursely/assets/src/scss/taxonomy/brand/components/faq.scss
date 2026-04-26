@@ -1,0 +1,36 @@
+// FAQ
+
+.faq-block{
+  .question{
+    cursor: pointer;
+    padding-right: 30px;
+    &:after,&:before{
+      content: '';
+      position: absolute;
+      top:50%;
+      transform: translateY(50%);
+      right: 0;
+      display:block;
+      width:16px;
+      height: 2px;
+      background: $brand;
+      transition: 1s;
+    }
+    &:before{
+        transform: rotate(90deg);
+    }
+    &:after{
+      transform: translateY(calc(50% - 1px));
+    }
+  }
+  .answer{
+    display:none;
+  }
+}
+.faq-block.active{
+  .question{
+    &:before{
+      transform: rotate(0deg);
+    }
+  }
+}

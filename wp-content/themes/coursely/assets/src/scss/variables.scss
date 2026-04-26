@@ -1,0 +1,30 @@
+/**
+* ------------ Colors -----------------
+*/
+
+:root {
+  --brand: theme('colors.brand.DEFAULT');
+  --gray: theme('colors.brand.gray');
+  --accent: theme('colors.brand.accent');
+  --light-gray: theme('colors.brand.light-gray');
+  --dark: theme('colors.brand.dark');
+  --error: theme('colors.brand.error');
+}
+
+$brand: var(--brand);
+$gray: var(--gray);
+$accent: var(--accent);
+$light-gray: var(--light-gray);
+$dark: var(--dark);
+$error: var(--error);
+/**
+* Path
+ */
+$path: '../images/';
+
+/**
+* Fonts
+*/
+
+$font-base: 16px;
+$font-family: 'Quicksand', sans-serif;

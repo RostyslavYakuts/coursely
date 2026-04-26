@@ -1,0 +1,46 @@
+[data-animate].visible{
+  opacity:1;
+  transform:translateY(0);
+}
+[data-animate]{
+  @apply opacity-0 transition-all duration-700;
+}
+[data-animate="up"]{
+
+  transform:translateY(30px);
+
+}
+[data-animate="down"]{
+  transform:translateY(-30px);
+}
+
+[data-animate="left"]{
+  transform:translateX(-40px);
+}
+
+[data-animate="right"]{
+  transform:translateX(40px);
+}
+.x-animation{
+  overflow-x: hidden;
+}
+
+#marquee_slider{
+  .slide:not(:last-child) {
+    border-right:1px solid $brand;
+  }
+}
+
+.wrap {
+  margin: 44px auto 0;
+  width: 320px;
+  @include respond(390){
+    width: 357px;
+  }
+  @include respond(768){
+    width: 600px;
+  }
+  @include respond(1280){
+    width: 1216px;
+  }
+}

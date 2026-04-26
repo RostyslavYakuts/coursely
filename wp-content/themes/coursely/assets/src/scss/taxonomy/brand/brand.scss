@@ -1,0 +1,14 @@
+@import "../../variables";
+@import "../../mixins";
+@import "components/faq";
+
+.recommended-slider{
+  .recommended-slide{
+    display:flex;
+  }
+}
+.recommended-pagination{
+  .swiper-pagination-bullet-active{
+    background: $brand;
+  }
+}

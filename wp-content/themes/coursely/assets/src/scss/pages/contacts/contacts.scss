@@ -1,0 +1,12 @@
+@import "../../variables";
+@import "../../mixins";
+
+.contact-us-modal.success{
+  border: 2px solid #1a2d2a;
+}
+.contact-us-modal.fail{
+  border: 2px solid #FF0000;
+}
+#company{
+	@apply hidden;
+}

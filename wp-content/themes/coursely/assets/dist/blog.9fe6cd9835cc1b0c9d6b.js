@@ -1,0 +1,2 @@
+(()=>{"use strict";(()=>{const t=document.getElementById("load_more_posts");t&&t.addEventListener("click",async function(){let t=parseInt(this.dataset.page);if(t>=parseInt(this.dataset.maxNumPages))return void this.remove();this.disabled=!0;const e=await fetch(`/wp-json/blog/v1/posts?page=${t+1}`),s=await e.json();s.html&&(document.querySelector(".all-articles-js").insertAdjacentHTML("beforeend",s.html),this.dataset.page=t+1,this.disabled=!1),t+1>=s.max_pages&&this.remove()})})()})();
+//# sourceMappingURL=blog.9fe6cd9835cc1b0c9d6b.js.map

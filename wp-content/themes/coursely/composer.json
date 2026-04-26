@@ -1,0 +1,12 @@
+{
+  "name": "kaz/evrotrans",
+  "description": "Custom wordpress theme",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "autoload": {
+    "psr-4": {
+      "ket\\App\\": "app",
+      "ket\\acf\\": "acf"
+    }
+  }
+}

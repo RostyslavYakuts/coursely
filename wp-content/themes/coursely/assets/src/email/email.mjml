@@ -1,0 +1,69 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Arial" />
+      <mj-section background-color="#627C8C" padding="32px" />
+      <mj-text color="#ffffff" />
+    </mj-attributes>
+
+    <mj-style inline="inline">
+      .fixed-height {
+        height: 531px !important;
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body>
+    <!-- Header -->
+    <mj-section background-color="#B9C7D2" padding="36px 32px 24px 32px">
+      <mj-group>
+          <!-- Logo on the left -->
+          <mj-column vertical-align="middle" padding="0" width="50%">
+            <mj-image src="{{src}}assets/dist/images/white_logo.png" alt="wirtstudio.com" padding="0 0 0 32px" width="107px" height="27px" align="left" target="_blank" href="https://itdevstaff.com/" />
+          </mj-column>
+      </mj-group>
+    </mj-section>
+
+    <!-- Content -->
+   <mj-section background-color="#B9C7D2" padding="0 32px 32px 32px">
+         <mj-column width="100%" background-color="#ffffff" border-radius="4px 4px 0 0" padding="32px 32px 0px 32px">
+           <mj-text font-family="Arial" padding="0" font-size="16px" color="#333333" line-height="24px">
+             <span style="font-weight:600; color:#627C8C;"><i>Hello {{name}}!</i></span>
+           </mj-text>
+         </mj-column>
+         <mj-column width="100%" background-color="#ffffff" padding="32px 32px 16px 32px">
+           <mj-text font-family="Arial" padding="0" font-size="16px" color="#333333" line-height="24px">
+             <span>Thank you for reaching out and for your interest in our services. We have received your message and appreciate you taking the time to contact us.</span>
+             <br>
+             <span>Our team will review your request and get back to you shortly with a response.</span>
+             <br><br>
+             <span>We’re always happy to help with web development, improvements, and support for your website or project.
+             And we’re always glad to see you at <a style="font-weight:bold;color:#E93C35" target="_blank" href="https://wirtstudio.com/"><i>WIRTstudio</i></a>.</span>
+           </mj-text>
+         </mj-column>
+        <mj-column width="100%" background-color="#ffffff" border-radius="0px 0px 4px 4px" padding="0px 32px 32px 32px">
+           <mj-text font-family="Arial" padding="0" font-size="16px" color="#333333" line-height="24px">
+             <p style="color:#333333;">Best regards,<br/>
+             <b style="color:#627C8C;"><i>WIRTstudio</i></b> team</p>
+           </mj-text>
+         </mj-column>
+
+   </mj-section>
+
+    <!-- Footer -->
+      <mj-section background-color="#2B3034" padding="0 32px 16px 32px">
+        <mj-column background-color="#2B3034" border-radius="4px" padding="0 32px 0 32px">
+          <mj-text font-family="Arial" padding="0" font-size="14px" color="#ffffff" line-height="20px">
+            <br>
+            <span>
+            You received this email at <a style="text-decoration:underline; color:#E93C35" href="mailto:{{email}}" target="_blank">{{email}}</a> because you submitted a form on our website. If this wasn’t you, please ignore this message.
+            </span>
+          </mj-text>
+          <mj-text padding="16px 0 16px 0" font-family="Arial" font-size="12px" color="#B9C7D2" line-height="16px">
+             <span>Copyright © {{year}} <i>WIRTstudio</i></span>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+  </mj-body>
+</mjml>

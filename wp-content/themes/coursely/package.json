@@ -1,0 +1,53 @@
+{
+  "name": "wirtstudio",
+  "version": "1.0.0",
+  "description": "webpack builder for custom project ids",
+  "private": true,
+  "scripts": {
+    "build": "webpack --mode production",
+    "watch": "webpack --watch",
+    "dev": "webpack serve --open"
+  },
+  "browserslist": "> 0.25%, not dead",
+  "keywords": [
+    "js",
+    "webpack"
+  ],
+  "author": "RostWirt <rostwirt@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
+    "@tailwindcss/line-clamp": "^0.4.4",
+    "@tailwindcss/typography": "0.5.10",
+    "autoprefixer": "^10.4.0",
+    "babel-loader": "^10.0.0",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^12.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.8.0",
+    "css-minimizer-webpack-plugin": "^7.0.0",
+    "csv-loader": "^3.0.3",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "mini-css-extract-plugin": "^2.7.0",
+    "mjml": "^4.15.3",
+    "postcss": "^8.5.3",
+    "postcss-loader": "^7.3.0",
+    "postcss-preset-env": "^10.1.6",
+    "sass": "^1.77.8",
+    "sass-loader": "^13.3.0",
+    "tailwind-scrollbar": "^2.1.0",
+    "tailwindcss": "3.4.13",
+    "tailwindcss-content-visibility": "^0.1.0",
+    "terser-webpack-plugin": "^5.3.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.0",
+    "webpack-dev-server": "^5.0.0",
+    "wp-pot": "^2.0.0"
+  },
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "swiper": "^12.0.3"
+  }
+}

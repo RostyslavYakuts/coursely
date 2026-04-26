@@ -1,0 +1,45 @@
+/**
+* Hamburger
+ */
+.hamburger{
+	width:24px;
+	height:24px;
+	position: relative;
+	z-index: 9999999;
+	&-line{
+		left: 0;
+		position: absolute;
+		width: 100%;
+		height: 2px;
+		background: $brand;
+		display: block;
+		transition: .3s;
+	}
+	&-top{
+		top:0;
+	}
+	&-middle{
+		width: 70%;
+		top:10.5px;
+	}
+	&-bottom{
+		bottom:0;
+	}
+}
+.hamburger.opened{
+	.hamburger-top, .hamburger-bottom{
+		position:absolute;
+		width:120%;
+	}
+	.hamburger-top{
+		top: 11px;
+		transform: rotate(45deg);
+	}
+	.hamburger-middle{
+		display:none;
+	}
+	.hamburger-bottom{
+		bottom: 11px;
+		transform: rotate(-45deg);
+	}
+}

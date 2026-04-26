@@ -1,0 +1,11 @@
+@import "../../variables";
+@import "../../mixins";
+
+.recommended-slide{
+  display:flex!important;
+}
+.recommended-pagination{
+  .swiper-pagination-bullet-active{
+    background: $brand;
+  }
+}

@@ -1,0 +1,68 @@
+# Wordpress - ignore core, configuration, examples, uploads and logs.
+# https://github.com/github/gitignore/blob/main/WordPress.gitignore
+#IDE settings
+.idea/
+# Node
+node_modules/
+# WP
+wp-admin/
+wp-includes/
+wordpress/
+# Core
+#
+# Note: if you want to stage/commit WP core files
+# you can delete this whole section/until Configuration.
+/wp-content/index.php
+/wp-content/languages
+/wp-content/plugins/index.php
+/wp-content/themes/index.php
+/wp-includes/
+/index.php
+/license.txt
+/readme.html
+/wp-*.php
+/xmlrpc.php
+/wp-content/object-cache.php
+/wp-content/db.php
+/wp-content/advanced-cache.php
+/wp-content/autoptimize_404_handler.php
+/wp-content/wp-cache-config.php
+/wp-content/wp-rocket-config
+/wp-content/wpo-cache
+/wp-content/webp-express
+/wp-content/ai1wm-backups
+/wp-content/ai1wm-backups/
+# Configuration
+wp-config.php
+
+# Example themes
+/wp-content/themes/twenty*/
+
+# Example plugin
+/wp-content/plugins/
+
+# Uploads
+/wp-content/uploads/
+
+# Log files
+*.log
+
+# htaccess
+/.htaccess
+# ENV
+.env
+# Logs
+yarn-error.log
+
+
+# All plugins
+#
+# Note: If you wish to whitelist plugins,
+# uncomment the next line
+wp-content/plugins
+
+# All themes
+#
+# Note: If you wish to whitelist themes,
+# uncomment the next line
+#/wp-content/themes
