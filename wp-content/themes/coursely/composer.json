@@ -1,12 +1,15 @@
 {
-  "name": "kaz/evrotrans",
+  "name": "coursely/project",
   "description": "Custom wordpress theme",
   "minimum-stability": "stable",
   "license": "proprietary",
   "autoload": {
     "psr-4": {
-      "ket\\App\\": "app",
-      "ket\\acf\\": "acf"
+      "coursely\\App\\": "App",
+      "coursely\\acf\\": "acf"
     }
+  },
+  "require": {
+    "duncan3dc/blade": "^4.15"
   }
 }

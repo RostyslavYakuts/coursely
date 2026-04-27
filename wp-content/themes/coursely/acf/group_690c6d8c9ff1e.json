@@ -20,6 +20,51 @@
             "endpoint": 0
         },
         {
+            "key": "field_69ef9c04cd8c0",
+            "label": "Trusted by",
+            "name": "trusted_by",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_69ef9c3bcd8c1",
+            "label": "Trusted by image",
+            "name": "trusted_by_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
             "key": "field_690c6e729303c",
             "label": "h1",
             "name": "h1",
@@ -84,6 +129,23 @@
             "label": "CTA link",
             "name": "cta_link",
             "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_69ef9372b8be9",
+            "label": "CTA 2 text",
+            "name": "cta_2_text",
+            "aria-label": "",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -98,6 +160,23 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_69ef9388b8bea",
+            "label": "CTA 2 link",
+            "name": "cta_2_link",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
         },
         {
             "key": "field_69aaea7ab55fe",
@@ -1092,5 +1171,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1772808932
+    "modified": 1777311238
 }

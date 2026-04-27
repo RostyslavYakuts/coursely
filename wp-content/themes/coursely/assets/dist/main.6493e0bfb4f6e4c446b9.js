@@ -1,2 +1,0 @@
-(()=>{"use strict";(()=>{const e=document.querySelector(".hamburger-js"),o=document.querySelector(".main-menu-js"),s=document.body;e&&o&&e.addEventListener("click",t=>{t.stopPropagation();const l="block"===o.style.display;e.classList.toggle("opened"),l?(o.style.display="none",s.classList.remove("shadow")):(o.style.display="block",s.classList.add("shadow"))})})(),document.querySelectorAll(".scroll-to-top-js").forEach(e=>{e.addEventListener("click",()=>{window.scrollTo({top:0,behavior:"smooth"})})})})();
-//# sourceMappingURL=main.6493e0bfb4f6e4c446b9.js.map

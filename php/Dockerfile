@@ -1,36 +1,32 @@
-# Use the official PHP image with FPM
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
-# Install necessary PHP extensions
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libssl-dev \
-    imagemagick \
-    libmagickcore-6.q16-3-extra\
     libmagickwand-dev \
+    imagemagick \
     curl \
     gnupg \
     unzip \
     cron \
     git \
-    nodejs \
-    npm \
-    && docker-php-ext-install \
+ && docker-php-ext-install \
     pdo \
     pdo_mysql \
     mysqli \
     zip \
     gd \
-        && pecl install imagick && docker-php-ext-enable imagick
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
-RUN npm install -g wrangler
-# Install Xdebug
-RUN pecl install xdebug && docker-php-ext-enable xdebug
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ && pecl install imagick xdebug \
+ && docker-php-ext-enable imagick xdebug
 
-# Copy Xdebug configuration file
+# Node 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+ && apt-get install -y nodejs \
+ && npm install -g wrangler
+
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
-# Set the working directory
 WORKDIR /var/www/html

@@ -1,5 +1,5 @@
 <?php
-namespace ws\acf;
+namespace coursely\acf;
 
 class FieldsKeeper{
     public function __construct(){

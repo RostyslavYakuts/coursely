@@ -1,0 +1,16 @@
+
+<nav class="main-menu main-menu-js hidden fixed px-5 l:px-[57px] z-10
+l:relative l:flex l:items-center top-0 left-0 w-full l:w-auto l:top-inherit l:left:inherit">
+	<div class="mt-[220px] lgx:mt-0 top-menu-wrapper flex flex-col gap-12 items-center l:flex-row relative">
+		<?php
+			wp_nav_menu([
+                'theme_location' => 'main_menu',
+                'menu_class' => 'text-lg top-menu lgx:text-brand relative z-10 l:gap-x-5 flex flex-col items-center justify-center mb-0 l:flex-row gap-y-5 l:gap-y-0 [&_a]:text-white [&_span]:text-white [&_a]:relative [&_a]:after:content-[""] [&_a]:after:absolute [&_a]:after:left-0 [&_a]:after:-bottom-1 [&_a]:after:w-0 [&_a]:after:h-[2px] [&_a]:after:bg-current [&_a]:after:transition-all [&_a:hover]:after:w-full',
+                'container' => false,
+            ]);
+		?>
+
+	</div>
+
+</nav>
+<?php /**PATH /var/www/html/wp-content/themes/coursely/App/Views/global/header/top-menu.blade.php ENDPATH**/ ?>

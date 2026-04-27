@@ -1,16 +1,10 @@
 <?php
-/**
- * The template for displaying 404 pages (not found)
- *
- * @link https://codex.wordpress.org/Creating_an_Error_404_Page
- *
- * @package _s
- */
+// 404 Template
 
-get_header();
-?>
+use coursely\App\Controllers\Error404Controller;
 
-	<h1>404</h1>
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-<?php
-get_footer();
+(new Error404Controller())->render();

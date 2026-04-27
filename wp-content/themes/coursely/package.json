@@ -1,5 +1,5 @@
 {
-  "name": "wirtstudio",
+  "name": "coursely",
   "version": "1.0.0",
   "description": "webpack builder for custom project ids",
   "private": true,
@@ -13,7 +13,6 @@
     "js",
     "webpack"
   ],
-  "author": "RostWirt <rostwirt@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.29.0",

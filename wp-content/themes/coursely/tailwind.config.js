@@ -1,8 +1,7 @@
 /** @type {string[]} */
 
 const contentPaths = [
-	'inc/**/*.php',
-	'template-parts/**/*.php',
+	'App/**/*.php',
 	'assets/src/**/*.{js,jsx,ts,html}'
 ];
 
@@ -68,13 +67,18 @@ module.exports = {
 		},
 		colors: {
 			'brand':{
-				DEFAULT:'#627C8C',
-				'gray':'#989398',
+				DEFAULT:'#1C55E0',
+				'dark':'#111230',
+				'gray':'#F4F4F5',
+				'text':'#667085',
+				'light-gray':'#0F051A80',
+
+
 				'accent':'#E93C35',
-				'light-gray':'#B9C7D2',
-				'dark':'#2B3034',
+
 				'error':'#ff0000'
 			},
+			'gray':'#DDE1E6',
 			'half-white':'rgba(255,255,255,0.7)',
 			'half-black':'rgba(43,48,52,0.7)',
 			transparent:'transparent',
