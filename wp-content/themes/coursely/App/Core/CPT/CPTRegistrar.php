@@ -19,10 +19,10 @@ class CPTRegistrar
             ['title']
         );
         new CustomPostType(
-            'Service',
-            'service',
+            'Course',
+            'course',
             'dashicons-list-view',
-            false,
+            true,
             true,
             ['title','editor','excerpt','thumbnail']
         );

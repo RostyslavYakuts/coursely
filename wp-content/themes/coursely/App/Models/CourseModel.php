@@ -5,7 +5,7 @@ namespace coursely\App\Models;
 use coursely\App\Core\Features\TableOfContent;
 use coursely\App\Core\Features\SocialSharer;
 
-class ServiceModel implements ModelInterface
+class CourseModel implements ModelInterface
 {
     public \WP_Post $post;
     public function __construct($post){
@@ -28,14 +28,14 @@ class ServiceModel implements ModelInterface
             'content' => apply_filters('the_content', get_the_content()),
             'social'=>$social,
             'toc'=>$toc_list,
-            'recommended'=>$this->get_other_services($id)
+            'recommended'=>$this->get_other_items($id)
         ];
     }
 
-    public static function get_other_services($current_id): array
+    public static function get_other_items($current_id): array
     {
         $args = [
-            'post_type'      => 'service',
+            'post_type'      => 'course',
             'posts_per_page' => -1,
             'post__not_in'   => [$current_id],
             'orderby'        => 'rand'

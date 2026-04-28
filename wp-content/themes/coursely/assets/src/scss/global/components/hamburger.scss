@@ -6,39 +6,39 @@
 	height:24px;
 	position: relative;
 	z-index: 9999999;
+	background: #FFFFFF22;
+	border-radius: 50%;
+	border:1px solid #FFFFFF33;
+	padding:25px;
 	&-line{
-		left: 0;
+		right: 15px;
 		position: absolute;
-		width: 100%;
+		width: 20px;
 		height: 2px;
-		background: $brand;
+		background: #fff;
 		display: block;
 		transition: .3s;
 	}
 	&-top{
-		top:0;
+		top:18px;
 	}
 	&-middle{
-		width: 70%;
-		top:10.5px;
+		top:24px;
 	}
 	&-bottom{
-		bottom:0;
+		width: 15px;
+		bottom:18px;
 	}
 }
 .hamburger.opened{
-	.hamburger-top, .hamburger-bottom{
-		position:absolute;
-		width:120%;
-	}
 	.hamburger-top{
-		top: 11px;
+		top: 24px;
 		transform: rotate(45deg);
 	}
-	.hamburger-middle{
+	.hamburger-bottom{
 		display:none;
 	}
-	.hamburger-bottom{
+	.hamburger-middle{
 		bottom: 11px;
 		transform: rotate(-45deg);
 	}

@@ -11,6 +11,21 @@ l:relative l:flex l:items-center top-0 left-0 w-full l:w-auto l:top-inherit l:le
 		?>
 
 	</div>
+	<div class="mt-[80px] flex lgx:hidden gap-x-2 justify-center items-center text-sm">
+		<?php if(is_user_logged_in()): ?>
+			<?php echo get_avatar(get_current_user_id(),40); ?>
+
+		<?php else: ?>
+			<button class="login-js brand-btn w-[70px] h-[41px] text-white bg-[#FFFFFF22] hover:bg-brand border border-[#FFFFFF33]">
+				<?php echo e(__('Log in','coursely')); ?>
+
+			</button>
+			<a href="/pricing" class="brand-btn w-[81px] h-[41px] text-brand-dark  hover:bg-brand-dark hover:text-white bg-white">
+				<?php echo e(__('Sign up','coursely')); ?>
+
+			</a>
+		<?php endif; ?>
+	</div>
 
 </nav>
 <?php /**PATH /var/www/html/wp-content/themes/coursely/App/Views/global/header/top-menu.blade.php ENDPATH**/ ?>

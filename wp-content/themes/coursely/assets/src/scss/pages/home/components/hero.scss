@@ -1,4 +1,63 @@
+.home-hero-section {
+  background: linear-gradient(147deg, #0c0101, #3b7fbd 65%, #3b7fbd 70%, #012b68 85%, #0c0101);
+}
 
-.home-hero-section{
-  background: linear-gradient(147deg, #0c0101, #3b7fbd 60%, #3b7fbd 76%, #012b68);
+.course-category{
+  cursor: pointer;
+  background: white;
+  transition: 1s;
+  color:$dark;
+  border:1px solid $gray;
+  &:hover{
+    background: $dark;
+    color:white;
+    border:1px solid $dark;
+  }
+}
+.course-category.active{
+  background: $dark;
+  color:white;
+  border:1px solid $dark;
+}
+.course-cart{
+  transition: 1s;
+  &:hover{
+    button{
+      background: $dark;
+      color:white;
+      border:1px solid $dark;
+    }
+  }
+}
+
+.swiper-pagination-bullet{
+  background: #999999;
+}
+.swiper-pagination-bullet.swiper-pagination-bullet-active{
+  background: $dark;
+}
+
+.testimonials-swiper-pagination{
+  display:flex;
+  width:100%;
+  max-width:320px;
+  @include respond(768){
+    max-width: 460px;
+  }
+  margin:0 auto 0;
+  gap:0;
+}
+
+.testimonials-swiper-pagination .swiper-pagination-bullet{
+  flex:1;
+  height:1px;
+  margin:0 !important;
+  border-radius:0;
+  background:#999999;
+  opacity:1;
+}
+
+.testimonials-swiper-pagination .swiper-pagination-bullet-active{
+  background: $dark;
+  height:3px;
 }

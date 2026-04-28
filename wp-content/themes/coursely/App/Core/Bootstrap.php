@@ -4,6 +4,7 @@ namespace coursely\App\Core;
 
 use coursely\App\Controllers\PaginationController;
 use coursely\App\Core\CPT\CPTRegistrar;
+use coursely\App\Core\CT\CustomTaxonomyRegister;
 use coursely\App\Core\Handlers\AjaxAuthHandler;
 use coursely\App\Core\Handlers\AjaxHandler;
 use coursely\App\Core\Helpers\FilterDataCustomisationHelper;
@@ -39,8 +40,9 @@ class Bootstrap
         (new NavMenuSetup)->initialize();
         (new ThumbnailSetup)->initialize();
         (new Enqueuer)->initialize();
-        new CPTRegistrar;
-        new PaginationController;
+        new CPTRegistrar();
+        new CustomTaxonomyRegister();
+        new PaginationController();
         new AjaxHandler();
         new AjaxAuthHandler();
         (new DateShortcodes())->register();

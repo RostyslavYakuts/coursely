@@ -2,6 +2,8 @@
 
 namespace coursely\App\Core\Setup;
 
+use coursely\App\Core\Helpers\CourseCard;
+
 class RestAPISetup
 {
 
@@ -12,7 +14,186 @@ class RestAPISetup
 		add_action('rest_api_init', array($this, 'register_load_more_posts'));
         add_action('rest_api_init', array($this, 'register_load_more_tax_posts'));
 
+        add_action('rest_api_init', [$this,'register_course_filter']);
+
 	}
+
+    public function register_course_filter(): void
+    {
+        register_rest_route(
+            'courses/v1',
+            '/filter',
+            [
+                'methods' => 'GET',
+                'callback' => [$this,'filter_courses'],
+                'permission_callback' => '__return_true',
+            ]
+        );
+    }
+
+    public function filter_courses(\WP_REST_Request $request): \WP_REST_Response{
+        $html = '';
+        $courses = [];
+        if($request->get_param('term_id') !== 'all'){
+
+            $term_id = (int) $request->get_param('term_id');
+
+            $args = [
+                'post_type' => 'course',
+                'posts_per_page' => -1,
+                'meta_key' => 'rating',
+                'orderby' => 'meta_value_num',
+                'order' => 'DESC'
+            ];
+
+
+            if ($term_id) {
+
+                $args['tax_query'] = [
+                    [
+                        'taxonomy' => 'course_category',
+                        'field' => 'term_id',
+                        'terms' => $term_id,
+                        'include_children' => true
+                    ]
+                ];
+            }
+
+            $query = new \WP_Query($args);
+
+            while ($query->have_posts()) {
+
+                $query->the_post();
+                $id = get_the_ID();
+                $rating = get_field('rating',$id);
+                $duration = get_field('duration',$id);
+                $lessons_count = get_field('lessons_count',$id);
+
+                $terms = get_the_terms(
+                    $id,
+                    'course_category'
+                );
+
+                $parent_category = '';
+
+                if ($terms) {
+                    foreach ($terms as $term) {
+
+                        if ($term->parent) {
+                            $parent = get_term($term->parent);
+                            $parent_category = $parent->name;
+                            break;
+                        }
+
+                        $parent_category = $term->name;
+                    }
+                }
+                $courses[] = [
+                    'id' => $id,
+                    'title' => get_the_title($id),
+                    'excerpt' => get_the_excerpt($id),
+                    'link' => get_permalink($id),
+                    'thumbnail' => get_the_post_thumbnail_url($id, 'medium_large'),
+                    'rating' => $rating,
+                    'duration' => $duration,
+                    'lessons_count' => $lessons_count,
+                    'category' => $parent_category
+                ];
+
+            }
+            foreach( $courses as $course){
+                $html .= CourseCard::render($course);
+            }
+
+            wp_reset_postdata();
+        }else{
+            $query = new \WP_Query([
+                'post_type'      => 'course',
+                'posts_per_page' => 3,
+                'meta_key'       => 'rating',
+                'orderby'        => 'meta_value_num',
+                'order'          => 'DESC'
+            ]);
+
+            if ($query->have_posts()) {
+
+                foreach ($query->posts as $post) {
+
+                    $terms = get_the_terms(
+                        $post->ID,
+                        'course_category'
+                    );
+
+                    $parent_category = '';
+
+                    if ($terms && !is_wp_error($terms)) {
+
+                        foreach ($terms as $term) {
+
+                            // parent category
+                            if ($term->parent) {
+
+                                $parent = get_term($term->parent);
+
+                                if ($parent && !is_wp_error($parent)) {
+                                    $parent_category = $parent->name;
+                                    break;
+                                }
+                            }
+
+                            // fallback
+                            if (!$term->parent) {
+                                $parent_category = $term->name;
+                            }
+                        }
+                    }
+
+                    $courses[] = [
+                        'id' => $post->ID,
+                        'title' => get_the_title($post->ID),
+                        'excerpt' => get_the_excerpt($post->ID),
+                        'link' => get_permalink($post->ID),
+                        'thumbnail' => get_the_post_thumbnail_url($post->ID, 'medium_large'),
+                        'rating' => get_field('rating', $post->ID),
+                        'duration' => get_field('duration', $post->ID),
+                        'lessons_count' => get_field('lessons_count', $post->ID),
+                        'category' => $parent_category
+                    ];
+                }
+                foreach ($courses as $course) {
+                    $html .= CourseCard::render($course);
+                }
+            }
+
+            wp_reset_postdata();
+
+        }
+
+
+        return new \WP_REST_Response([
+            'html' => $html
+        ]);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function register_load_more_posts(): void
     {

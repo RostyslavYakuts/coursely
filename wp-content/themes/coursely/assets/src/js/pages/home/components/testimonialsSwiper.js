@@ -12,6 +12,7 @@ export const testimonialsSwiper = ()=>{
             effect: 'slide',
             loop: true,
             slidesPerView: 1,
+            spaceBetween: 20,
             navigation: {
                 nextEl: '.testimonials-next',
                 prevEl: '.testimonials-prev',
@@ -19,6 +20,14 @@ export const testimonialsSwiper = ()=>{
             pagination: {
                 el: '.testimonials-swiper-pagination',
                 clickable: true
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2
+                },
+                1024: {
+                    slidesPerView: 3
+                }
             }
         });
     }

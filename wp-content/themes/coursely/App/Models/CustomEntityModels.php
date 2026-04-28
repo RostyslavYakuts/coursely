@@ -2,6 +2,8 @@
 
 namespace coursely\App\Models;
 
+use WP_Error;
+
 abstract class CustomEntityModels
 {
 	abstract public static function get_entity_model(): array;
@@ -64,28 +66,34 @@ abstract class CustomEntityModels
 		return $query;
 	}
 
-	/**
-	 * @param $taxonomy
-	 * @param $exclude_id
-	 * @return array|\WP_Error|string
-	 */
-	public static function get_custom_terms($taxonomy,$exclude_id = null): array|\WP_Error|string
+    /**
+     * @param $taxonomy
+     * @param null $exclude_id
+     * @param bool $parent_only
+     * @return array
+     */
+	public static function get_custom_terms($taxonomy, bool $parent_only = true, int $exclude_id = null): array
 	{
-		$result = [];
+
 		$args = [
 			'taxonomy'   => $taxonomy,
 			'hide_empty' => true,
 		];
 
 		if ($exclude_id) {
-			$args['exclude'] = (int)$exclude_id; // Ensure it's an integer
+			$args['exclude'] = $exclude_id;
 		}
+
+        if ($parent_only) {
+            $args['parent'] = 0;
+        }
+
 		$terms = get_terms($args);
 
 		if( is_wp_error($terms) ){
-			$err = new \WP_Error('no_terms', 'No terms found', array('status' => 404));
+			$err = new WP_Error('no_terms', 'No terms found', array('status' => 404));
 			error_log($err->get_error_message());
-			return $result;
+			return [];
 		}
 		return $terms;
 	}
