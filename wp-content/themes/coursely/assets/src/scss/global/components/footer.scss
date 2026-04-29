@@ -1,0 +1,13 @@
+.footer-banner{
+  background: linear-gradient(147deg, #0c0101, #3b7fbd 65%, #3b7fbd 70%, #012b68 85%, #0c0101);
+}
+
+
+#menu-footer-secondary-menu li:not(:last-child)::after {
+  content: "|";
+  margin: 0 5px;
+  color:$gray;
+  @include respond(768){
+    margin: 0 10px;
+  }
+}

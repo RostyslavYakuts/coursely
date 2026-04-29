@@ -7,8 +7,10 @@ import {marqueeSlider} from "@/js/pages/home/components/marqueeSlider";
 import {swipers} from "@/js/pages/home/components/swipers";
 import {homeCategoryFilter} from "@/js/pages/home/components/homeCategoryFilter";
 import {testimonialsSwiper} from "@/js/pages/home/components/testimonialsSwiper";
+import {faq} from "@/js/global/components/faq";
 
 window.addEventListener('load', () => {
     homeCategoryFilter();
     testimonialsSwiper();
+    faq();
 });

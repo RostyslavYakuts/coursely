@@ -19,7 +19,7 @@ use coursely\App\Core\Helpers\CourseCard;
           {{ __('All categories','coursely') }}
       </div>
        @foreach($course_categories as $category)
-            <div data-id="{{$category->term_id}}" class="course-tab-js course-category min-w-[100px] rounded-full text-center lgx:text-lg p-3 lgx:p-4">
+            <div data-id="{{$category->term_id}}" class="course-tab-js course-category select-none min-w-[100px] rounded-full text-center lgx:text-lg p-3 lgx:p-4">
                 {!! $category->name !!}
             </div>
         @endforeach

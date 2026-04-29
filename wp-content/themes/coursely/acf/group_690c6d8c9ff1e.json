@@ -681,7 +681,7 @@
         },
         {
             "key": "field_6996e2bf1547d",
-            "label": "Brands",
+            "label": "Pricing Section",
             "name": "",
             "aria-label": "",
             "type": "tab",
@@ -698,8 +698,8 @@
         },
         {
             "key": "field_6996e331f8f8e",
-            "label": "Brands title",
-            "name": "brands_title",
+            "label": "Pricing section title",
+            "name": "pricing_section_title",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -718,8 +718,8 @@
         },
         {
             "key": "field_6996e369f8f8f",
-            "label": "Brands description",
-            "name": "brands_description",
+            "label": "Pricing section CTA",
+            "name": "pricing_section_cta",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -737,9 +737,83 @@
             "append": ""
         },
         {
-            "key": "field_6996e2e3f8f8c",
-            "label": "Brands",
-            "name": "brands",
+            "key": "field_69f1d19857c4d",
+            "label": "Pricing section CTA link",
+            "name": "pricing_section_cta_link",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_69f1f7c780a44",
+            "label": "FAQ",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_69f1f7dd80a45",
+            "label": "FAQ title",
+            "name": "faq_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_69f1f7e880a46",
+            "label": "FAQ description",
+            "name": "faq_description",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_69f1f7f680a47",
+            "label": "FAQ",
+            "name": "faq",
             "aria-label": "",
             "type": "repeater",
             "instructions": "",
@@ -755,15 +829,15 @@
             "min": 0,
             "max": 0,
             "collapsed": "",
-            "button_label": "Додати рядок",
+            "button_label": "Add Row",
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_6996e2fff8f8d",
-                    "label": "Image",
-                    "name": "image",
+                    "key": "field_69f1f80880a48",
+                    "label": "Question",
+                    "name": "question",
                     "aria-label": "",
-                    "type": "image",
+                    "type": "text",
                     "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
@@ -772,17 +846,33 @@
                         "class": "",
                         "id": ""
                     },
-                    "return_format": "array",
-                    "library": "all",
-                    "min_width": "",
-                    "min_height": "",
-                    "min_size": "",
-                    "max_width": "",
-                    "max_height": "",
-                    "max_size": "",
-                    "mime_types": "",
-                    "preview_size": "medium",
-                    "parent_repeater": "field_6996e2e3f8f8c"
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_69f1f7f680a47"
+                },
+                {
+                    "key": "field_69f1f81180a49",
+                    "label": "Answer",
+                    "name": "answer",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "rows": "",
+                    "placeholder": "",
+                    "new_lines": "",
+                    "parent_repeater": "field_69f1f7f680a47"
                 }
             ]
         }
@@ -805,5 +895,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1777390648
+    "modified": 1777465618
 }

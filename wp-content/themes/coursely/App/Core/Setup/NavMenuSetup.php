@@ -56,8 +56,9 @@ class NavMenuSetup
     private function register_menus(): void
     {
         register_nav_menus([
-            'main_menu'   => __('Main Menu', 'di'),
-            'footer_menu'   => __('Footer Menu', 'di'),
+            'main_menu'   => __('Main Menu', 'coursely'),
+            'footer_menu'   => __('Footer Menu', 'coursely'),
+            'footer_menu_sec'   => __('Footer Menu Secondary', 'coursely'),
         ]);
     }
 

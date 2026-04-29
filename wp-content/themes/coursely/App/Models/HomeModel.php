@@ -45,9 +45,16 @@ class HomeModel implements ModelInterface
             'testimonials_description' => get_field('testimonials_description', $id) ?? '',
             'testimonials_slider' => get_field('testimonials_slider', $id) ?? [],
 
-            'brands_title' => get_field('brands_title', $id) ?? '',
-            'brands_description' => get_field('brands_description', $id) ?? '',
-            'brands' => get_field('brands', $id) ?? [],
+            'pricing_section_title' => get_field('pricing_section_title', $id) ?? '',
+            'pricing_section_cta' => get_field('pricing_section_cta', $id) ?? '',
+            'pricing_section_cta_link' => get_field('pricing_section_cta_link', $id) ?? '',
+            'plans_cta'=>get_field('plans_cta', 'options') ?? 'Get started',
+            'plans_features_text'=>get_field('plans_features_text', 'options') ?? 'Features included:',
+            'plans'=>get_field('plans', 'options') ?? [],
+
+            'faq_title' => get_field('faq_title', $id) ?? '',
+            'faq_description' => get_field('faq_description', $id) ?? '',
+            'faq' => get_field('faq', $id) ?? [],
 
             'title' => get_the_title(),
             'content' => apply_filters('the_content', get_the_content()),

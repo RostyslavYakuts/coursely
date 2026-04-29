@@ -18,8 +18,6 @@ class OptionsData
         return [
             'login_popup_image' => get_field('login_popup_image', 'options')??[],
             'header_logo' => get_field('header_logo', 'options')??[],
-            'header_cta_text' => get_field('header_cta_text', 'options'),
-            'header_cta_link'  => get_field('header_cta_link', 'options'),
             'admin_phone'  => get_field('admin_phone', 'options'),
             'admin_email'  => get_field('admin_email', 'options'),
         ];
@@ -29,17 +27,16 @@ class OptionsData
     {
         return[
 
-            'footer_title' => get_field('footer_title', 'options') ?? '',
-            'footer_description' => get_field('footer_description', 'options') ?? '',
+            'footer_banner_title' => get_field('footer_banner_title', 'options') ?? '',
+            'footer_banner_description' => get_field('footer_banner_description', 'options') ?? '',
+            'footer_banner_cta' => get_field('footer_banner_cta', 'options') ?? '',
+            'footer_banner_cta_link' => get_field('footer_banner_cta_link', 'options') ?? '',
+            'footer_contacts_text' => get_field('footer_contacts_text', 'options') ?? '',
+
             'logo'        => get_field('footer_logo', 'options') ?? [],
-            'copyright'   => get_field('copyright_text', 'options'),
             'admin_email'   => get_field('admin_email', 'options'),
             'admin_phone'   => get_field('admin_phone', 'options'),
-            'footer_socials'=> get_field('footer_socials', 'options') ?? [],
-            'cookies' => [
-                'cookies_title' => get_field('cookies_title', 'options'),
-                'cookies_description' => get_field('cookies_description', 'options'),
-            ]
+
         ];
     }
 	public static function get_integrated_data():array

@@ -15,7 +15,7 @@
     <meta name="google-site-verification" content="e43k2m_4IYRCD6iZlY0jFb0NoqiVWEsBpo6fD8S3F8s" />
     <?php wp_head(); ?>
 </head>
-<body <?php body_class('h-full bg-white text-slate-800') ?> >
+<body <?php body_class('h-full bg-brand-gray') ?> >
 
 <main class="total-wrapper min-h-full">
 

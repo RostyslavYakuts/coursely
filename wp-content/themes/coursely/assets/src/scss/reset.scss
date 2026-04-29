@@ -83,12 +83,7 @@ h1,h2,h3,.h1,.h2,.h3{
 	padding-left: 20px;
 	padding-right: 20px;
 
-	@include respond(768){
-		padding-left: 30px;
-		padding-right: 30px;
-	}
-
-	@include respond(1200){
+	@include respond(1366){
 		padding-left: 0;
 		padding-right: 0;
 	}

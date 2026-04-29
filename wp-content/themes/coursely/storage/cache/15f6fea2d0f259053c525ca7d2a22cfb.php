@@ -21,7 +21,7 @@ use coursely\App\Core\Helpers\CourseCard;
 
       </div>
        <?php $__currentLoopData = $course_categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div data-id="<?php echo e($category->term_id); ?>" class="course-tab-js course-category min-w-[100px] rounded-full text-center lgx:text-lg p-3 lgx:p-4">
+            <div data-id="<?php echo e($category->term_id); ?>" class="course-tab-js course-category select-none min-w-[100px] rounded-full text-center lgx:text-lg p-3 lgx:p-4">
                 <?php echo $category->name; ?>
 
             </div>
