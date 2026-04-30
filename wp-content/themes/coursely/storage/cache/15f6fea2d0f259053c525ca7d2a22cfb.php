@@ -16,12 +16,12 @@ use coursely\App\Core\Helpers\CourseCard;
   </h2>
 
   <div class="course-categories-js mt-5 flex flex-row flex-wrap gap-4 justify-center items-center">
-      <div data-id="all" class="active course-tab-js course-category rounded-full text-center lgx:text-lg p-3 lgx:p-4 ">
+      <div data-id="all" class="active course-tab-js course-category rounded-full text-center lgx:text-lg p-3">
           <?php echo e(__('All categories','coursely')); ?>
 
       </div>
        <?php $__currentLoopData = $course_categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div data-id="<?php echo e($category->term_id); ?>" class="course-tab-js course-category select-none min-w-[100px] rounded-full text-center lgx:text-lg p-3 lgx:p-4">
+            <div data-id="<?php echo e($category->term_id); ?>" class="course-tab-js course-category select-none min-w-[100px] rounded-full text-center lgx:text-lg p-3">
                 <?php echo $category->name; ?>
 
             </div>

@@ -8,7 +8,7 @@ export const hamburger = () => {
 	hamburger.addEventListener('click', (e) => {
 		e.stopPropagation();
 
-		const isVisible = menu.style.display === 'block';
+		const isVisible = menu.style.display === 'flex';
 
 		hamburger.classList.toggle('opened');
 
@@ -16,7 +16,7 @@ export const hamburger = () => {
 			menu.style.display = 'none';
 			body.classList.remove('shadow');
 		} else {
-			menu.style.display = 'block';
+			menu.style.display = 'flex';
 			body.classList.add('shadow');
 		}
 	});

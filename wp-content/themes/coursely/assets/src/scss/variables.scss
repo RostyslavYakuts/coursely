@@ -5,6 +5,7 @@
 :root {
   --brand: theme('colors.brand.DEFAULT');
   --gray: theme('colors.gray');
+  --text: theme('colors.brand.text');
   --accent: theme('colors.brand.accent');
   --light-gray: theme('colors.brand.light-gray');
   --dark: theme('colors.brand.dark');
@@ -13,6 +14,7 @@
 
 $brand: var(--brand);
 $gray: var(--gray);
+$text: var(--text);
 $accent: var(--accent);
 $light-gray: var(--light-gray);
 $dark: var(--dark);

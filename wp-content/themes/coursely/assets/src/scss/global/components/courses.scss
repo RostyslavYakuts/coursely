@@ -1,0 +1,27 @@
+.course-category{
+  cursor: pointer;
+  background: white;
+  transition: 1s;
+  color:$dark;
+  border:1px solid $gray;
+  &:hover{
+    background: $dark;
+    color:white;
+    border:1px solid $dark;
+  }
+}
+.course-category.active{
+  background: $dark;
+  color:white;
+  border:1px solid $dark;
+}
+.course-card{
+  transition: 1s;
+  &:hover{
+    button{
+      background: $dark;
+      color:white;
+      border:1px solid $dark;
+    }
+  }
+}

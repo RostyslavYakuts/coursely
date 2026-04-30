@@ -13,7 +13,7 @@
     <div class="container mx-auto">
         <div class="plans-wrapper mt-16 grid grid-cols-1 md:grid-cols-2 lgx:grid-cols-4 gap-5">
             <?php $__currentLoopData = $data['plans']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $plan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="plan <?php echo e($plan['is_popular'] ? 'bg-brand-dark lgx:-mt-5' :'bg-white'); ?> rounded-[20px] py-8 px-6 w-full flex flex-col gap-5 <?php echo e($plan['is_popular'] ?? 'popular'); ?>" data-type="<?php echo e($plan['type']); ?>">
+                <div class="plan <?php echo e($plan['is_popular'] ? 'bg-brand-dark lgx:-mt-5 lgx:mb-5' :'bg-white'); ?> rounded-[20px] py-8 px-6 w-full flex flex-col gap-5 <?php echo e($plan['is_popular'] ?? 'popular'); ?>" data-type="<?php echo e($plan['type']); ?>">
 
                     <span class="font-bold text-[20px] lgx:text-[24px] <?php echo e($plan['is_popular'] ? 'text-white' :'text-brand-dark'); ?>">
                         <?php echo e($plan['duration']); ?>

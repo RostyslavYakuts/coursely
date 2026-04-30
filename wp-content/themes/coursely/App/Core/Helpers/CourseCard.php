@@ -9,7 +9,7 @@ class CourseCard
         ob_start();
         ?>
 
-        <a href="<?= esc_html($course['link']) ?>" class="course-cart brand-shadow flex flex-col gap-5 rounded-[20px]">
+        <a href="<?= esc_html($course['link']) ?>" class="course-card brand-shadow flex flex-col gap-5 rounded-[20px]">
             <div class="course-thumbnail relative">
                 <span class="min-w-[80px] text-center absolute top-2 left-2 z-10 rounded-full bg-white text-brand-dark text-sm px-2.5 py-2"><?= esc_html($course['category']) ?></span>
                 <img loading="lazy" decoding="async"

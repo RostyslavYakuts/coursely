@@ -2,33 +2,7 @@
   background: linear-gradient(147deg, #0c0101, #3b7fbd 65%, #3b7fbd 70%, #012b68 85%, #0c0101);
 }
 
-.course-category{
-  cursor: pointer;
-  background: white;
-  transition: 1s;
-  color:$dark;
-  border:1px solid $gray;
-  &:hover{
-    background: $dark;
-    color:white;
-    border:1px solid $dark;
-  }
-}
-.course-category.active{
-  background: $dark;
-  color:white;
-  border:1px solid $dark;
-}
-.course-cart{
-  transition: 1s;
-  &:hover{
-    button{
-      background: $dark;
-      color:white;
-      border:1px solid $dark;
-    }
-  }
-}
+
 
 .swiper-pagination-bullet{
   background: #999999;
@@ -62,26 +36,3 @@
   height:3px;
 }
 
-.faq-wrapper{
-  .faq-block{
-    .faq-opened{
-      display:none;
-    }
-    .faq-closed{
-      display:block;
-    }
-  }
-  .answer{
-    display:none;
-  }
-  .faq-block.active{
-    display:block;
-    .faq-opened{
-      display:block;
-    }
-    .faq-closed{
-      display:none;
-    }
-  }
-
-}

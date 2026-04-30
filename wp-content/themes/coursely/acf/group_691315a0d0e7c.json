@@ -42,29 +42,9 @@
             "append": ""
         },
         {
-            "key": "field_691315ebf81db",
-            "label": "Phone",
-            "name": "phone",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_69440fe532279",
-            "label": "UTM",
-            "name": "utm",
+            "key": "field_69f36c60e052f",
+            "label": "Subject",
+            "name": "subject",
             "aria-label": "",
             "type": "text",
             "instructions": "",
@@ -118,26 +98,6 @@
             "display_format": "d\/m\/Y g:i a",
             "return_format": "d\/m\/Y g:i a",
             "first_day": 1
-        },
-        {
-            "key": "field_6957c2a787a74",
-            "label": "File",
-            "name": "file",
-            "aria-label": "",
-            "type": "file",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "array",
-            "library": "all",
-            "min_size": "",
-            "max_size": "",
-            "mime_types": ""
         }
     ],
     "location": [
@@ -158,5 +118,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1769525846
+    "modified": 1777560821
 }

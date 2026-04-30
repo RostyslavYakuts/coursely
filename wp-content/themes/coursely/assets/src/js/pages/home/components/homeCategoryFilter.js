@@ -15,6 +15,7 @@ export const homeCategoryFilter = ()=>{
 
 
         const termId = tab.dataset.id || '';
+        const perPage = 3;
 
         const wrap =
             document.querySelector('.courses-js');
@@ -23,7 +24,7 @@ export const homeCategoryFilter = ()=>{
 
 
         const res = await fetch(
-            `/wp-json/courses/v1/filter?term_id=${termId}`
+            `/wp-json/courses/v1/filter?term_id=${termId}&per_page=${perPage}&order_by=rating`
         );
 
         const data = await res.json();

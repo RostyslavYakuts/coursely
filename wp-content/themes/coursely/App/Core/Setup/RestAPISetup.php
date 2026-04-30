@@ -31,150 +31,141 @@ class RestAPISetup
         );
     }
 
-    public function filter_courses(\WP_REST_Request $request): \WP_REST_Response{
-        $html = '';
-        $courses = [];
-        if($request->get_param('term_id') !== 'all'){
+    public function filter_courses(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $page = (int)$request->get_param('page') ?: 1;
+        $per_page = (int)$request->get_param('per_page') ?: 3;
+        $term_id = $request->get_param('term_id') ?? 'all';
+        $order_by = $request->get_param('order_by') ?? 'ID';
 
-            $term_id = (int) $request->get_param('term_id');
+        $params = [
+            'page' => $page,
+            'per_page' => $per_page,
+            'term_id' => $term_id,
+            'order' => 'DESC'
+        ];
 
-            $args = [
-                'post_type' => 'course',
-                'posts_per_page' => -1,
-                'meta_key' => 'rating',
-                'orderby' => 'meta_value_num',
-                'order' => 'DESC'
-            ];
-
-
-            if ($term_id) {
-
-                $args['tax_query'] = [
-                    [
-                        'taxonomy' => 'course_category',
-                        'field' => 'term_id',
-                        'terms' => $term_id,
-                        'include_children' => true
-                    ]
-                ];
-            }
-
-            $query = new \WP_Query($args);
-
-            while ($query->have_posts()) {
-
-                $query->the_post();
-                $id = get_the_ID();
-                $rating = get_field('rating',$id);
-                $duration = get_field('duration',$id);
-                $lessons_count = get_field('lessons_count',$id);
-
-                $terms = get_the_terms(
-                    $id,
-                    'course_category'
-                );
-
-                $parent_category = '';
-
-                if ($terms) {
-                    foreach ($terms as $term) {
-
-                        if ($term->parent) {
-                            $parent = get_term($term->parent);
-                            $parent_category = $parent->name;
-                            break;
-                        }
-
-                        $parent_category = $term->name;
-                    }
-                }
-                $courses[] = [
-                    'id' => $id,
-                    'title' => get_the_title($id),
-                    'excerpt' => get_the_excerpt($id),
-                    'link' => get_permalink($id),
-                    'thumbnail' => get_the_post_thumbnail_url($id, 'medium_large'),
-                    'rating' => $rating,
-                    'duration' => $duration,
-                    'lessons_count' => $lessons_count,
-                    'category' => $parent_category
-                ];
-
-            }
-            foreach( $courses as $course){
-                $html .= CourseCard::render($course);
-            }
-
-            wp_reset_postdata();
-        }else{
-            $query = new \WP_Query([
-                'post_type'      => 'course',
-                'posts_per_page' => 3,
-                'meta_key'       => 'rating',
-                'orderby'        => 'meta_value_num',
-                'order'          => 'DESC'
-            ]);
-
-            if ($query->have_posts()) {
-
-                foreach ($query->posts as $post) {
-
-                    $terms = get_the_terms(
-                        $post->ID,
-                        'course_category'
-                    );
-
-                    $parent_category = '';
-
-                    if ($terms && !is_wp_error($terms)) {
-
-                        foreach ($terms as $term) {
-
-                            // parent category
-                            if ($term->parent) {
-
-                                $parent = get_term($term->parent);
-
-                                if ($parent && !is_wp_error($parent)) {
-                                    $parent_category = $parent->name;
-                                    break;
-                                }
-                            }
-
-                            // fallback
-                            if (!$term->parent) {
-                                $parent_category = $term->name;
-                            }
-                        }
-                    }
-
-                    $courses[] = [
-                        'id' => $post->ID,
-                        'title' => get_the_title($post->ID),
-                        'excerpt' => get_the_excerpt($post->ID),
-                        'link' => get_permalink($post->ID),
-                        'thumbnail' => get_the_post_thumbnail_url($post->ID, 'medium_large'),
-                        'rating' => get_field('rating', $post->ID),
-                        'duration' => get_field('duration', $post->ID),
-                        'lessons_count' => get_field('lessons_count', $post->ID),
-                        'category' => $parent_category
-                    ];
-                }
-                foreach ($courses as $course) {
-                    $html .= CourseCard::render($course);
-                }
-            }
-
-            wp_reset_postdata();
-
+        if ($order_by === 'rating') {
+            $params['meta_key'] = 'rating';
+            $params['orderby'] = 'meta_value_num';
+        } else {
+            $params['orderby'] = 'ID';
         }
 
 
+        $data = $this->query_courses($params);
+
+        $html = '';
+
+        foreach ($data['items'] as $course) {
+            $html .= CourseCard::render($course);
+        }
+
         return new \WP_REST_Response([
-            'html' => $html
+            'html' => $html,
+            'has_more' => $data['has_more']
         ]);
     }
 
+    private function query_courses(array $params = []): array
+    {
+        $is_default = ($params['term_id'] ?? 'all') === 'all';
+
+        if($params['order_by'] === 'ID') {
+            $args = [
+                'post_type' => 'course',
+                'orderby'   => $params['orderby'],
+                'order'     => $params['order']
+            ];
+        }else{
+            $args = [
+                'post_type' => 'course',
+                'meta_key'  => $params['meta_key'],
+                'orderby'   => $params['orderby'],
+                'order'     => $params['order']
+            ];
+        }
+
+
+        // Pagination only for all tab
+        if ($is_default) {
+            $args['posts_per_page'] = $params['per_page'] ?? 3;
+            $args['paged'] = $params['page'] ?? 1;
+        } else {
+            $args['posts_per_page'] = -1;
+        }
+
+        if (!$is_default) {
+            $args['tax_query'] = [
+                [
+                    'taxonomy' => 'course_category',
+                    'field'    => 'term_id',
+                    'terms'    => (int)$params['term_id'],
+                    'include_children' => true
+                ]
+            ];
+        }
+
+        $query = new \WP_Query($args);
+
+        $courses = [];
+
+        foreach ($query->posts as $post) {
+            // mapping
+            $courses[] = [
+                'id' => $post->ID,
+                'title' => get_the_title($post->ID),
+                'excerpt' => get_the_excerpt($post->ID),
+                'link' => get_permalink($post->ID),
+                'thumbnail' => get_the_post_thumbnail_url($post->ID, 'medium_large'),
+                'rating' => get_field('rating', $post->ID),
+                'duration' => get_field('duration', $post->ID),
+                'lessons_count' => get_field('lessons_count', $post->ID),
+                'category' => $this->get_parent_category($post->ID),
+            ];
+        }
+
+        wp_reset_postdata();
+
+        return [
+            'items' => $courses,
+            'has_more' => $is_default && $params['page'] < $query->max_num_pages
+        ];
+    }
+
+    private function get_parent_category(int $id): string
+    {
+        $terms = get_the_terms(
+            $id,
+            'course_category'
+        );
+
+        $parent_category = '';
+
+        if ($terms && !is_wp_error($terms)) {
+
+            foreach ($terms as $term) {
+
+                // parent category
+                if ($term->parent) {
+
+                    $parent = get_term($term->parent);
+
+                    if ($parent && !is_wp_error($parent)) {
+                        $parent_category = $parent->name;
+                        break;
+                    }
+                }
+
+                // fallback
+                if (!$term->parent) {
+                    $parent_category = $term->name;
+                }
+            }
+        }
+        return $parent_category;
+
+    }
 
 
 

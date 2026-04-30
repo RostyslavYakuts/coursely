@@ -1,0 +1,15 @@
+/**
+* Breadcrumbs
+ */
+
+#breadcrumbs{
+  a{
+    color:$text;
+  }
+  .breadcrumb_last{
+    color: $dark;
+  }
+  .separator{
+    padding: 0 16px;
+  }
+}

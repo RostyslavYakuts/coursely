@@ -1,10 +1,9 @@
 {{-- Hero Contacts --}}
-<section class="w-full h-calc-100-100 relative mt-[100px]">
-    <img class="absolute top-0 left-0 w-full h-full object-cover"
-         decoding="async" loading="lazy"
-         src="{{$data['background_image_url']}}" alt="Contacts">
-    <div class="px-5 absolute bg-half-black top-0 left-0 z-10 w-full h-full flex flex-col gap-6 justify-center items-center text-center text-white">
-        <h1 class="text-4xl">{{$data['h1']}}</h1>
-        <p class="w-full max-w-[700px]">{{$data['short_description']}}</p>
-    </div>
+<section class="w-full container mx-auto">
+    <h1 class="font-bold text-center text-brand-dark text-[32px] lgx:text-[48px]  mt-10">
+        {{$data['h1']}}
+    </h1>
+    <p class="mt-5 text-lg text-brand-text text-center mx-auto max-w-[500px]">
+        {{$data['description']}}
+    </p>
 </section>

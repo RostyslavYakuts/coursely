@@ -21,7 +21,14 @@ class ContactModel implements ModelInterface
             'content' => apply_filters('the_content', get_the_content()),
             'background_image_url'=>get_the_post_thumbnail_url($id,'full'),
             'h1'=>get_field('h1',$id),
-            'short_description'=>get_field('short_description',$id),
+            'description'=>get_field('description',$id),
+            'faq_title'=>get_field('faq_title', $id) ?? '',
+            'faq_description'=>get_field('faq_description', $id) ?? '',
+            'faq'=>get_field('faq', $id) ?? [],
+            'address'=>get_field('address', 'options') ?? '',
+            'admin_email'=>get_field('admin_email', 'options') ?? '',
+            'admin_phone'=>get_field('admin_phone', 'options') ?? '',
+            'hours_of_operation'=>get_field('hours_of_operation', 'options') ?? '',
         ];
 
     }

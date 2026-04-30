@@ -53,6 +53,17 @@ class NavMenuSetup
 	{
 		return is_array($var) ? array_intersect($var, array('current-menu-item', 'menu-item-has-children')) : '';
 	}
+
+    public function update_menu_for_user($items){
+        foreach ($items as &$item) {
+            if ($item->title === 'Courses') {
+                if (is_user_logged_in()) {
+                    $item->title = 'My Courses';
+                }
+            }
+        }
+        return $items;
+    }
     private function register_menus(): void
     {
         register_nav_menus([
@@ -68,6 +79,7 @@ class NavMenuSetup
 		add_filter('nav_menu_css_class', [$this, 'my_css_attributes_filter']);
 		add_filter('nav_menu_item_id', [$this, 'my_css_attributes_filter']);
 		add_filter('page_css_class', [$this, 'my_css_attributes_filter']);
+		add_filter('wp_nav_menu_objects', [$this, 'update_menu_for_user']);
         $this->register_menus();
 	}
 }

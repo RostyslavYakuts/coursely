@@ -7,39 +7,20 @@ export const contactFormHandler = () => {
     const form = document.getElementById("contact_us_form");
     if (!form) return;
 
-    function shortenFileName(name) {
-        const dotIndex = name.lastIndexOf('.');
-        if (dotIndex === -1) return name;
-        const ext = name.slice(dotIndex);
-        const base = name.slice(0, dotIndex);
-        if (base.length <= 15) return name;
-        return base.slice(0, 15) + '(...)' + ext;
-    }
-
-    const fileInput = document.getElementById('user_file');
-    const placeholder = document.querySelector('.file-placeholder-js');
-    const placeholderText = placeholder.textContent;
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files.length) {
-            placeholder.textContent = shortenFileName(fileInput.files[0].name);
-        } else {
-            placeholder.textContent = placeholderText;
-        }
-    });
-
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const name = form.querySelector("#user_name").value.trim();
-        const company = form.querySelector("#company").value.trim();
+        const company = form.querySelector("#user_company").value.trim();
+        const subject = form.querySelector("#user_subject").value.trim();
         const email = form.querySelector("#user_email").value.trim();
         const message = form.querySelector("#user_message").value.trim();
         const nameError = form.querySelector("#user_name_error");
         const emailError = form.querySelector("#user_email_error");
         const messageError = form.querySelector("#user_message_error");
-        const fileError = form.querySelector("#user_file_error");
+        const subjectError = form.querySelector("#user_subject_error");
         const globalMsg = document.getElementById("result_message");
-        [nameError, emailError, messageError].forEach(el => {
+        [nameError, emailError, subjectError, messageError].forEach(el => {
             el.textContent = ""; el.classList.add("hidden");
         });
         form.querySelectorAll(".form-input").forEach(el =>{
@@ -49,8 +30,8 @@ export const contactFormHandler = () => {
 
         const nameLabel = document.querySelector('label[for="user_name"]');
         const emailLabel = document.querySelector('label[for="user_email"]');
+        const subjectLabel = document.querySelector('label[for="user_subject"]');
         const messageLabel = document.querySelector('label[for="user_message"]');
-        const fileLabel = document.querySelector('.pseudo-label');
 
 		  if(company.length > 0){
 			  valid = false;
@@ -86,6 +67,24 @@ export const contactFormHandler = () => {
             emailLabel.classList.remove('label-error');
         }
 
+        if (subject.length < 3) {
+            subjectLabel.classList.add('label-error');
+            subjectError.textContent = "Please enter your subject";
+            subjectError.classList.remove("hidden");
+            form.querySelector("#user_subject").classList.add("border-error");
+            valid = false;
+        }else if (subject.length > 100) {
+            subjectLabel.classList.add('label-error');
+            subjectError.textContent = "Text is too long (max. 200 chars)";
+            subjectError.classList.remove("hidden");
+            form.querySelector("#user_subject").classList.add("border-error");
+            valid = false;
+        }else{
+            subjectLabel.classList.remove('label-error');
+            subjectError.classList.add("hidden");
+            form.querySelector("#user_subject").classList.remove("border-error");
+        }
+
         const messageValue = message;
         if (messageValue.length > 0 && messageValue.length < 10) {
             messageLabel.classList.add('label-error');
@@ -103,40 +102,7 @@ export const contactFormHandler = () => {
             messageLabel.classList.remove('label-error');
         }
 
-        if (fileInput.files.length) {
-            const file = fileInput.files[0];
-            const allowedTypes = [
-                "text/plain",
-                "application/msword",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "image/jpeg",
-                "image/png",
-                "application/pdf"
-            ];
-            const maxSize = 2 * 1024 * 1024; // 2MB
-
-            if (!allowedTypes.includes(file.type)) {
-                fileLabel.classList.add('label-error');
-                fileError.textContent = "Only TXT, DOC, JPG, PNG, PDF ext.";
-                fileError.classList.remove("hidden");
-                fileInput.classList.add("border-error");
-                valid = false;
-            } else if (file.size > maxSize) {
-                fileLabel.classList.add('label-error');
-                fileError.textContent = "Max. file size: 2MB.";
-                fileError.classList.remove("hidden");
-                fileInput.classList.add("border-error");
-                valid = false;
-            } else {
-                fileLabel.classList.remove('label-error');
-                fileError.classList.add("hidden");
-                fileInput.classList.remove("border-error");
-            }
-        }
-
         if (!valid) return;
-
-
 
         const pk = localizedScript.pk;
         const nonce = localizedScript.contact_us_form_nonce;
@@ -151,14 +117,10 @@ export const contactFormHandler = () => {
             formData.append("name", name);
             formData.append("company", company);
             formData.append("email", email);
+            formData.append("subject", subject);
             formData.append("message", message);
             formData.append("nonce", nonce);
             formData.append("recaptcha_token", token);
-
-            // Add file if selected
-            if (fileInput.files.length) {
-                formData.append("user_file", fileInput.files[0]);
-            }
 
             const res = await fetch(localizedScript.ajax_url, {
                 method: "POST",

@@ -1,0 +1,23 @@
+.faq-wrapper{
+  .faq-block{
+    .faq-opened{
+      display:none;
+    }
+    .faq-closed{
+      display:block;
+    }
+  }
+  .answer{
+    display:none;
+  }
+  .faq-block.active{
+    display:block;
+    .faq-opened{
+      display:block;
+    }
+    .faq-closed{
+      display:none;
+    }
+  }
+
+}
