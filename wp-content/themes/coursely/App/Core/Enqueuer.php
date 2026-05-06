@@ -124,7 +124,7 @@ class Enqueuer
                     continue;
                 }
                 if (str_contains($fullName, 'post')) {
-                    if (is_singular('post') || is_singular('service')) {
+                    if (is_singular('post') || is_singular('course')) {
                         wp_enqueue_script($name, get_template_directory_uri() . '/assets/dist/' . $fullName, [], $js_version,  ['in_footer' => true, 'strategy'  => 'defer']);
                     }
                     continue;
@@ -157,7 +157,7 @@ class Enqueuer
                     continue;
                 }
                 if (str_contains($fullName, 'post')) {
-                    if(is_singular('post')){
+                    if(is_singular('post') || is_singular('course') ){
                         wp_enqueue_style(
                             $handle,
                             get_template_directory_uri() . '/assets/dist/' . $fullName,

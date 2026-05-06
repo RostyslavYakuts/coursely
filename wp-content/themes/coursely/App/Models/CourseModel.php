@@ -2,9 +2,6 @@
 
 namespace coursely\App\Models;
 
-use coursely\App\Core\Features\TableOfContent;
-use coursely\App\Core\Features\SocialSharer;
-
 class CourseModel implements ModelInterface
 {
     public \WP_Post $post;
@@ -15,30 +12,64 @@ class CourseModel implements ModelInterface
     public function get_post_data(): array
     {
         $id = $this->post->ID;
-        $content = apply_filters('the_content', get_the_content());
-        $toc = new TableOfContent($content);
-        $toc_list = $toc->generateIndex();
-        $social = SocialSharer::get_social_sharing_buttons($this->post);
+        $terms = wp_get_post_terms($id, 'course_category');
+        $parent_ids = [];
+        $parent_data = [];
 
+        foreach ($terms as $term) {
+            $parent_id = $term->parent ?: $term->term_id;
+
+            $parent_term = $term->parent
+                ? get_term($term->parent, 'course_category')
+                : $term;
+
+            if (!$parent_term || is_wp_error($parent_term)) {
+                continue;
+            }
+
+            $parent_ids[] = $parent_id;
+
+            $parent_data[] = [
+                'id'   => $parent_term->term_id,
+                'name' => $parent_term->name,
+                'link' => get_term_link($parent_term),
+            ];
+        }
+
+        $parent_ids = array_unique($parent_ids);
+        $content = apply_filters('the_content', get_the_content());
 
         return [
             'id'=>$id,
             'title'=>get_the_title($id),
-            'thumbnail' => get_the_post_thumbnail(),
-            'content' => apply_filters('the_content', get_the_content()),
-            'social'=>$social,
-            'toc'=>$toc_list,
-            'recommended'=>$this->get_other_items($id)
+            'excerpt'=>get_the_excerpt($id),
+            'thumbnail' => get_the_post_thumbnail($id,'full',['class'=>'w-[406px] h-[360px] object-cover rounded-[20px]']),
+            'content' => $content,
+            'recommended'=>$this->get_other_items($id,$parent_ids),
+            'categories'=>$parent_data,
+            'rating'=>get_field('rating', $id) ?? 5,
+            'lessons_count'=>get_field('lessons_count', $id) ?? '',
+            'duration'=>get_field('duration', $id) ?? '',
         ];
     }
 
-    public static function get_other_items($current_id): array
+    private function get_other_items($current_id,$parent_ids): array
     {
+
         $args = [
             'post_type'      => 'course',
-            'posts_per_page' => -1,
+            'posts_per_page' => 3,
             'post__not_in'   => [$current_id],
-            'orderby'        => 'rand'
+            'orderby'        => 'rand',
+            'tax_query'      => [
+                [
+                    'taxonomy' => 'course_category',
+                    'field'    => 'term_id',
+                    'terms'    => $parent_ids,
+                    'include_children' => true
+                ]
+            ]
+
         ];
 
         $query = new \WP_Query($args);

@@ -3,7 +3,6 @@
 namespace coursely\App\Controllers\Factories;
 
 use coursely\App\Controllers\AboutPageController;
-use coursely\App\Controllers\AuthorController;
 use coursely\App\Controllers\BlogController;
 use coursely\App\Controllers\CategoryController;
 use coursely\App\Controllers\ContactPageController;
@@ -13,13 +12,13 @@ use coursely\App\Controllers\Error404Controller;
 use coursely\App\Controllers\HomeController;
 use coursely\App\Controllers\PageController;
 use coursely\App\Controllers\PostController;
-use coursely\App\Controllers\ServiceController;
+use coursely\App\Controllers\CourseController;
 use coursely\App\Controllers\TagController;
 use coursely\App\Models\AboutPageModel;
-use coursely\App\Models\AuthorModel;
 use coursely\App\Models\BlogModel;
 use coursely\App\Models\CategoryModel;
 use coursely\App\Models\ContactModel;
+use coursely\App\Models\CourseModel;
 use coursely\App\Models\CoursesPageModel;
 use coursely\App\Models\HomeModel;
 use coursely\App\Models\PostModel;
@@ -38,14 +37,14 @@ class ControllerFactory
             return new HomeController($homeModel);
         }
 
-        if(is_author()){
-            $authorModel = new AuthorModel($current_obj);
-            return new AuthorController($authorModel);
-        }
-
         if (is_singular('post')) {
             $postModel = new PostModel($current_obj);
             return new PostController($postModel);
+        }
+
+        if (is_singular('course')) {
+            $courseModel = new CourseModel($current_obj);
+            return new CourseController($courseModel);
         }
 
         if (is_page()) {

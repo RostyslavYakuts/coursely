@@ -5,7 +5,7 @@ namespace coursely\App\Controllers;
 use coursely\App\Models\ModelInterface;
 use duncan3dc\Laravel\BladeInstance;
 
-class AuthorController implements ControllerInterface
+class CourseController implements ControllerInterface
 {
     protected BladeInstance $blade;
     protected ModelInterface $model;
@@ -20,7 +20,7 @@ class AuthorController implements ControllerInterface
 
     public function render(): void
     {
-        $view = 'author.author';
+        $view = 'single.course.index';
         $data = $this->model->get_post_data();
         echo $this->blade->make($view, [
             'data' => $data

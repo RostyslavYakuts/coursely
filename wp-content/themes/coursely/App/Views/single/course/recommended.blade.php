@@ -1,4 +1,4 @@
-{{-- Recommended Services --}}
+{{-- Recommended Courses --}}
 @php
     /**
     * @var array $data
@@ -9,11 +9,8 @@
 
     <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold tracking-wide mb-4">
-            {!! __('Recommended Services','coursely') !!}
+            {!! __('Courses You might be interested in','coursely') !!}
         </h2>
-        <p class="text-gray-500 max-w-2xl mx-auto">
-            {!! __('Explore other services that can help improve performance, stability and growth of your website.','coursely') !!}
-        </p>
     </div>
 
     <div class="grid md:grid-cols-3 gap-8">
