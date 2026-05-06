@@ -43,7 +43,7 @@
                         data-page="1"
                         data-max-num-pages="{{ $data['all_articles']->max_num_pages }}"
                         class="uppercase px-6 py-3 bg-brand text-white rounded-lg hover:bg-brand-hover transition">
-                    {!! __('Show more','ws') !!}
+                    {!! __('Show more','coursely') !!}
                 </button>
             </div>
         @endif

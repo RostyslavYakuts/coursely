@@ -23,9 +23,6 @@ class CoursesPageModel implements ModelInterface
             'h1'=>get_field('h1', $id) ?? '',
             'course_categories' => $course_categories,
             'default_courses' => $this->get_selected_courses(),
-            'faq_title'=>get_field('faq_title', $id) ?? '',
-            'faq_description'=>get_field('faq_description', $id) ?? '',
-            'faq'=>get_field('faq', $id) ?? [],
         ];
     }
 

@@ -4,6 +4,6 @@
 @section('content')
     @include('global.breadcrumbs',['wrapper'=>true])
     @include('page.courses.courses')
-    @include('page.courses.faq')
+    @include('global.faq')
 @endsection
 

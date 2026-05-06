@@ -2,7 +2,7 @@
 <div class="mt-12 w-full p-4 bg-brand-light-gray">
 
     @if($data['similar_categories'])
-        <span class="text-2xl block pb-2">{!! __('Similar categories','ws') !!}</span>
+        <span class="text-2xl block pb-2">{!! __('Similar categories','coursely') !!}</span>
         <div class="flex flex-col gap-3">
             @foreach($data['similar_categories'] as $category)
                 @php

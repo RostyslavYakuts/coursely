@@ -3,7 +3,7 @@
 
     @if($data['similar_tags'])
         <span class="text-2xl text-brand-light-gray block pb-2">
-            {!! __('Similar tags','ws') !!}
+            {!! __('Similar tags','coursely') !!}
         </span>
         <div class="flex flex-col gap-3">
             @foreach($data['similar_tags'] as $tag)

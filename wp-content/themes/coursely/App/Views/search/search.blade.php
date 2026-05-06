@@ -5,7 +5,7 @@
     @include('global.breadcrumbs',['wrapper'=>true])
 
     <section class="container mx-auto py-[50px]">
-        <h1 class="text-4xl font-bold mb-8 text-gray-900">{!! __('Search result','ws') !!}: "{{ $data['query'] }}"</h1>
+        <h1 class="text-4xl font-bold mb-8 text-gray-900">{!! __('Search result','coursely') !!}: "{{ $data['query'] }}"</h1>
 
         @if($data['posts']->have_posts())
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
@@ -13,9 +13,9 @@
                     @php
                      $data['posts']->the_post();
                      $postType = get_post_type();
-                     $postName = __('Article','ws');
+                     $postName = __('Article','coursely');
                      if($postType === 'service'){
-                        $postName = __('Service','ws');
+                        $postName = __('Service','coursely');
                      }
                     @endphp
 
@@ -67,7 +67,7 @@
             @php wp_reset_postdata(); @endphp
         @else
             <p class="text-gray-600 text-lg mt-10">
-                {!! __('Nothing found','ws') !!}
+                {!! __('Nothing found','coursely') !!}
             </p>
         @endif
     </section>

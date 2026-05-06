@@ -79,7 +79,7 @@
                                      bg-brand hover:bg-brand-hover
                                      text-white py-3 rounded-lg
                                      transition">
-                           {!! __('Learn more','ws') !!}
+                           {!! __('Learn more','coursely') !!}
                         </span>
 
                     </a>
@@ -99,7 +99,7 @@
                                tracking-widest uppercase
                                shadow-md hover:shadow-xl
                                transition load-more-posts load-more-posts-js">
-                        {!! __('Show more','ws') !!}
+                        {!! __('Show more','coursely') !!}
                     </button>
                 </div>
             @endif

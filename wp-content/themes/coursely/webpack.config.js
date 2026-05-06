@@ -12,6 +12,7 @@ module.exports = {
 		main:'./assets/src/js/main.js',
 		home:'./assets/src/js/pages/home/home.js',
 		courses:'./assets/src/js/pages/courses/courses.js',
+		about:'./assets/src/js/pages/about/about.js',
 		pricing:'./assets/src/js/pages/pricing/pricing.js',
 		blog:'./assets/src/js/pages/blog/blog.js',
 		contacts:'./assets/src/js/pages/contacts/contacts.js',

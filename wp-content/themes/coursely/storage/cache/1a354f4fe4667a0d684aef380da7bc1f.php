@@ -1,6 +1,6 @@
 
 
-<header class="total-header total-header-js relative z-30 flex h-[84px] w-full rounded-[40px]">
+<header class="total-header total-header-js fixed top-0 left-0 z-30 flex h-[84px] w-full rounded-bl-[40px] rounded-br-[40px]">
 	<div class="container flex flex-row justify-between items-center text-white text-sm">
 
 		<?php echo $__env->make('global.header.logotype',['options'=>$options], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
@@ -15,7 +15,7 @@
 					<?php echo e(__('Log in','coursely')); ?>
 
 				</button>
-				<a href="/pricing" class="brand-btn w-[81px] h-[41px] text-brand-dark  hover:bg-brand-dark hover:text-white bg-white">
+				<a href="<?php echo e(home_url()); ?>/pricing" class="brand-btn w-[81px] h-[41px] text-brand-dark  hover:bg-brand-dark hover:text-white bg-white">
 					<?php echo e(__('Sign up','coursely')); ?>
 
 				</a>

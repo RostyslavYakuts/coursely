@@ -12,7 +12,7 @@
     <meta name="MobileOptimized" content="width">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="initial-scale=1.0, width=device-width user-scalable=yes  viewport-fit=cover">
-    <meta name="google-site-verification" content="e43k2m_4IYRCD6iZlY0jFb0NoqiVWEsBpo6fD8S3F8s" />
+    <meta name="google-site-verification" content="" />
     <?php wp_head(); ?>
 </head>
 <body <?php body_class('h-full bg-brand-gray') ?> >

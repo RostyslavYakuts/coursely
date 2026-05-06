@@ -1,8 +1,8 @@
 
 
 <section id="testimonials" class="w-full mt-[120px]">
-    <div class="container mx-auto">
-        <h2 class="text-center text-brand-dark text-[32px] lgx:text-[48px] "><?php echo e($data['testimonials_title']); ?></h2>
+    <div class="container">
+        <h2 class="text-center text-[32px] lgx:text-[48px] "><?php echo e($data['testimonials_title']); ?></h2>
         <p class="mt-5 text-lg text-brand-text text-center"><?php echo e($data['testimonials_description']); ?></p>
 
         <div class="relative mt-10">

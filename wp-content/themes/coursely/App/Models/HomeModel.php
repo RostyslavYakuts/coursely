@@ -51,11 +51,6 @@ class HomeModel implements ModelInterface
             'plans_cta'=>get_field('plans_cta', 'options') ?? 'Get started',
             'plans_features_text'=>get_field('plans_features_text', 'options') ?? 'Features included:',
             'plans'=>get_field('plans', 'options') ?? [],
-
-            'faq_title' => get_field('faq_title', $id) ?? '',
-            'faq_description' => get_field('faq_description', $id) ?? '',
-            'faq' => get_field('faq', $id) ?? [],
-
             'title' => get_the_title(),
             'content' => apply_filters('the_content', get_the_content()),
 

@@ -7,7 +7,7 @@
         </h1>
 
         <div class="js-toc_table_list_heading mt-2" aria-label="Table of Contents">
-            <h2>{!! __('Table of content','ws') !!}:</h2>
+            <h2>{!! __('Table of content','coursely') !!}:</h2>
             {!! $data['toc'] !!}
         </div>
         <div class="py-[50px] prose-base">

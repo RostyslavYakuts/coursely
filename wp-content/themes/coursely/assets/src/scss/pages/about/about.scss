@@ -1,0 +1,38 @@
+/**
+* About Page
+ */
+@import "../../variables";
+@import "../../mixins";
+
+.swiper-pagination-bullet{
+  background: #999999;
+}
+.swiper-pagination-bullet.swiper-pagination-bullet-active{
+  background: $dark;
+}
+
+.testimonials-swiper-pagination{
+  display:flex;
+  width:100%;
+  max-width:320px;
+  @include respond(768){
+    max-width: 460px;
+  }
+  margin:0 auto 0;
+  gap:0;
+}
+
+.testimonials-swiper-pagination .swiper-pagination-bullet{
+  flex:1;
+  height:1px;
+  margin:0 !important;
+  border-radius:0;
+  background:#999999;
+  opacity:1;
+}
+
+.testimonials-swiper-pagination .swiper-pagination-bullet-active{
+  background: $dark;
+  height:3px;
+}
+

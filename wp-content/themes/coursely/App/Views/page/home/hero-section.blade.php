@@ -1,5 +1,5 @@
 {{-- Hero section --}}
-<section id="hero_section"  class="home-hero-section rounded-bl-[40px] rounded-br-[40px] -mt-[84px] relative w-full hero-section default home-hero-section flex flex-col justify-center items-center gap-[32px]">
+<section id="hero_section"  class="home-hero-section rounded-bl-[40px] rounded-br-[40px] relative w-full hero-section default home-hero-section flex flex-col justify-center items-center gap-[32px]">
 
     <div class="flex items-center gap-2 p-2 w-[300px] mx-auto mt-[132px] lgx:mt-[164px] rounded-full bg-[#FFFFFF22] border border-[#FFFFFF33]">
         <img src="{{$data['trusted_by_image']['url']}}" alt="{{$data['trusted_by_image']['alt']}}">

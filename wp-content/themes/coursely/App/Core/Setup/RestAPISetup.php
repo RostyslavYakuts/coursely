@@ -335,7 +335,7 @@ class RestAPISetup
                                      bg-brand hover:bg-brand-hover
                                      text-white py-3 rounded
                                      transition">
-                           '.__('Learn more','ws').'
+                           '.__('Learn more','coursely').'
                         </span>
 
                     </a>';

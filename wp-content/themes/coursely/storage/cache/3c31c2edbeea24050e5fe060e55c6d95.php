@@ -1,8 +1,8 @@
 
 <section class="bg-[#0158D81A] w-full mt-[120px] rounded-[20px] lgx:rounded-[40px] lgx:px-5 pt-10 pb-14">
-    <div class="container mx-auto">
+    <div class="container">
         <div class="flex justify-between items-center">
-            <h2 class="text-brand-dark text-[32px] lgx:text-[48px] "><?php echo e($data['pricing_section_title']); ?></h2>
+            <h2 class="text-[32px] lgx:text-[48px] "><?php echo e($data['pricing_section_title']); ?></h2>
             <a href="<?php echo e($data['pricing_section_cta_link']); ?>" class="hidden lgx:flex items-center justify-center w-full lgx:max-w-[250px] brand-btn-dark">
                 <?php echo e($data['pricing_section_cta']); ?>
 

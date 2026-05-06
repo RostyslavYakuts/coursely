@@ -7,7 +7,7 @@
 @endphp
 <section class="container mx-auto py-[120px]">
     <h2 class="text-4xl font-light text-center mb-16 tracking-widest text-gray-800">
-        {!! __('All authors posts','ws') !!}
+        {!! __('All authors posts','coursely') !!}
     </h2>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
@@ -42,7 +42,7 @@
                              transition duration-300
                              group-hover:bg-brand
                              group-hover:text-white">
-                    {!! __('Read more','ws') !!}
+                    {!! __('Read more','coursely') !!}
                 </span>
             </a>
         @endforeach

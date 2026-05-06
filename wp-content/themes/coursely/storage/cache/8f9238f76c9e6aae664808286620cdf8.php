@@ -19,7 +19,7 @@
 					<div class="text-center text-brand text-[168px] md:text-[238px] leading-none">404</div>
 					<div class="flex flex-col gap-[32px]">
 						<h1 class="mt-10 text-center  text-5xl leading-none">
-							<?php echo __('Page not found','ws'); ?>
+							<?php echo __('Page not found','coursely'); ?>
 
 						</h1>
 						<p class="max-w-[500px] text-xl text-center">
@@ -32,7 +32,7 @@
                    'data'=>[
                        'target'=>'',
                        'button_link'=>$home_url,
-                       'button_title'=>__('Back to home','ws'),
+                       'button_title'=>__('Back to home','coursely'),
                        'tw_classes'=>'text-white hover:text-brand-accent'
                    ]
                 ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

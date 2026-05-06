@@ -1,6 +1,6 @@
 {{-- Template Part Total Header --}}
 
-<header class="total-header total-header-js relative z-30 flex h-[84px] w-full rounded-[40px]">
+<header class="total-header total-header-js fixed top-0 left-0 z-30 flex h-[84px] w-full rounded-bl-[40px] rounded-br-[40px]">
 	<div class="container flex flex-row justify-between items-center text-white text-sm">
 
 		@include('global.header.logotype',['options'=>$options])
@@ -13,7 +13,7 @@
 				<button class="login-js brand-btn w-[70px] h-[41px] text-white bg-[#FFFFFF22] hover:bg-brand border border-[#FFFFFF33]">
 					{{__('Log in','coursely')}}
 				</button>
-				<a href="/pricing" class="brand-btn w-[81px] h-[41px] text-brand-dark  hover:bg-brand-dark hover:text-white bg-white">
+				<a href="{{home_url()}}/pricing" class="brand-btn w-[81px] h-[41px] text-brand-dark  hover:bg-brand-dark hover:text-white bg-white">
 					{{__('Sign up','coursely')}}
 				</a>
 			@endif

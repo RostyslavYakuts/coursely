@@ -7,7 +7,7 @@
     @include('page.home.why-choose')
     @include('page.home.testimonials')
     @include('page.home.pricing')
-    @include('page.home.faq')
+    @include('global.faq')
 
 
 @endsection

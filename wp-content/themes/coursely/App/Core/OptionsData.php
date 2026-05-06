@@ -23,6 +23,15 @@ class OptionsData
         ];
     }
 
+    public static function get_global_faq_data():array
+    {
+        return[
+            'faq_title' => get_field('faq_title', 'options') ?? '',
+            'faq_description' => get_field('faq_description', 'options') ?? '',
+            'faq' => get_field('faq', 'options') ?? [],
+        ];
+    }
+
     public static function get_footer_data():array
     {
         return[
@@ -39,33 +48,6 @@ class OptionsData
 
         ];
     }
-	public static function get_integrated_data():array
-	{
-      return [
-            'recaptcha' => [
-                'public'  => get_field('recaptcha_public_key', 'options'),
-                'secret'  => get_field('recaptcha_secret_key', 'options'),
-                'enabled' => get_field('use_recaptcha', 'options'),
-            ],
-            'header' => [
-                'header_logo'   => get_field('header_logo', 'options'),
-                'cta'    => [
-                    'text' => get_field('cta_button_text', 'options'),
-                    'url'  => get_field('cta_button_url', 'options'),
-                ],
-            ],
-            'footer' => [
-                'logo'        => get_field('footer_logo', 'options'),
-                'copyright'   => get_field('copyright_text', 'options'),
-                'banner' => [
-                    'title'       => get_field('banner_title', 'options'),
-                    'description' => get_field('banner_description', 'options'),
-                    'background'  => get_field('banner_background_image', 'options'),
-                ],
-            ],
-        ];
-
-	}
 
 
 

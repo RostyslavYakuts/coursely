@@ -8,8 +8,10 @@ import {swipers} from "@/js/pages/home/components/swipers";
 import {homeCategoryFilter} from "@/js/pages/home/components/homeCategoryFilter";
 import {testimonialsSwiper} from "@/js/pages/home/components/testimonialsSwiper";
 import {faq} from "@/js/global/components/faq";
+import {colorMenuOnScroll} from "@/js/pages/home/components/colorMenuOnScroll";
 
 window.addEventListener('load', () => {
+    colorMenuOnScroll();
     homeCategoryFilter();
     testimonialsSwiper();
     faq();

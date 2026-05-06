@@ -102,6 +102,13 @@ class Enqueuer
                     }
                     continue;
                 }
+                if (str_contains($fullName, 'about')) {
+                    $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
+                    if ($template === 'page-about.php') {
+                        wp_enqueue_script($name, get_template_directory_uri() . '/assets/dist/' . $fullName, [], $js_version,  ['in_footer' => true, 'strategy'  => 'defer']);
+                    }
+                    continue;
+                }
                 if (str_contains($fullName, 'pricing')) {
                     $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
                     if ($template === 'page-pricing.php') {
@@ -186,6 +193,18 @@ class Enqueuer
                 if (str_contains($fullName, 'courses')) {
                     $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
                     if ($template === 'page-courses.php') {
+                        wp_enqueue_style(
+                            $handle,
+                            get_template_directory_uri() . '/assets/dist/' . $fullName,
+                            [],
+                            filemtime(get_template_directory() . '/assets/dist/' . $fullName)
+                        );
+                    }
+                    continue;
+                }
+                if (str_contains($fullName, 'about')) {
+                    $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
+                    if ($template === 'page-about.php') {
                         wp_enqueue_style(
                             $handle,
                             get_template_directory_uri() . '/assets/dist/' . $fullName,

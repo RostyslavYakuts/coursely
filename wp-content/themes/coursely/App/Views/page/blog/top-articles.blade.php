@@ -32,7 +32,7 @@
                                 {{ get_the_title($id) }}
                             </h3>
                             <span class="text-sm uppercase text-brand">
-                                {!! __('Read More','ws') !!} →
+                                {!! __('Read More','coursely') !!} →
                             </span>
 
                         </div>

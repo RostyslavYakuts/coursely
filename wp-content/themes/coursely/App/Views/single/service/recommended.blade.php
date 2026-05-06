@@ -9,10 +9,10 @@
 
     <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold tracking-wide mb-4">
-            {!! __('Recommended Services','ws') !!}
+            {!! __('Recommended Services','coursely') !!}
         </h2>
         <p class="text-gray-500 max-w-2xl mx-auto">
-            {!! __('Explore other services that can help improve performance, stability and growth of your website.','ws') !!}
+            {!! __('Explore other services that can help improve performance, stability and growth of your website.','coursely') !!}
         </p>
     </div>
 
@@ -34,7 +34,7 @@
                     </h3>
 
                     <div class="flex items-center text-sm font-semibold text-brand-accent">
-                        {!! __('Learn more','ws') !!}
+                        {!! __('Learn more','coursely') !!}
                         <span class="ml-2 transform group-hover:translate-x-1 transition">
                         →
                     </span>

@@ -82,7 +82,7 @@ class TableOfContent
 		if( $consists_with_hidden ){
 			$html .= '<li class="font-bold block cursor-pointer text-brand-accent text-center btn-show-more-items js-show-more-items"
 			 data-item-type="toc"
-			  data-max-displayed="6">' . ' +' . ($count - 6) . ' ' . __('Show all','ws') . '</li>';
+			  data-max-displayed="6">' . ' +' . ($count - 6) . ' ' . __('Show all','coursely') . '</li>';
 		}
 		if( $hierarchy === false && $html ){
 			$html = '<ul class="toc-ul py-1 bg-gray-100">'.$html.'</ul>';
