@@ -3,6 +3,7 @@
     /**
     * @var array $data
     */
+    use coursely\App\Core\Helpers\CourseCard;
     if(!$data['recommended']) return;
 ?>
 <div class="container mx-auto py-[100px]">
@@ -14,38 +15,11 @@
         </h2>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8">
+    <div class="courses-js mt-10 grid grid-cols-1 lgx:grid-cols-3 gap-8">
+        <?php $__currentLoopData = $data['recommended']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <?php echo CourseCard::render($course); ?>
 
-        <?php $__currentLoopData = $data['recommended']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <a href="<?php echo e($service['link']); ?>"
-               class="group block bg-white rounded-xl overflow-hidden border border-gray-200
-           hover:shadow-2xl transition-all duration-300">
-
-                <div class="overflow-hidden">
-                    <?php echo $service['thumbnail']; ?>
-
-                </div>
-
-                <div class="p-6">
-
-                    <h3 class="text-xl font-semibold mb-3 group-hover:text-brand-accent transition-colors">
-                        <?php echo e($service['title']); ?>
-
-                    </h3>
-
-                    <div class="flex items-center text-sm font-semibold text-brand-accent">
-                        <?php echo __('Learn more','coursely'); ?>
-
-                        <span class="ml-2 transform group-hover:translate-x-1 transition">
-                        →
-                    </span>
-                    </div>
-
-                </div>
-
-            </a>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
     </div>
 
 </div>

@@ -3,6 +3,7 @@
     /**
     * @var array $data
     */
+    use coursely\App\Core\Helpers\CourseCard;
     if(!$data['recommended']) return;
 @endphp
 <div class="container mx-auto py-[100px]">
@@ -13,35 +14,10 @@
         </h2>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8">
-
-        @foreach($data['recommended'] as $service)
-            <a href="{{ $service['link'] }}"
-               class="group block bg-white rounded-xl overflow-hidden border border-gray-200
-           hover:shadow-2xl transition-all duration-300">
-
-                <div class="overflow-hidden">
-                    {!! $service['thumbnail'] !!}
-                </div>
-
-                <div class="p-6">
-
-                    <h3 class="text-xl font-semibold mb-3 group-hover:text-brand-accent transition-colors">
-                        {{ $service['title'] }}
-                    </h3>
-
-                    <div class="flex items-center text-sm font-semibold text-brand-accent">
-                        {!! __('Learn more','coursely') !!}
-                        <span class="ml-2 transform group-hover:translate-x-1 transition">
-                        →
-                    </span>
-                    </div>
-
-                </div>
-
-            </a>
+    <div class="courses-js mt-10 grid grid-cols-1 lgx:grid-cols-3 gap-8">
+        @foreach($data['recommended'] as $course)
+            {!! CourseCard::render($course) !!}
         @endforeach
-
     </div>
 
 </div>

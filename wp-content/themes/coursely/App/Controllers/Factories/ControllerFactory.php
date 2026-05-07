@@ -13,6 +13,7 @@ use coursely\App\Controllers\HomeController;
 use coursely\App\Controllers\PageController;
 use coursely\App\Controllers\PostController;
 use coursely\App\Controllers\CourseController;
+use coursely\App\Controllers\LessonController;
 use coursely\App\Controllers\TagController;
 use coursely\App\Models\AboutPageModel;
 use coursely\App\Models\BlogModel;
@@ -21,6 +22,7 @@ use coursely\App\Models\ContactModel;
 use coursely\App\Models\CourseModel;
 use coursely\App\Models\CoursesPageModel;
 use coursely\App\Models\HomeModel;
+use coursely\App\Models\LessonModel;
 use coursely\App\Models\PostModel;
 use coursely\App\Models\TagModel;
 use coursely\App\Controllers\PricingPageController;
@@ -45,6 +47,10 @@ class ControllerFactory
         if (is_singular('course')) {
             $courseModel = new CourseModel($current_obj);
             return new CourseController($courseModel);
+        }
+        if (is_singular('lesson')) {
+            $lessonModel = new LessonModel($current_obj);
+            return new LessonController($lessonModel);
         }
 
         if (is_page()) {

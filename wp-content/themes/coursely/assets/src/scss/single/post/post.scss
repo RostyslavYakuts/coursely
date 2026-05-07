@@ -1,0 +1,26 @@
+.modules-wrapper{
+  .module{
+    .module-title{
+      cursor: pointer;
+      .module-title-arrow{
+        transition: 1s;
+      }
+    }
+    .module-lessons{
+      display:none;
+      .module-lesson{
+        border-bottom: 1px solid #fff;
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+  .module.active{
+    .module-title{
+      .module-title-arrow{
+        transform: rotate(180deg);
+      }
+    }
+  }
+}

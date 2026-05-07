@@ -26,6 +26,16 @@ class CPTRegistrar
             true,
             ['title','editor','excerpt','thumbnail']
         );
+        new CustomPostType(
+            'Lesson',
+            'lesson',
+            'dashicons-welcome-learn-more',
+            true,
+            true,
+            ['title','editor','excerpt','thumbnail'],
+            [],
+            true
+        );
 
     }
 }

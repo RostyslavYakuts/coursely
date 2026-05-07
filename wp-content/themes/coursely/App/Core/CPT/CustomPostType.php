@@ -5,19 +5,20 @@ namespace coursely\App\Core\CPT;
 
 class CustomPostType
 {
-    private $name;
-    private $slug;
-    private $icon;
-    private $archive;
-    private $public;
-    private $supports;
-    private $taxonomies;
+    private string $name;
+    private string $slug;
+    private mixed $icon;
+    private mixed $archive;
+    private mixed $public;
+    private mixed $supports;
+    private mixed $taxonomies;
+    private mixed $exclude_from_search;
 
     public function __construct(
       $name,$slug,$icon = 'dashicons-admin-page',
       $archive = false, $public = true,
       $supports = array( 'title', 'editor', 'thumbnail' ),
-      $taxonomies = []) {
+      $taxonomies = [],$exclude_from_search = false) {
         $this->name = $name;
         $this->slug = $slug;
         $this->icon = $icon;
@@ -25,6 +26,7 @@ class CustomPostType
         $this->public = $public;
         $this->supports = $supports;
         $this->taxonomies = $taxonomies;
+        $this->exclude_from_search = $exclude_from_search;
         $this->registration();
     }
 
@@ -49,6 +51,8 @@ class CustomPostType
             'has_archive'           => $this->archive,
             'hierarchical'          => true,
             'show_in_nav_menus'     => true,
+            'exclude_from_search'   => $this->exclude_from_search,
+            'publicly_queryable'    => true,
             'capability_type'       => 'page',
             'query_var'             => true,
             'menu_icon'             => $this->icon,

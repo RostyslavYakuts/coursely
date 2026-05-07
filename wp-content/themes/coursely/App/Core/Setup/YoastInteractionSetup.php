@@ -11,19 +11,54 @@ class YoastInteractionSetup
 	public function initialize(): void
 	{
 		$this->remove_404_page_from_indexing();
-		//add_filter('wpseo_canonical', '__return_false');
 		add_filter('wpseo_title', [$this, 'rw_add_pagination_to_meta_title']);
 		add_filter('wpseo_metadesc', [$this, 'rw_add_pagination_to_meta_description']);
-
 		add_filter( 'wpseo_sitemap_entry', [$this,'exclude_empty_terms_from_sitemap'], 10, 3 );
-		//add_filter( 'wpseo_sitemap_urlimages', array($this,'filter_wpseo_sitemap_urlimages'), 10, 2 );
 		add_filter( 'wpseo_canonical', [$this,'custom_canonical_url_paginate'], 20, 1 );
-		//add_filter( 'wpseo_canonical', array($this,'remove_trailing_slash_from_canonical'), 10, 2 );
-		//add_filter( "wpseo_robots", array($this,'author_custom_robots'));
-		//add_filter( "wpseo_robots", [$this,'search_page_robots']);
 		add_filter('wpseo_remove_reply_to_com', '__return_false');
 		add_filter( 'wpseo_opengraph_url', [$this,'open_graph_url_pagination']);
+        add_filter('wpseo_breadcrumb_links', [$this, 'breadcrumb_links_custom']);
 	}
+
+    public function breadcrumb_links_custom($links){
+
+        // 1. single course
+        if (is_singular('course') ) {
+
+            $courses_page = get_page_by_path('courses');
+
+            if ($courses_page) {
+
+                $id = $courses_page->ID;
+                if ($id) {
+                    $links[1] = [
+                        'url'  => get_permalink($id),
+                        'text' => get_the_title($id),
+                    ];
+                }
+            }
+        }
+        // 2. single lesson
+        if (is_singular('lesson') ) {
+
+            $courses_page = get_page_by_path('courses');
+
+            if ($courses_page) {
+
+                $id = $courses_page->ID;
+                if ($id) {
+                    $links[1] = [
+                        'url'  => get_permalink($id),
+                        'text' => get_the_title($id),
+                    ];
+                }
+            }
+        }
+
+
+        return $links;
+
+    }
 
 	public function open_graph_url_pagination($url): string
 	{

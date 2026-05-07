@@ -17,6 +17,7 @@ module.exports = {
 		blog:'./assets/src/js/pages/blog/blog.js',
 		contacts:'./assets/src/js/pages/contacts/contacts.js',
 		post:'./assets/src/js/single/post/post.js',
+		lesson:'./assets/src/js/single/lesson/lesson.js',
 		taxonomy:'./assets/src/js/taxonomy/category/category.js',
 	},
 	output: {

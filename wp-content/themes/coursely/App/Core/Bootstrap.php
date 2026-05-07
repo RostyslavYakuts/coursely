@@ -4,6 +4,7 @@ namespace coursely\App\Core;
 
 use coursely\App\Controllers\PaginationController;
 use coursely\App\Core\CPT\CPTRegistrar;
+use coursely\App\Core\CPT\CPTSlugRewrite;
 use coursely\App\Core\CT\CustomTaxonomyRegister;
 use coursely\App\Core\Handlers\AjaxAuthHandler;
 use coursely\App\Core\Handlers\AjaxHandler;
@@ -27,28 +28,29 @@ class Bootstrap
 {
     public static function init(): void
     {
-        (new HomePageInitializer())->register();
-        (new StaticPagesInitializer())->register();
-        (new PermalinkInitializer())->register();
-        (new ACFInteractionSetup())->initialize();
-        (new YoastInteractionSetup)->initialize();
-        (new CommentsSetup)->initialize();
-        (new DefaultHeadIncludesCleaner)->initialize();
-        (new EmojiSetup)->initialize();
-        (new FeedsSetup)->initialize();
-        (new FilesModSetup)->initialize();
-        (new NavMenuSetup)->initialize();
-        (new ThumbnailSetup)->initialize();
-        (new Enqueuer)->initialize();
+        new HomePageInitializer()->register();
+        new StaticPagesInitializer()->register();
+        new PermalinkInitializer()->register();
+        new ACFInteractionSetup()->initialize();
+        new YoastInteractionSetup()->initialize();
+        new CommentsSetup()->initialize();
+        new DefaultHeadIncludesCleaner()->initialize();
+        new EmojiSetup()->initialize();
+        new FeedsSetup()->initialize();
+        new FilesModSetup()->initialize();
+        new NavMenuSetup()->initialize();
+        new ThumbnailSetup()->initialize();
+        new Enqueuer()->initialize();
         new CPTRegistrar();
         new CustomTaxonomyRegister();
         new PaginationController();
         new AjaxHandler();
         new AjaxAuthHandler();
-        (new DateShortcodes())->register();
+        new DateShortcodes()->register();
         new RestAPISetup();
         new FilterDataCustomisationHelper();
         new FrontendAccountAccessGuard();
+        new CPTSlugRewrite('course', 'courses');
     }
 
 }

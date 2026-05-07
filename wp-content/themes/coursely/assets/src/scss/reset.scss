@@ -54,7 +54,7 @@ h1,h2,h3,.h1,.h2,.h3{
 	color:white;
 	border-radius: 40px;
 	gap:8px;
-	padding: 14px;
+	padding: 13px;
 	border:1px solid $dark;
 	&:hover{
 		background: white;
@@ -119,17 +119,28 @@ h1,h2,h3,.h1,.h2,.h3{
 }
 .prose-base :where(h2):not(:where([class~=not-prose],[class~=not-prose] *)) {
 	font-size: 24px;
-	margin-bottom: 10px;
-	margin-top: 10px;
+	margin-bottom: 20px;
+	margin-top: 20px;
 }
 .prose-base :where(h3):not(:where([class~=not-prose],[class~=not-prose] *)) {
 	font-size: 20px;
-	margin-bottom: 10px;
-	margin-top: 10px;
+	margin-bottom: 20px;
+	margin-top: 20px;
 }
 .prose-base :where(ul):not(:where([class~=not-prose],[class~=not-prose] *)) {
 	margin-bottom: 10px;
-	margin-top: 10px;
+	margin-top: 0;
+	color: $text;
+	li{
+		margin-top:1px;
+		margin-bottom:1px;
+	}
+}
+.prose-base :where(p):not(:where([class~=not-prose],[class~=not-prose] *)) {
+	margin-bottom: 16px;
+	margin-top: 0;
+	color: $text;
+	line-height: 1.2;
 }
 
 .empty-link{

@@ -3,7 +3,7 @@
 
 ?>
 <section class="container">
-    <div class="couse-hero flex lgx:flex-row justify-between gap-5 items-center rounded-[40px] brand-shadow p-5 ">
+    <div class="couse-hero mt-5 bg-white flex flex-col lgx:flex-row justify-between gap-5 items-center rounded-[40px] brand-shadow p-5 ">
         <div class="py-4 px-5 flex flex-col gap-5">
             <?php if($data['categories']): ?>
                 <div class="w-full">
@@ -47,7 +47,7 @@
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M4.66602 11.3334C4.66602 10.9652 4.96449 10.6667 5.33268 10.6667H10.666C11.0342 10.6667 11.3327 10.9652 11.3327 11.3334C11.3327 11.7015 11.0342 12 10.666 12H5.33268C4.96449 12 4.66602 11.7015 4.66602 11.3334Z" fill="#111230"/>
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M4.66602 5.99998C4.66602 5.63179 4.96449 5.33331 5.33268 5.33331H6.66602C7.03421 5.33331 7.33268 5.63179 7.33268 5.99998C7.33268 6.36817 7.03421 6.66665 6.66602 6.66665H5.33268C4.96449 6.66665 4.66602 6.36817 4.66602 5.99998Z" fill="#111230"/>
                         </svg>
-                        <span><?php echo e($data['lessons_count']); ?></span>
+                        <span><?php echo e($data['lessons_count']); ?> <?php echo e(__('lessons','coursely')); ?></span>
                     </div>
                     <div class="flex flex-row items-center gap-2">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -72,5 +72,37 @@
         </div>
        <?php echo $data['thumbnail']; ?>
 
+    </div>
+    <div class="px-8 content gap-5 flex flex-col lgx:flex-row items-start ">
+        <div class="gutenberg-content prose prose-base w-full flex flex-col gap-0">
+            <?php echo $data['content']; ?>
+
+            <?php echo $__env->make('single.course.modules', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        </div>
+        <div class="subscribe-banner w-full lgx:w-[406px] lgx:min-w-[406px] lgx:h-[365px] mt-14 bg-white rounded-[20px] brand-shadow p-5 lgx:py-8 lgx:px-6 flex flex-col">
+            <h3 class="leading-none font-bold text-[24px]"><?php echo e(__('Subscribe and Save','coursely')); ?></h3>
+            <div class="mt-8 flex w-full justify-between items-end">
+                <span><?php echo e(__('Starting at','coursely')); ?></span>
+                <span><b class="leading-none text-[36px]"><?php echo e($data['month_plan']); ?></b>
+                    <span class="text-brand-text">/<?php echo e(__('month','coursely')); ?></span></span>
+            </div>
+            <?php if($data['subscribe_features']): ?>
+            <ul class="mt-8 flex flex-col gap-4">
+                <?php $__currentLoopData = $data['subscribe_features']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $feature): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <li class="leading-none flex flex-row gap-2 items-center text-lg text-brand-text">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 0C7.21997 0 5.47991 0.527841 3.99987 1.51677C2.51983 2.50571 1.36628 3.91131 0.685088 5.55585C0.00389957 7.20038 -0.17433 9.00998 0.172937 10.7558C0.520203 12.5016 1.37737 14.1053 2.63604 15.364C3.89472 16.6226 5.49836 17.4798 7.24419 17.8271C8.99002 18.1743 10.7996 17.9961 12.4442 17.3149C14.0887 16.6337 15.4943 15.4802 16.4832 14.0001C17.4722 12.5201 18 10.78 18 9C18 6.61305 17.0518 4.32387 15.364 2.63604C13.6761 0.948212 11.387 0 9 0ZM13.23 6.46L8.79 12.62C8.65775 12.7985 8.46474 12.9225 8.24737 12.9686C8.03001 13.0146 7.8033 12.9796 7.61 12.87L5.06 11.38C4.85314 11.2553 4.70426 11.0536 4.64612 10.8192C4.58798 10.5848 4.62535 10.3369 4.75 10.13C4.87466 9.92313 5.07638 9.77425 5.3108 9.71612C5.54522 9.65798 5.79314 9.69535 6 9.82L7.81 10.9L11.81 5.41C11.9585 5.26128 12.1543 5.16919 12.3635 5.1497C12.5727 5.13021 12.7822 5.18454 12.9556 5.30329C13.1289 5.42204 13.2553 5.5977 13.3127 5.79984C13.3701 6.00198 13.355 6.21784 13.27 6.41L13.23 6.46Z" fill="#1C55E0"/>
+                    </svg>
+                    <?php echo e($feature); ?>
+
+                </li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </ul>
+            <?php endif; ?>
+            <a href="<?php echo e($data['activate_subscription_link']); ?>" class="mt-8 mx-auto w-full flex items-center justify-center brand-btn-dark">
+                <?php echo e(__('Activate subscription','coursely')); ?>
+
+            </a>
+        </div>
     </div>
 </section><?php /**PATH /var/www/html/wp-content/themes/coursely/App/Views/single/course/content.blade.php ENDPATH**/ ?>

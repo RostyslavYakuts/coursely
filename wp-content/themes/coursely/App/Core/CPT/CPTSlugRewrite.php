@@ -3,36 +3,41 @@ namespace coursely\App\Core\CPT;
 
 class CPTSlugRewrite
 {
-    private string $cpt_slug;
-    public function __construct(string $slug)
-    {
-        $this->cpt_slug = $slug;
-        add_filter('post_type_link', [$this, 'remove_slug'], 10, 3);
-        add_action('template_redirect', [$this, 'cpt_slug_redirect']);
-    }
-    public function remove_slug($post_link, $post)
-    {
-        if ($this->cpt_slug !== $post->post_type || 'publish' !== $post->post_status) {
-            return $post_link;
-        }
+    private string $postType;
+    private string $baseSlug;
 
-        return str_replace('/' . $post->post_type . '/', '/', $post_link);
-    }
-    public function cpt_slug_redirect(): void
+    public function __construct(string $postType, string $baseSlug)
     {
-        global $wp_query;
+        $this->postType = $postType;
+        $this->baseSlug = trim($baseSlug, '/');
 
-        if (!isset($wp_query->query['name'])) {
-            return;
-        }
-
-        $post = get_page_by_path($wp_query->query['name'], OBJECT, $this->cpt_slug);
-        if ($post) {
-            $wp_query->query_vars['post_type'] = $this->cpt_slug;
-            $wp_query->is_single = true;
-            $wp_query->is_page = false;
-            $wp_query->is_singular = true;
-        }
+        add_filter('post_type_link', [$this, 'filterPostTypeLink'], 10, 2);
+        add_action('init', [$this, 'addRewriteRules']);
     }
 
+    /**
+     * Generate custom URL:
+     * /courses/lesson-title
+     */
+    public function filterPostTypeLink($link, $post)
+    {
+        if ($post->post_type !== $this->postType || $post->post_status !== 'publish') {
+            return $link;
+        }
+
+        return home_url('/' . $this->baseSlug . '/' . $post->post_name . '/');
+    }
+
+    /**
+     * Register rewrite rule:
+     * /courses/{slug} → post_type
+     */
+    public function addRewriteRules(): void
+    {
+        add_rewrite_rule(
+            '^' . $this->baseSlug . '/([^/]+)/?$',
+            'index.php?post_type=' . $this->postType . '&name=$matches[1]',
+            'top'
+        );
+    }
 }
