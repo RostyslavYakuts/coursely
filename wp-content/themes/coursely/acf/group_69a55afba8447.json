@@ -24,8 +24,8 @@
         },
         {
             "key": "field_69a55b32bfb5a",
-            "label": "Author Photo",
-            "name": "author_photo",
+            "label": "User Photo",
+            "name": "user_photo",
             "aria-label": "",
             "type": "image",
             "instructions": "",
@@ -73,5 +73,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1772445197
+    "modified": 1778217795
 }

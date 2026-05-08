@@ -10,6 +10,8 @@ module.exports = {
 	mode: 'production',
 	entry: {
 		main:'./assets/src/js/main.js',
+		account:'./assets/src/js/pages/account/account.js',
+		checkout:'./assets/src/js/pages/checkout/checkout.js',
 		home:'./assets/src/js/pages/home/home.js',
 		courses:'./assets/src/js/pages/courses/courses.js',
 		about:'./assets/src/js/pages/about/about.js',

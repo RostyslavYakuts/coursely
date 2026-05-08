@@ -4,6 +4,7 @@
      * @var array $options
      */
 ?>
+<?php if( !is_user_logged_in() && !is_page('account') ): ?>
 <div class="container">
     <div class="footer-banner relative z-20 -mb-[80px] rounded-[40px] py-[80px] w-full flex flex-col justify-center items-center gap-5 ">
         <h2 class="px-5 text-white font-bold text-center text-[32px] lgx:text-[48px] leading-none"><?php echo e($options['footer_banner_title']); ?></h2>
@@ -14,7 +15,7 @@
         </a>
     </div>
 </div>
-
+<?php endif; ?>
 <footer id="footer"  class="w-full pt-[114px] bg-white rounded-tl-[40px] rounded-tr-[40px]">
     <div class="container mx-auto flex flex-col justify-between">
         <?php echo $__env->make('global.footer.logotype', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

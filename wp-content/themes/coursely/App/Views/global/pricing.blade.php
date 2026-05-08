@@ -34,12 +34,12 @@
                         <span class="{{ $plan['is_popular'] ? 'text-white' :'text-brand-text' }} ">/{{$plan['per_period']}}</span>
                     </span>
 
-                    <button data-plan-type="{{$plan['type']}}" class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark">
+                    <a href="{{get_home_url()}}/checkout?price_id={{$plan['stripe_price_id']}}" data-plan-type="{{$plan['type']}}" class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                         {{$data['plans_cta']}}
                         <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9.16667 1L15 7M15 7L9.16667 13M15 7L1 7" stroke="#111230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                    </button>
+                    </a>
 
                     <div class="w-full h-[1px] bg-brand-gray"></div>
 

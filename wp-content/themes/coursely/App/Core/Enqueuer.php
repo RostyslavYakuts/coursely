@@ -13,7 +13,10 @@ class Enqueuer
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_files'));
 		add_action('wp_default_scripts', array($this, 'remove_jquery_migrate'));
 		add_action('wp_enqueue_scripts', array($this, 'remove_global_styles'));
-		add_action('wp_enqueue_scripts', array($this, 'mp_ajax_localize_vars'));
+		add_action('wp_enqueue_scripts', array($this, 'global_ajax_localize_vars'));
+        if(is_user_logged_in()){
+            add_action('wp_enqueue_scripts', array($this, 'user_ajax_localize_vars'));
+        }
 		add_action('wp_enqueue_scripts', array($this, 'deregister_scripts_styles'));
 		add_action('widgets_init', array($this, 'remove_recent_comments_style'));
 		//add_filter('style_loader_src', array($this, 'remove_wp_ver_css_js'));
@@ -48,9 +51,6 @@ class Enqueuer
 	{
 		wp_dequeue_style('wp-block-library');
 	}
-
-
-
 	// Remove wp version param from any enqueued scripts except admin
 	public function remove_wp_ver_css_js($src)
 	{
@@ -62,7 +62,6 @@ class Enqueuer
 		}
 		return $src;
 	}
-
     public function clean_script_tag($tag)
     {
         if (str_contains($tag, 'wp-polyfill-fetch')) {
@@ -71,8 +70,6 @@ class Enqueuer
 
         return str_replace(" type='text/javascript'", '', $tag);
     }
-
-
 	public function enqueue_files(): void
 	{
 		$dirJS = new \DirectoryIterator(get_stylesheet_directory() . '/assets/dist');
@@ -119,6 +116,20 @@ class Enqueuer
                 if (str_contains($fullName, 'blog')) {
                     $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
                     if ($template === 'page-blog.php') {
+                        wp_enqueue_script($name, get_template_directory_uri() . '/assets/dist/' . $fullName, [], $js_version,  ['in_footer' => true, 'strategy'  => 'defer']);
+                    }
+                    continue;
+                }
+                if (str_contains($fullName, 'account')) {
+                    $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
+                    if ($template === 'page-account.php') {
+                        wp_enqueue_script($name, get_template_directory_uri() . '/assets/dist/' . $fullName, [], $js_version,  ['in_footer' => true, 'strategy'  => 'defer']);
+                    }
+                    continue;
+                }
+                if (str_contains($fullName, 'checkout')) {
+                    $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
+                    if ($template === 'page-checkout.php') {
                         wp_enqueue_script($name, get_template_directory_uri() . '/assets/dist/' . $fullName, [], $js_version,  ['in_footer' => true, 'strategy'  => 'defer']);
                     }
                     continue;
@@ -255,6 +266,31 @@ class Enqueuer
                     }
                     continue;
                 }
+                if (str_contains($fullName, 'account')) {
+                    $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
+                    if ($template === 'page-account.php') {
+                        wp_enqueue_style(
+                            $handle,
+                            get_template_directory_uri() . '/assets/dist/' . $fullName,
+                            [],
+                            filemtime(get_template_directory() . '/assets/dist/' . $fullName)
+                        );
+                    }
+                    continue;
+                }
+                if (str_contains($fullName, 'checkout')) {
+                    $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
+                    if ($template === 'page-checkout.php') {
+                        wp_enqueue_style(
+                            $handle,
+                            get_template_directory_uri() . '/assets/dist/' . $fullName,
+                            [],
+                            filemtime(get_template_directory() . '/assets/dist/' . $fullName)
+                        );
+                    }
+                    continue;
+                }
+
 
                 wp_enqueue_style(
                     $handle,
@@ -266,8 +302,6 @@ class Enqueuer
 		}
 
 	}
-
-
 	// Remove jquery migrate
 	public function remove_jquery_migrate($scripts): void
 	{
@@ -279,8 +313,6 @@ class Enqueuer
 			}
 		}
 	}
-
-
 	public function deregister_scripts_styles(): void
 	{
 		wp_dequeue_style('thickbox');
@@ -291,27 +323,40 @@ class Enqueuer
 		}
 
 	}
-
-
 	/**
 	 * Remove inline style wp
 	 */
-
 	public function remove_global_styles(): void
 	{
 		wp_dequeue_style('global-styles');
 	}
-
-
-	public function mp_ajax_localize_vars(): void
+	public function global_ajax_localize_vars(): void
 	{
 		wp_localize_script('main', 'localizedScript', array(
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'pk' =>  get_field('recaptcha_public_key', 'options'),
+
+                'checkout_action'=>'checkout_action',
+                'checkout_nonce'=>wp_create_nonce('checkout_action'),
+
                 'login_form_action'=>'login_form_action',
                 'login_form_nonce'=> wp_create_nonce('login_form_action'),
                 'contact_us_form_action' => 'contact_us_form_action',
                 'contact_us_form_nonce' => wp_create_nonce('contact_us_form_action'),
+			)
+		);
+
+	}
+	public function user_ajax_localize_vars(): void
+	{
+		wp_localize_script('main', 'userLocalizedScript', array(
+				'ajax_url' => admin_url('admin-ajax.php'),
+
+                'profile_settings_edit_action'=>'profile_settings_edit_action',
+                'profile_settings_edit_nonce'=>wp_create_nonce('profile_settings_edit_action'),
+
+                'password_edit_action'=>'password_edit_action',
+                'password_edit_nonce'=>wp_create_nonce('password_edit_action'),
 			)
 		);
 

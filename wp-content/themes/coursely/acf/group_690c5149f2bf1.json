@@ -575,6 +575,27 @@
                         }
                     ],
                     "parent_repeater": "field_69f1d4a01f32b"
+                },
+                {
+                    "key": "field_69fda9e444565",
+                    "label": "Stripe price id",
+                    "name": "stripe_price_id",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_69f1d4a01f32b"
                 }
             ]
         },
@@ -878,5 +899,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1778150532
+    "modified": 1778235350
 }

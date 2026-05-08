@@ -285,3 +285,72 @@ foreach ($courses as $course) {
     ]);
 
 }
+
+
+global $wpdb;
+
+$table = $wpdb->prefix . 'coursely_invoices';
+
+$userId = 1;
+
+$invoices = [
+    [
+        'user_id' => $userId,
+        'stripe_invoice_id' => 'in_001',
+        'stripe_payment_intent_id' => 'pi_001',
+        'total' => 49.00,
+        'currency' => 'usd',
+        'status' => 'paid',
+        'type' => 'subscription',
+        'plan_name'=>'1 Month',
+        'plan_interval'=>'1 month'
+    ],
+    [
+        'user_id' => $userId,
+        'stripe_invoice_id' => 'in_002',
+        'stripe_payment_intent_id' => 'pi_002',
+        'total' => 49.00,
+        'currency' => 'usd',
+        'status' => 'paid',
+        'type' => 'subscription',
+        'plan_name'=>'6 Month',
+        'plan_interval'=>'6 month'
+    ],
+    [
+        'user_id' => $userId,
+        'stripe_invoice_id' => 'in_003',
+        'stripe_payment_intent_id' => 'pi_003',
+        'total' => 99.00,
+        'currency' => 'usd',
+        'status' => 'paid',
+        'type' => 'one_time',
+        'plan_name'=>'1 Month',
+        'plan_interval'=>'1 month'
+    ],
+    [
+        'user_id' => $userId,
+        'stripe_invoice_id' => 'in_004',
+        'stripe_payment_intent_id' => 'pi_004',
+        'total' => 19.00,
+        'currency' => 'usd',
+        'status' => 'failed',
+        'type' => 'subscription',
+        'plan_name'=>'3 Month',
+        'plan_interval'=>'3 month'
+    ],
+    [
+        'user_id' => $userId,
+        'stripe_invoice_id' => 'in_005',
+        'stripe_payment_intent_id' => 'pi_005',
+        'total' => 49.00,
+        'currency' => 'usd',
+        'status' => 'refunded',
+        'type' => 'subscription',
+        'plan_name'=>'1 Year',
+        'plan_interval'=>'1 year'
+    ],
+];
+
+foreach ($invoices as $invoice) {
+    $wpdb->insert($table, $invoice);
+}

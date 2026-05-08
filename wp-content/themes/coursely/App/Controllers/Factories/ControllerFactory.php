@@ -3,6 +3,7 @@
 namespace coursely\App\Controllers\Factories;
 
 use coursely\App\Controllers\AboutPageController;
+use coursely\App\Controllers\AccountPageController;
 use coursely\App\Controllers\BlogController;
 use coursely\App\Controllers\CategoryController;
 use coursely\App\Controllers\ContactPageController;
@@ -16,6 +17,7 @@ use coursely\App\Controllers\CourseController;
 use coursely\App\Controllers\LessonController;
 use coursely\App\Controllers\TagController;
 use coursely\App\Models\AboutPageModel;
+use coursely\App\Models\AccountPageModel;
 use coursely\App\Models\BlogModel;
 use coursely\App\Models\CategoryModel;
 use coursely\App\Models\ContactModel;
@@ -57,6 +59,7 @@ class ControllerFactory
             $template = get_post_meta(get_queried_object_id(), '_wp_page_template', true);
             return match ($template) {
                 'page-blog.php' => new BlogController(new BlogModel($current_obj)),
+                'page-account.php' => new AccountPageController(new AccountPageModel($current_obj)),
                 'page-courses.php' => new CoursesPageController(new CoursesPageModel($current_obj)),
                 'page-about.php' => new AboutPageController(new AboutPageModel($current_obj)),
                 'page-pricing.php' => new PricingPageController(new PricingPageModel($current_obj)),

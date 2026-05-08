@@ -66,6 +66,17 @@ h1,h2,h3,.h1,.h2,.h3{
 		}
 	}
 }
+
+.brand-btn-light{
+	&:hover{
+		svg{
+			path{
+				stroke:white;
+			}
+		}
+	}
+}
+
 .bg-blur{
 	backdrop-filter: blur(8px);
 }

@@ -1,0 +1,70 @@
+@import "../../variables";
+@import "../../mixins";
+
+
+.account-tabs{
+  .account-tab.active{
+    @include respond(1199){
+      color:#fff;
+      background: $brand;
+    }
+  }
+}
+
+.account-tabs-content-item{
+  display:none;
+}
+.account-tabs-content-item.active{
+  @include respond(1199){
+    display:block;
+  }
+}
+.account-tabs-content-item.mobile-active{
+  @include respond_max(1199){
+    display:block;
+  }
+}
+.account-tabs-content{
+  position:absolute;
+  top:0;
+  left:0;
+  @include respond(1199){
+    position: relative;
+  }
+}
+
+
+
+.invoices{
+  .invoice{
+    border-bottom:1px solid #F4F4F5;
+    &:last-child{
+      border:none;
+    }
+  }
+}
+.invoice-status{
+  display:inline-flex;
+  align-items: center;
+  gap:5px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  position: relative;
+  background: #A709090D;
+  color: #A70909;
+  svg{
+    circle{
+      fill: #A70909;
+    }
+  }
+
+}
+.invoice-status.paid{
+  background: #A5FF9647;
+  color:#1E9609;
+  svg{
+    circle{
+      fill:#1E9609;
+    }
+  }
+}

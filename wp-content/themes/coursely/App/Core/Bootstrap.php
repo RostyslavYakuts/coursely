@@ -6,10 +6,12 @@ use coursely\App\Controllers\PaginationController;
 use coursely\App\Core\CPT\CPTRegistrar;
 use coursely\App\Core\CPT\CPTSlugRewrite;
 use coursely\App\Core\CT\CustomTaxonomyRegister;
+use coursely\App\Core\Handlers\AjaxAccountHandler;
 use coursely\App\Core\Handlers\AjaxAuthHandler;
 use coursely\App\Core\Handlers\AjaxHandler;
 use coursely\App\Core\Helpers\FilterDataCustomisationHelper;
 use coursely\App\Core\Setup\ACFInteractionSetup;
+use coursely\App\Core\Setup\AfterSwitchTheme;
 use coursely\App\Core\Setup\CommentsSetup;
 use coursely\App\Core\Setup\DefaultHeadIncludesCleaner;
 use coursely\App\Core\Setup\EmojiSetup;
@@ -28,6 +30,7 @@ class Bootstrap
 {
     public static function init(): void
     {
+        new AfterSwitchTheme();
         new HomePageInitializer()->register();
         new StaticPagesInitializer()->register();
         new PermalinkInitializer()->register();
@@ -46,6 +49,7 @@ class Bootstrap
         new PaginationController();
         new AjaxHandler();
         new AjaxAuthHandler();
+        new AjaxAccountHandler();
         new DateShortcodes()->register();
         new RestAPISetup();
         new FilterDataCustomisationHelper();
