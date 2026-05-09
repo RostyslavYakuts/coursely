@@ -8,7 +8,7 @@
         </h1>
     </div>
 
-    <div class="relative account-settings mt-10 bg-white rounded-[40px] brand-shadow p-6 flex flex-col lgx:flex-row gap-10 items-start">
+    <div class="relative account-settings my-10 bg-white rounded-[40px] brand-shadow p-6 flex flex-col lgx:flex-row gap-10 items-start">
        <?php echo $__env->make('page.account.tabs', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         <div class="account-tabs-content w-full hidden lgx:block bg-white p-5 border border-gray rounded-[20px]">
             <?php echo $__env->make('page.account.profile', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>

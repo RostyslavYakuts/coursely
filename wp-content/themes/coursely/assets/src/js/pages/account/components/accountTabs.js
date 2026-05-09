@@ -6,6 +6,7 @@ export const accountTabs = ()=>{
     const $accountTabsContent = $('.account-tabs-content');
     const isMobile = window.matchMedia('(max-width: 1199px)').matches;
     const $toTabBtn = $('.mobile-to-tabs-js');
+    const $tabsWrapper = $('.account-tabs-wrapper');
 
 
     $accountTab.on('click',function(){
@@ -16,6 +17,7 @@ export const accountTabs = ()=>{
             $('.'+dataTab).addClass('active');
             $(this).addClass('active');
         }else{
+            $tabsWrapper.addClass('hidden');
             $accountTabsContent.removeClass('hidden');
             $tabContentItem.removeClass('mobile-active');
             $('.'+dataTab).addClass('mobile-active');
@@ -25,6 +27,7 @@ export const accountTabs = ()=>{
 
     $toTabBtn.on('click',function (){
         if(isMobile){
+            $tabsWrapper.removeClass('hidden');
             $tabContentItem.removeClass('mobile-active');
             $accountTabsContent.addClass('hidden');
         }

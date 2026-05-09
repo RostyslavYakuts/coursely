@@ -25,12 +25,7 @@
   }
 }
 .account-tabs-content{
-  position:absolute;
-  top:0;
-  left:0;
-  @include respond(1199){
-    position: relative;
-  }
+  position: relative;
 }
 
 

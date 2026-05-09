@@ -96,7 +96,7 @@
 
 
     </div>
-    <div class="invoices flex flex-col lgx:hidden">
+    <div class="invoices flex flex-col lgx:hidden mt-8">
         <?php if($data['invoices']): ?>
             <?php $__currentLoopData = $data['invoices']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="invoice flex flex-col gap-2 text-sm">

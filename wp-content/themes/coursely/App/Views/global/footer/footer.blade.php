@@ -15,7 +15,7 @@
     </div>
 </div>
 @endif
-<footer id="footer"  class="w-full pt-[114px] bg-white rounded-tl-[40px] rounded-tr-[40px]">
+<footer id="footer"  class="w-full pt-5 lgx:pt-[114px] bg-white rounded-tl-[40px] rounded-tr-[40px]">
     <div class="container mx-auto flex flex-col justify-between">
         @include('global.footer.logotype')
         @include('global.footer.footer-contacts')

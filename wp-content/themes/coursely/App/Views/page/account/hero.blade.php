@@ -7,7 +7,7 @@
         </h1>
     </div>
 
-    <div class="relative account-settings mt-10 bg-white rounded-[40px] brand-shadow p-6 flex flex-col lgx:flex-row gap-10 items-start">
+    <div class="relative account-settings my-10 bg-white rounded-[40px] brand-shadow p-6 flex flex-col lgx:flex-row gap-10 items-start">
        @include('page.account.tabs')
         <div class="account-tabs-content w-full hidden lgx:block bg-white p-5 border border-gray rounded-[20px]">
             @include('page.account.profile')
