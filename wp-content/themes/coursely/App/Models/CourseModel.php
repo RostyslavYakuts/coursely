@@ -2,6 +2,9 @@
 
 namespace coursely\App\Models;
 
+use coursely\App\Core\Services\CourseProgressService;
+use coursely\App\Core\Services\SubscriptionManager;
+
 class CourseModel implements ModelInterface
 {
     public \WP_Post $post;
@@ -40,6 +43,29 @@ class CourseModel implements ModelInterface
         $content = apply_filters('the_content', get_the_content());
         $plans = get_field('plans','options') ?? [];
         $month_plan = $plans[0]['price'] ?? 8.99;
+        $current_user_id = get_current_user_id();
+        $lessons_count = (int) (get_field('lessons_count', $id) ?? 0);
+
+        $completed_lessons = CourseProgressService::getCompletedLessons($current_user_id, $id);
+        $completed_lessons_count = count($completed_lessons) ?? 0;
+        $completed_lessons_percentage = $lessons_count ? (int)round(($completed_lessons_count / $lessons_count) * 100) : 0;
+
+        $modules = get_field('modules', $id) ?? [];
+        $all_module_lessons = $this->get_lessons_from_module($modules);
+
+        $first_lesson_link = get_the_permalink($all_module_lessons[0]);
+        $next_lesson_link = $this->get_next_lesson_link($all_module_lessons,$completed_lessons);
+
+        $cta_text = __('Start learning','coursely');
+        $cta_link = $first_lesson_link;
+        if($completed_lessons_percentage === 100){
+            $cta_text = __('View Course','coursely');
+        }
+        if($completed_lessons_percentage > 0 && $completed_lessons_percentage < 100){
+            $cta_text = __('Continue learning','coursely');
+            $cta_link = $next_lesson_link;
+        }
+
 
         return [
             'id'=>$id,
@@ -50,7 +76,9 @@ class CourseModel implements ModelInterface
             'recommended'=>$this->get_other_items($id,$parent_ids,$parent_data),
             'categories'=>$parent_data,
             'rating'=>get_field('rating', $id) ?? 5,
-            'lessons_count'=>get_field('lessons_count', $id) ?? '',
+            'lessons_count'=>$lessons_count,
+            'completed_lessons_count'=>$completed_lessons_count,
+            'completed_lessons_percentage'=>$completed_lessons_percentage,
             'duration'=>get_field('duration', $id) ?? '',
             'month_plan'=>$month_plan,
             'activate_subscription_link'=>get_field('activate_subscription_link', 'options') ?? '',
@@ -59,53 +87,35 @@ class CourseModel implements ModelInterface
                  __('New courses included','coursely'),
                  __('Cancel anytime','coursely'),
             ],
-            'modules' => $this->get_modules_with_lessons($id),
+            'modules' =>  $modules,
+            'is_user_logged_in'=>is_user_logged_in(),
+            'current_user_id'=>$current_user_id,
+            'is_user_subscription_active'=>SubscriptionManager::isActive($current_user_id),
+            'cta_text'=>$cta_text,
+            'cta_link'=>$cta_link,
+
         ];
     }
 
-    private function get_modules_with_lessons(int $course_id): array
+    private function get_lessons_from_module(array $modules): array
     {
-        $modules = get_field('modules', $course_id) ?? [];
+        $lessons = [];
 
-        $lessons_query = get_posts([
-            'post_type'      => 'lesson',
-            'posts_per_page' => -1,
-            'meta_query'     => [
-                [
-                    'key'   => 'course',
-                    'value' => $course_id,
-                    'compare' => '='
-                ]
-            ],
-            'meta_key' => 'order',
-            'orderby'  => 'meta_value_num',
-            'order'    => 'ASC'
-        ]);
-
-        $grouped_lessons = [];
-
-        foreach ($lessons_query as $lesson) {
-
-            $module_id = get_field('module', $lesson->ID);
-
-            $grouped_lessons[$module_id][] = [
-                'id' => $lesson->ID,
-                'title' => get_the_title($lesson->ID),
-                'link' => get_permalink($lesson->ID),
-                'order' => (int)get_field('order', $lesson->ID),
-                'module' => $module_id,
-            ];
+        foreach ($modules as $module) {
+            foreach (($module['lessons'] ?? []) as $lesson) {
+                if (!empty($lesson['lesson'])) {
+                    $lessons[] = (int) $lesson['lesson'];
+                }
+            }
         }
 
-        foreach ($modules as &$module) {
-
-            $module['lessons'] = $grouped_lessons[$module['id']] ?? [];
-
-        }
-
-        return $modules;
+        return $lessons;
     }
-
+    private function get_next_lesson_link(array $lessons,array $completed_lessons):string{
+        $remaining_lessons = array_diff($lessons, $completed_lessons);
+        $next_lesson_id = reset($remaining_lessons);
+        return $next_lesson_id ? get_permalink((int) $next_lesson_id) : '';
+    }
     private function get_other_items($current_id,$parent_ids,$parent_data): array
     {
 

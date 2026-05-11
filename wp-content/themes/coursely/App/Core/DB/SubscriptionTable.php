@@ -2,7 +2,7 @@
 
 namespace coursely\App\Core\DB;
 
-class SubscriptionTable
+class SubscriptionTable extends CustomTable implements CustomTableInterface
 {
     private string $table;
 
@@ -17,7 +17,7 @@ class SubscriptionTable
     {
         global $wpdb;
 
-        if ($this->exists()) {
+        if ($this->exists($this->table)) {
             return;
         }
 
@@ -29,23 +29,18 @@ class SubscriptionTable
             CREATE TABLE {$this->table} (
                 id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
                 user_id BIGINT UNSIGNED NOT NULL,
-
                 stripe_subscription_id VARCHAR(255) NOT NULL,
                 stripe_customer_id VARCHAR(255) NOT NULL,
                 stripe_price_id VARCHAR(255) NOT NULL,
-
                 plan_name VARCHAR(100) NOT NULL,
                 plan_interval VARCHAR(20) NOT NULL,
-
                 status VARCHAR(50) NOT NULL,
-
                 current_period_start DATETIME NULL,
                 current_period_end DATETIME NULL,
-
                 cancel_at_period_end TINYINT(1) DEFAULT 0,
-
                 created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                ended_at DATETIME NULL,
 
                 PRIMARY KEY (id),
 
@@ -63,19 +58,5 @@ class SubscriptionTable
         dbDelta($sql);
     }
 
-    private function exists(): bool
-    {
-        global $wpdb;
 
-        $table = $wpdb->esc_like($this->table);
-
-        $result = $wpdb->get_var(
-            $wpdb->prepare(
-                "SHOW TABLES LIKE %s",
-                $table
-            )
-        );
-
-        return $result === $this->table;
-    }
 }

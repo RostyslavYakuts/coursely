@@ -2,8 +2,7 @@
 
 namespace coursely\App\Models;
 
-use coursely\App\Models\CustomEntityModels;
-use coursely\App\Models\ModelInterface;
+use coursely\App\Core\Services\SubscriptionManager;
 
 class PricingPageModel implements ModelInterface
 {
@@ -26,7 +25,7 @@ class PricingPageModel implements ModelInterface
             'description'=>get_field('description', $id) ?? '',
             'plans_cta'=>get_field('plans_cta', 'options') ?? 'Get started',
             'plans_features_text'=>get_field('plans_features_text', 'options') ?? 'Features included:',
-            'plans'=>get_field('plans', 'options') ?? [],
+            'plans'=>get_field('plans', 'options') ?? []
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace coursely\App\Core\Setup;
 
 use coursely\App\Core\DB\InvoiceTable;
+use coursely\App\Core\DB\LessonsProgressTable;
 use coursely\App\Core\DB\SubscriptionTable;
 
 class AfterSwitchTheme
@@ -17,5 +18,7 @@ class AfterSwitchTheme
         $invoiceTable->create();
         $subscriptionTable = new SubscriptionTable();
         $subscriptionTable->create();
+        $lessonsProgressTable = new LessonsProgressTable();
+        $lessonsProgressTable->create();
     }
 }

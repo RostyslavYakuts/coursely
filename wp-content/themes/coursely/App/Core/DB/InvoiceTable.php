@@ -2,7 +2,7 @@
 
 namespace coursely\App\Core\DB;
 
-class InvoiceTable
+class InvoiceTable extends CustomTable implements CustomTableInterface
 {
     private string $table;
 
@@ -17,7 +17,7 @@ class InvoiceTable
     {
         global $wpdb;
 
-        if ($this->exists()) {
+        if ($this->exists($this->table)) {
             return;
         }
 
@@ -61,19 +61,5 @@ class InvoiceTable
         dbDelta($sql);
     }
 
-    private function exists(): bool
-    {
-        global $wpdb;
 
-        $table = $wpdb->esc_like($this->table);
-
-        $result = $wpdb->get_var(
-            $wpdb->prepare(
-                "SHOW TABLES LIKE %s",
-                $table
-            )
-        );
-
-        return $result === $this->table;
-    }
 }

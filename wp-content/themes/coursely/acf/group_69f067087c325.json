@@ -150,25 +150,51 @@
                 },
                 {
                     "key": "field_69fc8fab84fdb",
-                    "label": "Lessons count",
-                    "name": "lessons_count",
+                    "label": "Lessons",
+                    "name": "lessons",
                     "aria-label": "",
-                    "type": "number",
+                    "type": "repeater",
                     "instructions": "",
-                    "required": 0,
+                    "required": 1,
                     "conditional_logic": 0,
                     "wrapper": {
                         "width": "",
                         "class": "",
                         "id": ""
                     },
-                    "default_value": "",
+                    "layout": "table",
                     "min": 0,
-                    "max": "",
-                    "placeholder": "",
-                    "step": 1,
-                    "prepend": "",
-                    "append": "",
+                    "max": 0,
+                    "collapsed": "",
+                    "button_label": "Add Row",
+                    "rows_per_page": 20,
+                    "sub_fields": [
+                        {
+                            "key": "field_6a01d0e0b9cec",
+                            "label": "Lesson",
+                            "name": "lesson",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 1,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "lesson"
+                            ],
+                            "post_status": "",
+                            "taxonomy": "",
+                            "return_format": "id",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 1,
+                            "parent_repeater": "field_69fc8fab84fdb"
+                        }
+                    ],
                     "parent_repeater": "field_69fc8d3ee3a5c"
                 }
             ]
@@ -192,5 +218,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1778159558
+    "modified": 1778505883
 }
