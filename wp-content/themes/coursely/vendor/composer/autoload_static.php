@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8739d34e6633ae3fe6cea0842c646015
+class ComposerStaticInitd53430228161be2555940a5a198640c5
 {
     public static $files = array (
         '606a39d89246991a373564698c2d8383' => __DIR__ . '/..' . '/symfony/polyfill-php85/bootstrap.php',
@@ -20,6 +20,7 @@ class ComposerStaticInit8739d34e6633ae3fe6cea0842c646015
         '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
         'ef65a1626449d89d0811cf9befce46f0' => __DIR__ . '/..' . '/illuminate/events/functions.php',
         '06a34129a50df3d9257ee706cf3c875b' => __DIR__ . '/..' . '/illuminate/filesystem/functions.php',
+        'd92f49fe138fde4e7a3ec6f988960524' => __DIR__ . '/..' . '/stripe/stripe-php/lib/version_check.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -46,6 +47,7 @@ class ComposerStaticInit8739d34e6633ae3fe6cea0842c646015
             'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Clock\\' => 24,
+            'Stripe\\' => 7,
         ),
         'P' => 
         array (
@@ -123,6 +125,10 @@ class ComposerStaticInit8739d34e6633ae3fe6cea0842c646015
         'Symfony\\Component\\Clock\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/clock',
+        ),
+        'Stripe\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
         ),
         'Psr\\SimpleCache\\' => 
         array (
@@ -217,9 +223,9 @@ class ComposerStaticInit8739d34e6633ae3fe6cea0842c646015
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8739d34e6633ae3fe6cea0842c646015::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8739d34e6633ae3fe6cea0842c646015::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit8739d34e6633ae3fe6cea0842c646015::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitd53430228161be2555940a5a198640c5::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitd53430228161be2555940a5a198640c5::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitd53430228161be2555940a5a198640c5::$classMap;
 
         }, null, ClassLoader::class);
     }

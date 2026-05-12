@@ -8,6 +8,7 @@ use coursely\App\Core\CPT\CPTSlugRewrite;
 use coursely\App\Core\CT\CustomTaxonomyRegister;
 use coursely\App\Core\Handlers\AjaxAccountHandler;
 use coursely\App\Core\Handlers\AjaxAuthHandler;
+use coursely\App\Core\Handlers\AjaxCheckout;
 use coursely\App\Core\Handlers\AjaxHandler;
 use coursely\App\Core\Helpers\FilterDataCustomisationHelper;
 use coursely\App\Core\Setup\ACFInteractionSetup;
@@ -50,6 +51,7 @@ class Bootstrap
         new AjaxHandler();
         new AjaxAuthHandler();
         new AjaxAccountHandler();
+        new AjaxCheckout();
         new DateShortcodes()->register();
         new RestAPISetup();
         new FilterDataCustomisationHelper();

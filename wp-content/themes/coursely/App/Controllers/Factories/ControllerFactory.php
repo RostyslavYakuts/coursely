@@ -6,6 +6,7 @@ use coursely\App\Controllers\AboutPageController;
 use coursely\App\Controllers\AccountPageController;
 use coursely\App\Controllers\BlogController;
 use coursely\App\Controllers\CategoryController;
+use coursely\App\Controllers\CheckoutController;
 use coursely\App\Controllers\ContactPageController;
 use coursely\App\Controllers\ControllerInterface;
 use coursely\App\Controllers\CoursesPageController;
@@ -20,6 +21,7 @@ use coursely\App\Models\AboutPageModel;
 use coursely\App\Models\AccountPageModel;
 use coursely\App\Models\BlogModel;
 use coursely\App\Models\CategoryModel;
+use coursely\App\Models\CheckoutModel;
 use coursely\App\Models\ContactModel;
 use coursely\App\Models\CourseModel;
 use coursely\App\Models\CoursesPageModel;
@@ -64,6 +66,7 @@ class ControllerFactory
                 'page-about.php' => new AboutPageController(new AboutPageModel($current_obj)),
                 'page-pricing.php' => new PricingPageController(new PricingPageModel($current_obj)),
                 'page-contact-us.php' => new ContactPageController(new ContactModel($current_obj)),
+                'page-checkout.php' => new CheckoutController(new CheckoutModel($current_obj)),
                 default => new PageController(),
             };
         }

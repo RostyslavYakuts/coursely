@@ -62,7 +62,7 @@
                         <span class="text-brand-text">/<?php echo e($plan['per_period']); ?></span>
                     </span>
 
-                    <a href="<?php echo e(get_home_url()); ?>/checkout?price_id=<?php echo e($plan['stripe_price_id']); ?>"
+                    <a href="<?php echo e(get_home_url()); ?>/checkout?price_id=<?php echo e($plan['get_parameter_plan_key']); ?>"
                        data-plan-type="<?php echo e($plan['type']); ?>"
                        class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                         <?php echo e($data['plans_cta']); ?>
@@ -131,7 +131,7 @@
                         <span class="<?php echo e($plan['is_popular'] ? 'text-white' :'text-brand-text'); ?> ">/<?php echo e($plan['per_period']); ?></span>
                     </span>
 
-                    <a href="<?php echo e(get_home_url()); ?>/checkout?price_id=<?php echo e($plan['stripe_price_id']); ?>"
+                    <a href="<?php echo e(get_home_url()); ?>/checkout?price_id=<?php echo e($plan['get_parameter_plan_key']); ?>"
                        data-plan-type="<?php echo e($plan['type']); ?>"
                        class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                         <?php echo e($data['plans_cta']); ?>

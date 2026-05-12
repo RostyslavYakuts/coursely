@@ -3,8 +3,65 @@
     "title": "Global Options",
     "fields": [
         {
+            "key": "field_6a02dcbe3bf58",
+            "label": "Stripe",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_6a02dcd13bf59",
+            "label": "Stripe Public Key",
+            "name": "stripe_public_key",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_6a02dce63bf5a",
+            "label": "Stripe Secret Key",
+            "name": "stripe_secret_key",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_6943fc594929f",
-            "label": "Integrations",
+            "label": "Recaptcha",
             "name": "",
             "aria-label": "",
             "type": "tab",
@@ -596,6 +653,27 @@
                     "prepend": "",
                     "append": "",
                     "parent_repeater": "field_69f1d4a01f32b"
+                },
+                {
+                    "key": "field_6a03209dbff47",
+                    "label": "Get parameter plan key",
+                    "name": "get_parameter_plan_key",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_69f1d4a01f32b"
                 }
             ]
         },
@@ -899,5 +977,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1778235350
+    "modified": 1778589910
 }

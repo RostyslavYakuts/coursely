@@ -56,7 +56,7 @@
                         <span class="text-brand-text">/{{$plan['per_period']}}</span>
                     </span>
 
-                    <a href="{{get_home_url()}}/checkout?price_id={{$plan['stripe_price_id']}}"
+                    <a href="{{get_home_url()}}/checkout?price_id={{$plan['get_parameter_plan_key']}}"
                        data-plan-type="{{$plan['type']}}"
                        class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                         {{$data['plans_cta']}}
@@ -117,7 +117,7 @@
                         <span class="{{ $plan['is_popular'] ? 'text-white' :'text-brand-text' }} ">/{{$plan['per_period']}}</span>
                     </span>
 
-                    <a href="{{get_home_url()}}/checkout?price_id={{$plan['stripe_price_id']}}"
+                    <a href="{{get_home_url()}}/checkout?price_id={{$plan['get_parameter_plan_key']}}"
                        data-plan-type="{{$plan['type']}}"
                        class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                         {{$data['plans_cta']}}

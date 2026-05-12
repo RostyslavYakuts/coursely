@@ -335,6 +335,7 @@ class Enqueuer
 		wp_localize_script('main', 'localizedScript', array(
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'pk' =>  get_field('recaptcha_public_key', 'options'),
+                'spk' => get_field('stripe_public_key', 'options'),
 
                 'checkout_action'=>'checkout_action',
                 'checkout_nonce'=>wp_create_nonce('checkout_action'),
