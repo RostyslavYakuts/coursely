@@ -114,42 +114,22 @@ class AjaxCheckout
         } catch (\Throwable $e) {
 
             if ($signupToken) {
-
-                delete_transient(
-                    self::SIGNUP_TRANSIENT_PREFIX
-                    . $signupToken
-                );
+                delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
             }
 
-            error_log(
-                'Stripe Checkout Error: '
-                . $e->getMessage()
-            );
+            error_log('Stripe Checkout Error: ' . $e->getMessage());
 
-            wp_send_json_error([
-                'message' =>
-                    'Checkout failed. Please try again.'
-            ]);
+            wp_send_json_error(['message' => 'Checkout failed. Please try again.']);
         }
     }
 
     private function verifyNonce(): void
     {
-        $nonce =
-            $_POST['nonce']
-            ?? '';
+        $nonce = $_POST['nonce'] ?? '';
 
-        if (
-            !wp_verify_nonce(
-                $nonce,
-                'checkout_action'
-            )
-        ) {
+        if (!wp_verify_nonce($nonce, 'checkout_action')) {
 
-            wp_send_json_error([
-                'message' =>
-                    'Security check failed.'
-            ]);
+            wp_send_json_error(['message' => 'Security check failed.']);
 
             return;
         }
@@ -158,97 +138,24 @@ class AjaxCheckout
     private function getRequestData(): array
     {
         return [
-
-            'payment_method_id' =>
-                sanitize_text_field(
-                    $_POST[
-                    'payment_method_id'
-                    ] ?? ''
-                ),
-
-            'plan_id' =>
-                sanitize_text_field(
-                    $_POST[
-                    'plan_id'
-                    ] ?? ''
-                ),
-
-            'email' =>
-                sanitize_email(
-                    $_POST[
-                    'subscriber_email'
-                    ] ?? ''
-                ),
-
-            'name' =>
-                sanitize_text_field(
-                    $_POST[
-                    'subscriber_name'
-                    ] ?? ''
-                ),
-
-            'phone' =>
-                sanitize_text_field(
-                    $_POST[
-                    'subscriber_phone'
-                    ] ?? ''
-                ),
-
-            'password' =>
-                $_POST[
-                'subscriber_password'
-                ] ?? '',
-
+            'payment_method_id' => sanitize_text_field($_POST['payment_method_id'] ?? ''),
+            'plan_id' => sanitize_text_field($_POST['plan_id'] ?? ''),
+            'email' => sanitize_email($_POST['subscriber_email'] ?? ''),
+            'name' => sanitize_text_field($_POST['subscriber_name'] ?? ''),
+            'phone' => sanitize_text_field($_POST['subscriber_phone'] ?? ''),
+            'password' => $_POST['subscriber_password'] ?? '',
             'address' => [
-
-                'line1' =>
-                    sanitize_text_field(
-                        $_POST[
-                        'subscriber_street_address'
-                        ] ?? ''
-                    ),
-
-                'line2' =>
-                    sanitize_text_field(
-                        $_POST[
-                        'subscriber_street_address_2'
-                        ] ?? ''
-                    ),
-
-                'city' =>
-                    sanitize_text_field(
-                        $_POST[
-                        'subscriber_city'
-                        ] ?? ''
-                    ),
-
-                'state' =>
-                    sanitize_text_field(
-                        $_POST[
-                        'subscriber_state'
-                        ] ?? ''
-                    ),
-
-                'postal_code' =>
-                    sanitize_text_field(
-                        $_POST[
-                        'subscriber_zip'
-                        ] ?? ''
-                    ),
-
-                'country' =>
-                    sanitize_text_field(
-                        $_POST[
-                        'subscriber_country'
-                        ] ?? ''
-                    ),
+                'line1' => sanitize_text_field($_POST['subscriber_street_address'] ?? ''),
+                'line2' => sanitize_text_field($_POST['subscriber_street_address_2'] ?? ''),
+                'city' => sanitize_text_field($_POST['subscriber_city'] ?? ''),
+                'state' => sanitize_text_field($_POST['subscriber_state'] ?? ''),
+                'postal_code' => sanitize_text_field($_POST['subscriber_zip'] ?? ''),
+                'country' => sanitize_text_field($_POST['subscriber_country'] ?? ''),
             ],
         ];
     }
 
-    private function validateRequest(
-        array $data
-    ): void {
+    private function validateRequest(array $data): void {
 
         $required = [
             'payment_method_id',
@@ -259,81 +166,30 @@ class AjaxCheckout
             'password',
         ];
 
-        foreach (
-            $required
-            as $field
-        ) {
+        foreach ($required as $field) {
 
-            if (
-                empty(
-                $data[$field]
-                )
-            ) {
-
-                wp_send_json_error([
-                    'message' =>
-                        'Required field missing.'
-                ]);
-
+            if (empty($data[$field])) {
+                wp_send_json_error(['message' => 'Required field missing.']);
                 return;
             }
         }
 
-        if (
-            !is_email(
-                $data['email']
-            )
-        ) {
-
-            wp_send_json_error([
-                'message' =>
-                    'Invalid email.'
-            ]);
-
+        if (!is_email($data['email'])) {
+            wp_send_json_error(['message' => 'Invalid email.']);
+            return;
+        }
+        if (email_exists($data['email'])) {
+            wp_send_json_error(['message' => 'Email already exists.']);
             return;
         }
 
-        if (
-            email_exists(
-                $data['email']
-            )
-        ) {
-
-            wp_send_json_error([
-                'message' =>
-                    'Email already exists.'
-            ]);
-
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d).{8,}$/', $data['password'])) {
+            wp_send_json_error(['message' => 'Password too weak.']);
             return;
         }
 
-        if (
-            !preg_match(
-                '/^(?=.*[A-Za-z])(?=.*\d).{8,}$/',
-                $data['password']
-            )
-        ) {
-
-            wp_send_json_error([
-                'message' =>
-                    'Password too weak.'
-            ]);
-
-            return;
-        }
-
-        if (
-            !array_key_exists(
-                $data['plan_id'],
-                $this->get_stripe_prices()
-            )
-        ) {
-
-            wp_send_json_error([
-                'message' =>
-                    'Invalid plan.'
-            ]);
-
+        if (!array_key_exists($data['plan_id'], $this->get_stripe_prices())) {
+            wp_send_json_error(['message' => 'Invalid plan.']);
             return;
         }
     }
@@ -341,127 +197,53 @@ class AjaxCheckout
     private function getStripeClient():
     StripeClient {
 
-        $secretKey =
-            get_field(
-                'stripe_secret_key',
-                'options'
-            );
+        $secretKey = get_field('stripe_secret_key', 'options');
 
-        if (
-            empty($secretKey)
-        ) {
-
-            throw new \Exception(
-                'Stripe key missing.'
-            );
+        if (empty($secretKey)) {
+            throw new \Exception('Stripe key missing.');
         }
-
-        return new StripeClient(
-            $secretKey
-        );
+        return new StripeClient($secretKey);
     }
 
-    private function getStripePriceId(
-        string $planId
-    ): string {
-
-        return
-            $this
-                ->get_stripe_prices()
-            [$planId];
+    private function getStripePriceId(string $planId): string {
+        return $this->get_stripe_prices()[$planId];
     }
 
     /**
      * @throws ApiErrorException
      */
-    private function createOrGetCustomer(
-        StripeClient $stripe,
-        array $data,
-        string $signupToken
-    ): object {
+    private function createOrGetCustomer(StripeClient $stripe, array $data, string $signupToken): object {
 
-        $customers =
-            $stripe
-                ->customers
-                ->all([
-                    'email' =>
-                        $data['email'],
+        $customers = $stripe->customers->all([
+                    'email' => $data['email'],
                     'limit' => 1
                 ]);
 
         // existing customer
-        if (
-            !empty(
-            $customers->data
-            )
-        ) {
-
-            $customer =
-                $customers
-                    ->data[0];
-
+        if (!empty($customers->data)) {
+            $customer = $customers->data[0];
         } else {
+            $customer = $stripe->customers->create([
 
-            $customer =
-                $stripe
-                    ->customers
-                    ->create([
-
-                        'email' =>
-                            $data['email'],
-
-                        'name' =>
-                            $data['name'],
-
-                        'phone' =>
-                            $data['phone'],
-
-                        'address' =>
-                            $data['address'],
-
+                        'email' => $data['email'],
+                        'name' => $data['name'],
+                        'phone' => $data['phone'],
+                        'address' => $data['address'],
                         'metadata' => [
-
-                            'signup_token' =>
-                                $signupToken,
-
-                            'plan_id' =>
-                                $data[
-                                'plan_id'
-                                ],
-
-                            'site_user_email' =>
-                                $data[
-                                'email'
-                                ],
+                            'signup_token' => $signupToken,
+                            'plan_id' => $data['plan_id'],
+                            'site_user_email' => $data['email'],
                         ]
                     ]);
         }
 
         // attach card
-        $stripe
-            ->paymentMethods
-            ->attach(
-                $data[
-                'payment_method_id'
-                ],
-                [
-                    'customer' =>
-                        $customer->id
-                ]
-            );
+        $stripe->paymentMethods->attach($data['payment_method_id'], ['customer' => $customer->id]);
 
         // set default card
-        $stripe
-            ->customers
-            ->update(
-                $customer->id,
+        $stripe->customers->update($customer->id,
                 [
-                    'invoice_settings' => [
-                        'default_payment_method' =>
-                            $data[
-                            'payment_method_id'
-                            ]
-                    ]
+                    'invoice_settings' => ['default_payment_method' => $data['payment_method_id']]
                 ]
             );
 
@@ -471,67 +253,28 @@ class AjaxCheckout
     /**
      * @throws ApiErrorException
      */
-    private function createSubscription(
-        StripeClient $stripe,
-        string $customerId,
-        string $priceId
-    ): object {
+    private function createSubscription(StripeClient $stripe, string $customerId, string $priceId): object {
 
-        return
-            $stripe
-                ->subscriptions
-                ->create([
-
-                    'customer' =>
-                        $customerId,
-
-                    'items' => [[
-                        'price' =>
-                            $priceId
-                    ]],
-
-                    'payment_behavior' =>
-                        'default_incomplete',
-
-                    'expand' => [
-                        'latest_invoice.payment_intent'
-                    ],
+        return $stripe->subscriptions->create([
+                    'customer' => $customerId,
+                    'items' => [['price' => $priceId]],
+                    'payment_behavior' => 'default_incomplete',
+                    'expand' => ['latest_invoice.payment_intent'],
                 ]);
     }
 
-    private function createSignupToken(
-        array $data
-    ): string {
-
-        $token =
-            wp_generate_uuid4();
-
-        set_transient(
-            self::SIGNUP_TRANSIENT_PREFIX
-            . $token,
-            $data,
-            HOUR_IN_SECONDS
-        );
-
+    private function createSignupToken(array $data): string {
+        $token = wp_generate_uuid4();
+        set_transient(self::SIGNUP_TRANSIENT_PREFIX . $token, $data, HOUR_IN_SECONDS);
         return $token;
     }
 
-    public function get_stripe_prices():
-    array {
-
-        return [
-
-            'monthly' =>
-                'price_1TUl5jLpogh0rAqqAxpgsGx0',
-
-            'quarterly' =>
-                'price_1TUl63Lpogh0rAqqLUixBPnA',
-
-            'half-year' =>
-                'price_1TUl6JLpogh0rAqqtbmWudcU',
-
-            'annual' =>
-                'price_1TUl6aLpogh0rAqqdAPQT52f',
-        ];
+    public function get_stripe_prices(): array {
+        $plans = get_field('plans', 'options');
+        $arr = [];
+        foreach($plans as $plan) {
+            $arr[$plan['get_parameter_plan_key']] = $plan['stripe_price_id'];
+        }
+        return $arr;
     }
 }
