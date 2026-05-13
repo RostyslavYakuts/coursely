@@ -2,6 +2,9 @@
 namespace coursely\App\Core\Handlers;
 
 
+use coursely\App\Core\Helpers\NonceChecker;
+use coursely\App\Core\Helpers\RecaptchaChecker;
+use coursely\App\Core\Helpers\UserIpDetector;
 use coursely\App\Core\Services\EmailSender;
 
 class AjaxHandler
@@ -13,7 +16,7 @@ class AjaxHandler
 
     public function contact_us_form_action(): void
     {
-		 $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+		 $ip = UserIpDetector::detect();
 		 $key = 'contact_form_' . md5($ip);
 
 		 if (get_transient($key)) {
@@ -23,18 +26,13 @@ class AjaxHandler
 		 set_transient($key, 1, 120);
 
 		 // Check nonce
-        if (empty($_POST['nonce']) || !wp_verify_nonce(wp_unslash($_POST['nonce']), 'contact_us_form_action')) {
-            wp_send_json_error([
-                'message' => '<h3 class="text-[24px] font-bold">Warning!</h3> <span>Security check failed.</span>'
-            ]);
-        }
+        NonceChecker::check('contact_us_form_action');
 
         // Sanitize input
 		 $name = isset($_POST['name']) ? sanitize_text_field(wp_unslash($_POST['name'])) : '';
 		 $subject = isset($_POST['subject']) ? sanitize_text_field(wp_unslash($_POST['subject'])) : '';
 		 $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
 		 $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
-		 $token = isset($_POST['recaptcha_token']) ? sanitize_text_field(wp_unslash($_POST['recaptcha_token'])) : '';
 
 		  if (!empty($_POST['company'])) {
 			 wp_send_json_error(['message' => '<h3 class="text-[24px] font-bold">Warning!</h3> <span>Spam.</span>']);
@@ -48,29 +46,8 @@ class AjaxHandler
         }
 
         // Validate reCAPTCHA (v3)
-        $secret_key = get_field('recaptcha_secret_key', 'option');
-        $use_recaptcha = get_field('use_recaptcha', 'option');
-        $response = wp_remote_post('https://www.google.com/recaptcha/api/siteverify', [
-            'body' => [
-                'secret' => $secret_key,
-                'response' => $token,
-                'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
-					 'timeout' => 5
-            ],
-        ]);
+        RecaptchaChecker::check();
 
-        if (is_wp_error($response) && $use_recaptcha) {
-            wp_send_json_error([
-                'message' => '<h3 class="text-[20px] lgx:text-[24px] font-bold">reCAPTCHA</h3> <span class="block mt-[12px]">request failed.</span>'
-            ]);
-        }
-
-        $result = json_decode(wp_remote_retrieve_body($response), true);
-        if ($use_recaptcha && (empty($result['success']) || $result['score'] < 0.7)) {
-            wp_send_json_error([
-                'message' => '<h3 class="text-[20px] lgx:text-[24px] font-bold">reCAPTCHA</h3> <span class="block mt-[12px]">verification failed.</span> '
-            ]);
-        }
         // Store user data
         $post_id = wp_insert_post([
             'post_type'   => 'contact',

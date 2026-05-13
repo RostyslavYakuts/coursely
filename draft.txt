@@ -1,0 +1,238 @@
+public function handle_stripe_checkout1(): void
+    {
+        $signupToken = null;
+
+        try {
+            NonceChecker::check('checkout_action');
+            RecaptchaChecker::check();
+            $data = $this->getRequestData();
+            $this->validateRequest($data);
+            $signupToken = $this->createSignupToken($data);
+            $stripe = $this->getStripeClient();
+            $priceId = $this->getStripePriceId($data['plan_id']);
+            $customer = $this->createOrGetCustomer($stripe, $data, $signupToken);
+
+            $subscription = $this->createSubscription($stripe, $customer->id, $priceId, $data['payment_method_id']);
+
+            // Try to get Payment Intent from the expanded response
+            $paymentIntent = $subscription->latest_invoice?->payment_intent;
+            // FALLBACK: If payment_intent is missing, fetch the invoice manually
+            if (empty($paymentIntent) && !empty($subscription->latest_invoice)) {
+                // Determine if latest_invoice is a string (ID) or an object
+                $invoiceId = is_string($subscription->latest_invoice)
+                    ? $subscription->latest_invoice
+                    : ($subscription->latest_invoice->id ?? null);
+
+                if ($invoiceId) {
+                    try {
+                        $invoice = $stripe->invoices->retrieve($invoiceId, ['expand' => ['payment_intent']]);
+                        $paymentIntent = $invoice->payment_intent;
+                    } catch (\Exception $e) {
+                        error_log('Could not retrieve invoice: ' . $e->getMessage());
+                    }
+                }
+            }
+
+            wp_send_json_success([
+                'subscription' => $subscription,
+                'payment_intent' => $paymentIntent,
+                'post'=>$_POST,
+                'price' => $priceId,
+                'customer' => $customer,
+                'stripe' => $stripe,
+            ]);
+
+            // 3D Secure (e.g., card 4000 0025 0000 3155)
+            if ($paymentIntent && $paymentIntent->status === 'requires_action') {
+                wp_send_json_success([
+                    'requires_action' => true,
+                    'client_secret' => $paymentIntent->client_secret,
+                    'redirect_url'    => home_url('/checkout-success/'),
+                ]);
+            }
+            // Payment Succeeded (e.g., card 4242 4242 4242 4242)
+            if ($paymentIntent && in_array($paymentIntent->status, ['succeeded', 'processing'], true)) {
+                wp_send_json_success([
+                    'message' => 'Payment processing.',
+                    'redirect_url' => home_url('/checkout-success/')
+                ]);
+            }
+
+            // Subscription Active (e.g. free trial or immediate success without PI delay)
+            if (in_array($subscription->status, ['active', 'trialing'], true)) {
+                wp_send_json_success([
+                    'message' => 'Subscription created.',
+                    'redirect_url' => home_url('/checkout-success/'),
+                ]);
+            }
+
+            // card declined
+            if ($paymentIntent && $paymentIntent->status === 'requires_payment_method') {
+                delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
+                wp_send_json_error(['message' => $paymentIntent->last_payment_error?->message ?? 'Card declined.']);
+            }
+
+            // If we are here, something unexpected happened
+            delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
+            error_log('Debug Subscription: ' . print_r($subscription, true));
+
+            wp_send_json_error([
+                'subscription_status' => $subscription->status,
+                'payment_intent_status' => $paymentIntent?->status,
+                'message' => 'Unexpected payment status.'
+            ]);
+
+        } catch (\Throwable $e) {
+            if ($signupToken) {
+                delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
+            }
+            error_log('STRIPE CHECKOUT ERROR: ' . $e->getMessage());
+            error_log($e->getTraceAsString());
+            wp_send_json_error([
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    }
+
+     private function createOrGetCustomer(StripeClient $stripe, array $data, string $signupToken): object {
+
+            $customers = $stripe->customers->all([
+                        'email' => $data['email'],
+                        'limit' => 1
+                    ]);
+
+            // existing customer
+            if (!empty($customers->data)) {
+                $customer = $customers->data[0];
+            } else {
+                $customer = $stripe->customers->create([
+
+                            'email' => $data['email'],
+                            'name' => $data['name'],
+                            'payment_method' => $data['payment_method_id'],
+                            'phone' => $data['phone'],
+                            'address' => $data['address'],
+                            'invoice_settings' => [
+                                'default_payment_method' => $data['payment_method_id']
+                            ],
+                            'metadata' => [
+                                'signup_token' => $signupToken,
+                                'plan_id' => $data['plan_id'],
+                                'site_user_email' => $data['email'],
+                            ]
+                        ]);
+            }
+
+            // attach card
+            $stripe->paymentMethods->attach($data['payment_method_id'], ['customer' => $customer->id]);
+
+            // set default card
+            $stripe->customers->update($customer->id,
+                    [
+                        'invoice_settings' => ['default_payment_method' => $data['payment_method_id']]
+                    ]
+                );
+
+            return $customer;
+        }
+
+
+            public function handle_stripe_checkout_old(): void
+            {
+                $signupToken = null;
+
+                try {
+                    NonceChecker::check('checkout_action');
+                    RecaptchaChecker::check();
+                    $data = $this->getRequestData();
+                    $this->validateRequest($data);
+
+                    $stripe = $this->getStripeClient();
+                    $priceId = $this->getStripePriceId($data['plan_id']);
+                    $signupToken = $this->createSignupToken($data);
+
+                    $customer = $this->createCustomer($stripe,$data,$signupToken);
+                    $this->attachPaymentMethod($stripe, $data['payment_method_id'], $customer->id);
+                    $subscription = $this->createSubscription($stripe,$customer->id,$priceId,$data['payment_method_id']);
+
+                    $invoiceId = $subscription->latest_invoice->id;
+                    // Because auto_advance is likely false on your account,
+                    // we must manually tell Stripe to pay the invoice.
+                    // We expand 'payment_intent' so the response contains the PI details immediately.
+                    $invoice = $stripe->invoices->pay($invoiceId, [
+                        'expand' => ['payment_intent']
+                    ]);
+
+                    if ($invoice->status === 'paid') {
+                        // The subscription object in memory might still say 'incomplete',
+                        // but the payment is done. Redirect to success.
+                        // (Your webhook will update the subscription status in the DB)
+                        wp_send_json_success([
+                            'message' => 'Payment successful.',
+                            'redirect_url' => home_url('/checkout-success/')
+                        ]);
+                    }
+                    $paymentIntent = $invoice->payment_intent;
+                    // 3D Secure (e.g., card 4000 0025 0000 3155)
+                    if ($paymentIntent && $paymentIntent->status === 'requires_action') {
+                        wp_send_json_success([
+                            'requires_action' => true,
+                            'client_secret' => $paymentIntent->client_secret,
+                            'redirect_url'    => home_url('/checkout-success/'),
+                        ]);
+                    }
+
+                    // 2. Картку відхилено (наприклад, недостатньо коштів)
+                    if ($paymentIntent && $paymentIntent->status === 'requires_payment_method') {
+                        delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
+                        $errorMsg = 'Card declined.';
+                        if ($paymentIntent->last_payment_error && is_object($paymentIntent->last_payment_error)) {
+                            $errorMsg = $paymentIntent->last_payment_error->message ?? $errorMsg;
+                        }
+                        wp_send_json_error(['message' => $errorMsg]);
+                    }
+
+                    // Payment Succeeded (e.g., card 4242 4242 4242 4242)
+                    if ($paymentIntent && in_array($paymentIntent->status, ['succeeded', 'processing'], true)) {
+                        wp_send_json_success([
+                            'message' => 'Payment processing.',
+                            'redirect_url' => home_url('/checkout-success/')
+                        ]);
+                    }
+
+                    // Subscription Active (e.g. free trial)
+                    if (in_array($subscription->status, ['active', 'trialing'], true)) {
+                        wp_send_json_success([
+                            'message' => 'Subscription created.',
+                            'redirect_url' => home_url('/checkout-success/'),
+                        ]);
+                    }
+
+                    // If we are here, something unexpected happened
+                    delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
+                    error_log('Unexpected Status Check - Sub Status: ' . $subscription->status . ' PI Status: ' . $paymentIntent?->status);
+                    wp_send_json_error([
+                        'subscription_status' => $subscription->status,
+                        'payment_intent_status' => $paymentIntent?->status,
+                        'subscription' => $subscription,
+                        'payment_intent' => $paymentIntent,
+                        'post'=>$_POST,
+                        'price' => $priceId,
+                        'customer' => $customer,
+                        'stripe' => $stripe,
+                        'message' => 'Unexpected payment status.'
+                    ]);
+
+                } catch (\Throwable $e) {
+                    if ($signupToken) {
+                        delete_transient(self::SIGNUP_TRANSIENT_PREFIX . $signupToken);
+                    }
+                    error_log('STRIPE CHECKOUT ERROR: ' . $e->getMessage());
+                    error_log($e->getTraceAsString());
+                    wp_send_json_error([
+                        'message' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                }
+            }

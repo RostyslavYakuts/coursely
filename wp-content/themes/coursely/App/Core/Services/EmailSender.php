@@ -31,8 +31,8 @@ class EmailSender
             $year
         ], $html);
         $headers = self::getEmailHeaders();
-        wp_mail($contact, $subject, $message, $headers);
-        return wp_mail($user_email, $subject, $html, $headers);
+
+        return  wp_mail($contact, $subject, $message, $headers);
 
     }
     /**

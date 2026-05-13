@@ -1,6 +1,10 @@
 import $ from 'jquery';
 import { loadStripe } from '@stripe/stripe-js';
 
+/**
+ * @var grecaptcha
+ * @var localizedScript
+ */
 
 export const checkoutHandler = async () => {
 
@@ -8,12 +12,10 @@ export const checkoutHandler = async () => {
     if (!$form.length) return;
 
     const stripe = await loadStripe(localizedScript.spk);
-
     if (!stripe) return;
 
     const elements = stripe.elements();
-
-    const elementStyle = {
+    const style = {
         base: {
             fontSize: '16px',
             color: '#111827',
@@ -24,53 +26,26 @@ export const checkoutHandler = async () => {
         },
     };
 
-    const cardNumber = elements.create('cardNumber', {
-        style: elementStyle,
-    });
-
-    const cardExpiry = elements.create('cardExpiry', {
-        style: elementStyle,
-    });
-
-    const cardCvc = elements.create('cardCvc', {
-        style: elementStyle,
-    });
+    const cardNumber = elements.create('cardNumber', {style: style,});
+    const cardExpiry = elements.create('cardExpiry', {style: style,});
+    const cardCvc = elements.create('cardCvc', {style: style,});
 
     cardNumber.mount('#card_number');
     cardExpiry.mount('#card_expiry');
     cardCvc.mount('#card_cvc');
 
-    let stripeState = {
-        cardNumber: false,
-        cardExpiry: false,
-        cardCvc: false,
-    };
-    cardNumber.on('change', (event) => {
-        stripeState.cardNumber = event.complete;
+    let stripeState = {cardNumber: false, cardExpiry: false, cardCvc: false};
 
-        toggleStripeError('card_number_err', event);
-    });
-
-    cardExpiry.on('change', (event) => {
-        stripeState.cardExpiry = event.complete;
-
-        toggleStripeError('card_expiry_err', event);
-    });
-
-    cardCvc.on('change', (event) => {
-        stripeState.cardCvc = event.complete;
-
-        toggleStripeError('card_cvc_err', event);
-    });
-
+    cardNumber.on('change', (event) => {stripeState.cardNumber = event.complete;toggleStripeError('card_number_err', event);});
+    cardExpiry.on('change', (event) => {stripeState.cardExpiry = event.complete;toggleStripeError('card_expiry_err', event);});
+    cardCvc.on('change', (event) => {stripeState.cardCvc = event.complete;toggleStripeError('card_cvc_err', event);});
 
     $form.on('submit', async function (e) {
 
         e.preventDefault();
 
         const $submit = $(this).find('[type="submit"]');
-
-        $submit.prop('disabled', true);
+        $submit.prop('disabled', true); // Block from resubmit
 
         const params = new URLSearchParams(window.location.search);
         const plan = params.get('price_id');
@@ -90,40 +65,38 @@ export const checkoutHandler = async () => {
             { id: '#subscriber_state', err: '#subscriber_state_err' },
             { id: '#subscriber_zip', err: '#subscriber_zip_err' },
         ];
-        requiredFields.forEach(field => {
-            const value = $(field.id).val();
 
-            if (!value) {
+        requiredFields.forEach(field => {
+            if (!$(field.id).val()) {
                 $(field.err).text('This field is required');
                 hasError = true;
             }
         });
-        if (!stripeState.cardNumber) {
-            $('#card_number_err').text('Card number is incomplete');
+
+        if (!stripeState.cardNumber) {$('#card_number_err').text('Card number is incomplete');hasError = true;}
+        if (!stripeState.cardExpiry) {$('#card_expiry_err').text('Expiration date is incomplete');hasError = true;}
+        if (!stripeState.cardCvc) {$('#card_cvc_err').text('CVC is incomplete');hasError = true;}
+
+        const password = $('#subscriber_password').val();
+        const passwordConfirm = $('#subscriber_password_confirm').val();
+        if (password && passwordConfirm && password !== passwordConfirm) {
+            $('#subscriber_password_confirm_err').text('Passwords do not match');
             hasError = true;
         }
 
-        if (!stripeState.cardExpiry) {
-            $('#card_expiry_err').text('Expiration date is incomplete');
-            hasError = true;
-        }
 
-        if (!stripeState.cardCvc) {
-            $('#card_cvc_err').text('CVC is incomplete');
-            hasError = true;
-        }
 
         const email = $('#subscriber_email').val();
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             $('#subscriber_email_err').text('Invalid email');
             hasError = true;
         }
+
         const phone = $('#subscriber_phone').val();
-        if (phone.length < 8) {
+        if (phone && phone.length < 8) {
             $('#subscriber_phone_err').text('Invalid phone');
             hasError = true;
         }
-
 
         if (hasError) {
             $submit.prop('disabled', false);
@@ -131,42 +104,55 @@ export const checkoutHandler = async () => {
             return;
         }
 
-        const { paymentMethod, error } =
-            await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardNumber,
-                billing_details: {
-                    name: $('#subscriber_cardholder_name').val(),
-                    email: $('#subscriber_email').val(),
-                    phone: $('#subscriber_phone').val(),
+        let billingName = $('#subscriber_cardholder_name').val();
+        if(!billingName){
+            billingName = $('#subscriber_name').val()
+        }
 
-                    address: {
-                        line1: $('#subscriber_street_address').val(),
-                        line2: $('#subscriber_street_address_2').val(),
-                        city: $('#subscriber_city').val(),
-                        state: $('#subscriber_state').val(),
-                        postal_code: $('#subscriber_zip').val(),
-                        country: $('#subscriber_country').val(),
-                    }
+        const { paymentMethod, error: stripeError } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardNumber,
+            billing_details: {
+                name:  billingName,
+                email: email,
+                phone: phone,
+                address: {
+                    line1: $('#subscriber_street_address').val(),
+                    line2: $('#subscriber_street_address_2').val(),
+                    city: $('#subscriber_city').val(),
+                    state: $('#subscriber_state').val(),
+                    postal_code: $('#subscriber_zip').val(),
+                    country: $('#subscriber_country').val(),
                 }
-            });
+            }
+        });
 
-        if (error) {
-            $('#card_number_err').text(error.message);
+        if (stripeError) {
+            $('#card_number_err').text(stripeError.message);
             $submit.prop('disabled', false);
             return;
         }
 
+
         console.log(paymentMethod);
 
         //Prepare ajax
+
+        let token = '';
+        try {
+            token = await grecaptcha.execute(localizedScript.pk, { action: localizedScript.checkout_action });
+        } catch (recaptchaErr) {
+            $('#card_number_err').text('reCAPTCHA verification failed. Please refresh.');
+            $submit.prop('disabled', false);
+            return;
+        }
+
         const formData = {
             action: localizedScript.checkout_action,
             nonce: localizedScript.checkout_nonce,
             payment_method_id: paymentMethod.id,
             plan_id: plan,
-
-            // Subscriber Details
+            recaptcha_token: token,
             subscriber_name: $('#subscriber_name').val(),
             subscriber_email: $('#subscriber_email').val(),
             subscriber_phone: $('#subscriber_phone').val(),
@@ -184,24 +170,17 @@ export const checkoutHandler = async () => {
             type: 'POST',
             data: formData,
             success: async function (response) {
+                console.log(response);
                 if (response.success) {
+                    // 3D Secure
                     if (response.data.requires_action) {
-                        const { client_secret } = response.data;
-
-                        // show bank modal window
-                        const { error, paymentIntent } = await stripe.confirmCardPayment(client_secret, {
-                            payment_method: { card: cardNumber }
-                        });
-
+                        const { error } = await stripe.confirmCardPayment(response.data.client_secret);
                         if (error) {
-                          // wrong code or other
                             $('#card_number_err').text(error.message);
                             $submit.prop('disabled', false);
                         } else {
-                            // Success 3D Secure
-                            window.location.href = response.data.redirect_url || '/account/';
+                            window.location.href = response.data.redirect_url || '/checkout-success/';
                         }
-
                     }else if (response.data.redirect_url) {
                         // --- no 3D Secure ---
                         window.location.href = response.data.redirect_url;
@@ -211,21 +190,19 @@ export const checkoutHandler = async () => {
                     }
 
                 } else {
-                    $('#card_number_err').text(response.data.message);
+                    $('#card_number_err').text(response.data.message || 'Payment declined.');
                     $submit.prop('disabled', false);
                 }
             },
             error: function (xhr, status, error) {
-                // Technical AJAX error (500, 404, etc)
                 console.error(error);
                 $('#card_number_err').text('An unexpected error occurred. Please try again.');
                 $submit.prop('disabled', false);
             }
         });
-
-
-        $submit.prop('disabled', false);
     });
+
+
 
 
     function toggleStripeError(id, event) {

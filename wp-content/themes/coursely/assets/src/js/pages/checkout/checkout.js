@@ -5,4 +5,5 @@ import {selectCountries} from "@/js/pages/checkout/components/selectCountries";
 
 showPassword();
 selectCountries();
-checkoutHandler();
+
+void checkoutHandler();

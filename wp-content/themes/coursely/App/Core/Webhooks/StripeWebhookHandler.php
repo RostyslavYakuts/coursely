@@ -121,4 +121,50 @@ class StripeWebhookHandler
             false
         );
     }
+    public function handle_stripe_webhook(): void
+    {
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
+        $endpoint_secret = 'whsec_...'; // Ваш секрет вебхуку з кабінету Stripe
+
+        try {
+            $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+        } catch (\Exception $e) {
+            status_header(400);
+            exit();
+        }
+
+        // Обробляємо подію успішної оплати інвойсу підписки
+        if ($event->type === 'invoice.paid') {
+            $invoice = $event->data->object;
+
+            // Ігноруємо поодинокі замовлення, нам потрібні лише підписки
+            if (!empty($invoice->subscription)) {
+                $customerEmail = $invoice->customer_email;
+                $customerId    = $invoice->customer;
+
+                // 1. Перевіряємо, чи існує вже юзер в WordPress
+                $user_id = email_exists($customerEmail);
+
+                if (!$user_id) {
+                    // 2. Якщо юзера немає — створюємо його автоматично
+                    $random_password = wp_generate_password(12, false);
+                    $user_id = wp_create_user($customerEmail, $random_password, $customerEmail);
+
+                    // 3. Зберігаємо Stripe Customer ID у метаполя юзера для майбутнього менеджменту
+                    update_user_meta($user_id, 'stripe_customer_id', $customerId);
+                    update_user_meta($user_id, 'stripe_subscription_id', $invoice->subscription);
+
+                    // 4. Відправляємо email користувачу з його згенерованим паролем та лінком на курс
+                    wp_new_user_notification($user_id, null, 'both');
+                } else {
+                    // Якщо юзер вже існує (наприклад, купує другий курс), просто оновлюємо його рівень доступу
+                    update_user_meta($user_id, 'stripe_subscription_id', $invoice->subscription);
+                }
+            }
+        }
+
+        status_header(200);
+        exit();
+    }
 }
