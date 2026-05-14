@@ -12,6 +12,7 @@ module.exports = {
 		main:'./assets/src/js/main.js',
 		account:'./assets/src/js/pages/account/account.js',
 		checkout:'./assets/src/js/pages/checkout/checkout.js',
+		processing:'./assets/src/js/pages/processing/processing.js',
 		home:'./assets/src/js/pages/home/home.js',
 		courses:'./assets/src/js/pages/courses/courses.js',
 		about:'./assets/src/js/pages/about/about.js',

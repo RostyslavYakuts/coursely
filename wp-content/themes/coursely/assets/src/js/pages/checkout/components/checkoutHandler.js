@@ -206,7 +206,7 @@ export const checkoutHandler = async () => {
                             $('#card_number_err').text('Error occurred.');
                             return;
                         }
-                        console.log('Payment processing…');
+
                         window.location.href = `${response.data.redirect_url}?token=${response.data.signup_token}`;
 
                     }else if (response.data.redirect_url) {

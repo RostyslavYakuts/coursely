@@ -10,6 +10,7 @@ use coursely\App\Core\Handlers\AjaxAccountHandler;
 use coursely\App\Core\Handlers\AjaxAuthHandler;
 use coursely\App\Core\Handlers\AjaxCancelSubscription;
 use coursely\App\Core\Handlers\AjaxCheckout;
+use coursely\App\Core\Handlers\AjaxCheckoutStatus;
 use coursely\App\Core\Handlers\AjaxHandler;
 use coursely\App\Core\Helpers\FilterDataCustomisationHelper;
 use coursely\App\Core\Setup\ACFInteractionSetup;
@@ -55,6 +56,7 @@ class Bootstrap
         new AjaxAccountHandler();
         new AjaxCheckout();
         new AjaxCancelSubscription();
+        new AjaxCheckoutStatus();
         new StripeWebhookHandler();
         new DateShortcodes()->register();
         new RestAPISetup();

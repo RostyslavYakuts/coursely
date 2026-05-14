@@ -1,0 +1,2 @@
+(()=>{"use strict";(()=>{const e=document.querySelector("[data-signup-token]");if(!e)return;const t=e.dataset.signupToken,a=e.dataset.nonce,n=setInterval(async()=>{const e=await fetch(localizedScript.ajax_url,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams({action:"check_checkout_status",token:t,nonce:a})}),c=await e.json();console.log(c),c.success&&c.data.ready&&(clearInterval(n),window.location.href=c.data.redirect_url)},2e3)})()})();
+//# sourceMappingURL=processing.6a12785f404abe319ae0.js.map

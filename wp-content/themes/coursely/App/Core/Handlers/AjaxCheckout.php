@@ -40,11 +40,19 @@ class AjaxCheckout
             $activeSub = $this->getActiveSubscription($stripe, $customer->id);
 
             // Case user already has this plan as active subscription
-            if ($activeSub && CheckoutHelper::isSamePlan($activeSub, $plan['id'])) {
-               wp_send_json_error(['message' => 'This plan is already actual. No action needed',]);
+            if ($activeSub && CheckoutHelper::isSamePlan($activeSub, $plan['stripe_price_id'])) {
+                if ($activeSub->status === 'active') {
+                    wp_send_json_error(
+                        [
+                            'message' => 'This plan is already actual. No action needed',
+                            'plan'=>$plan,
+                            'active_subscription'=>$activeSub,
+                            'customer'=>$customer,
+                        ]);
+                }
             }
             if ($activeSub) {
-                $subscription = $this->updateSubscription($stripe, $activeSub, $plan['id'], $data['payment_method_id']);
+                $subscription = $this->updateSubscription($stripe, $activeSub, $plan['stripe_price_id'], $data['payment_method_id']);
             } else {
                 $subscription = $this->createSubscription($stripe, $customer->id, $plan['stripe_price_id'], $data['payment_method_id'], $signupToken);
             }

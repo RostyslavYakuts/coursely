@@ -92,7 +92,7 @@ $user_data = $data['user_data'];
 
                     <span id="subscriber_country_err" class="input-error"></span>
                 </div>
-                <div class="mt-5 flex justify-between items-center gap-5">
+                <div class="mt-5 flex flex-col lgx:flex-row lgx:justify-between lgx:items-center gap-5">
                     <div class="input-block relative flex flex-col gap-1">
                         <label class="font-medium"  for="subscriber_state"><?php echo e(__('State','coursely')); ?><sup class="text-brand">*</sup></label>
                         <input required class="bg-transparent rounded-lg active:border-brand h-[44px] py-[10px] px-[12px] border border-gray" placeholder="<?php echo e(__('Enter state','coursely')); ?>" type="text" id="subscriber_state" name="subscriber_state" value="<?php echo e($user_data['user_state'] ?? ''); ?>">
@@ -103,7 +103,6 @@ $user_data = $data['user_data'];
                         <input required class="bg-transparent rounded-lg active:border-brand h-[44px] py-[10px] px-[12px] border border-gray" placeholder="<?php echo e(__('Enter postcode','coursely')); ?>" type="text" id="subscriber_zip" name="subscriber_zip" value="<?php echo e($user_data['user_postal_code'] ?? ''); ?>">
                         <span id="subscriber_zip_err" class="input-error"></span>
                     </div>
-
                 </div>
 
                 <h2 class="mt-10 font-bold text-[24px]"><?php echo e(__('Payment Details','coursely')); ?></h2>
@@ -121,7 +120,7 @@ $user_data = $data['user_data'];
                         <span id="card_number_err" class="input-error"></span>
                     </div>
 
-                    <div class="mt-5 grid grid-cols-2 gap-4">
+                    <div class="mt-5 grid grid-cols-1 lgx:grid-cols-2 gap-4">
                         <div class="input-block relative flex flex-col gap-1">
                             <span class="font-medium"><?php echo e(__('Expiration Date','coursely')); ?><sup class="text-brand">*</sup></span>
                             <div id="card_expiry" class="rounded-lg active:border-brand h-[44px] py-[10px] px-[12px] border border-gray"></div>
