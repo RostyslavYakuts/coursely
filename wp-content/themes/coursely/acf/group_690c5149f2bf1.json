@@ -60,6 +60,26 @@
             "append": ""
         },
         {
+            "key": "field_6a05b52357a1f",
+            "label": "Stripe Webhook Secret",
+            "name": "stripe_webhook_secret",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_6943fc594929f",
             "label": "Recaptcha",
             "name": "",
@@ -438,6 +458,27 @@
             "button_label": "Add Row",
             "rows_per_page": 20,
             "sub_fields": [
+                {
+                    "key": "field_6a04d5266adad",
+                    "label": "Name",
+                    "name": "name",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_69f1d4a01f32b"
+                },
                 {
                     "key": "field_69f1d63c1f331",
                     "label": "Type",
@@ -977,5 +1018,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1778589910
+    "modified": 1778758966
 }

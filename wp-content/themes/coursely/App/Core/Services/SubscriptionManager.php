@@ -45,6 +45,7 @@ class SubscriptionManager
             'plan_interval' => $subscription->plan_interval,
             'stripe_price_id' => $subscription->stripe_price_id,
             'expires_at' => $subscription->current_period_end,
+            'stripe_subscription_id' => $subscription->stripe_subscription_id,
         ];
     }
 }

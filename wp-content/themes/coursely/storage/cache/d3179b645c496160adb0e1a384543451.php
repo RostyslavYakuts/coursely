@@ -18,6 +18,7 @@
 <?php if($active_plan && $data['plans']): ?>
     <?php
         $stripe_price_id = $active_plan->stripe_price_id;
+        $stripe_subscription_id = $active_plan->stripe_subscription_id;
     ?>
     <div class="container">
         <div class="plans-wrapper mt-16 grid grid-cols-1 md:grid-cols-2 lgx:grid-cols-4 gap-5">
@@ -28,7 +29,7 @@
                     <?php if($plan['stripe_price_id'] === $stripe_price_id): ?>
                     <div class="flex justify-between items-center gap-2">
                          <span class="font-bold text-[20px] lgx:text-[24px]">
-                            <?php echo e($plan['duration']); ?>
+                            <?php echo e($plan['name']); ?>
 
                         </span>
                         <span class="font-medium text-xs rounded-[8px] bg-brand text-white py-1.5 px-2">
@@ -38,7 +39,7 @@
                     </div>
                     <?php else: ?>
                         <span class="font-bold text-[20px] lgx:text-[24px]">
-                            <?php echo e($plan['duration']); ?>
+                            <?php echo e($plan['name']); ?>
 
                         </span>
                     <?php endif; ?>
@@ -61,17 +62,23 @@
                         </span>
                         <span class="text-brand-text">/<?php echo e($plan['per_period']); ?></span>
                     </span>
+                    <?php
+                        $is_current_plan = ($plan['stripe_price_id'] === $stripe_price_id);
+                    ?>
+                    <?php if(!$is_current_plan): ?>
+                        <a href="<?php echo e(get_home_url().'/checkout?price_id='.$plan['get_parameter_plan_key']); ?>"
+                           data-plan-type="<?php echo e($plan['type']); ?>"
+                           class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
+                            <?php echo e(__('Change','coursely')); ?>
 
-                    <a href="<?php echo e(get_home_url()); ?>/checkout?price_id=<?php echo e($plan['get_parameter_plan_key']); ?>"
-                       data-plan-type="<?php echo e($plan['type']); ?>"
-                       class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
-                        <?php echo e($data['plans_cta']); ?>
+                        </a>
+                    <?php else: ?>
+                         <button data-nonce="<?php echo e(wp_create_nonce('cancel_subscription')); ?>"  data-subscription_id="<?php echo e($stripe_subscription_id); ?>" data-stripe_price_id="<?php echo e($plan['stripe_price_id']); ?>"
+                               class="cancel-subscription-js bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
+                                <?php echo e(__('Cancel subscription','coursely')); ?>
 
-                        <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.16667 1L15 7M15 7L9.16667 13M15 7L1 7" stroke="#111230" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
+                         </button>
+                    <?php endif; ?>
 
                     <div class="w-full h-[1px] bg-brand-gray"></div>
 
@@ -109,7 +116,7 @@
                      data-type="<?php echo e($plan['type']); ?>">
 
                     <span class="font-bold text-[20px] lgx:text-[24px] <?php echo e($plan['is_popular'] ? 'text-white' :'text-brand-dark'); ?>">
-                        <?php echo e($plan['duration']); ?>
+                        <?php echo e($plan['name']); ?>
 
                     </span>
 

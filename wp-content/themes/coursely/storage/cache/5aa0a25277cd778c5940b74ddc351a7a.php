@@ -8,5 +8,5 @@
         <?php echo e($data['description']); ?>
 
     </p>
-    <?php echo $__env->make('global.pricing',['user_data'=>['current_user_id'=>$data['current_user_id'],'']], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+    <?php echo $__env->make('global.pricing', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 </section><?php /**PATH /var/www/html/wp-content/themes/coursely/App/Views/page/pricing/plans.blade.php ENDPATH**/ ?>

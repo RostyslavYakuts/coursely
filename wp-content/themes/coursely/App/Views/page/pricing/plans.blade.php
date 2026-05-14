@@ -6,5 +6,5 @@
     <p class="mt-5 text-lg text-brand-text text-center">
         {{$data['description']}}
     </p>
-    @include('global.pricing',['user_data'=>['current_user_id'=>$data['current_user_id'],'']])
+    @include('global.pricing')
 </section>

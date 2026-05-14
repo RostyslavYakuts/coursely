@@ -53,7 +53,7 @@ export const checkoutHandler = async () => {
         $('.input-error').text('');
         let hasError = false;
 
-        const requiredFields = [
+        let requiredFields = [
             { id: '#subscriber_name', err: '#subscriber_name_err' },
             { id: '#subscriber_email', err: '#subscriber_email_err' },
             { id: '#subscriber_phone', err: '#subscriber_phone_err' },
@@ -65,6 +65,18 @@ export const checkoutHandler = async () => {
             { id: '#subscriber_state', err: '#subscriber_state_err' },
             { id: '#subscriber_zip', err: '#subscriber_zip_err' },
         ];
+        if( localizedScript.is_user_logged_in){
+            requiredFields = [
+                { id: '#subscriber_name', err: '#subscriber_name_err' },
+                { id: '#subscriber_email', err: '#subscriber_email_err' },
+                { id: '#subscriber_phone', err: '#subscriber_phone_err' },
+                { id: '#subscriber_street_address', err: '#subscriber_street_address_err' },
+                { id: '#subscriber_city', err: '#subscriber_city_err' },
+                { id: '#subscriber_country', err: '#subscriber_country_err' },
+                { id: '#subscriber_state', err: '#subscriber_state_err' },
+                { id: '#subscriber_zip', err: '#subscriber_zip_err' },
+            ];
+        }
 
         requiredFields.forEach(field => {
             if (!$(field.id).val()) {
@@ -77,12 +89,17 @@ export const checkoutHandler = async () => {
         if (!stripeState.cardExpiry) {$('#card_expiry_err').text('Expiration date is incomplete');hasError = true;}
         if (!stripeState.cardCvc) {$('#card_cvc_err').text('CVC is incomplete');hasError = true;}
 
-        const password = $('#subscriber_password').val();
-        const passwordConfirm = $('#subscriber_password_confirm').val();
-        if (password && passwordConfirm && password !== passwordConfirm) {
-            $('#subscriber_password_confirm_err').text('Passwords do not match');
-            hasError = true;
+        let password = '';
+        let passwordConfirm = '';
+        if(! localizedScript.is_user_logged_in){
+            password = $('#subscriber_password').val();
+            passwordConfirm = $('#subscriber_password_confirm').val();
+            if (password && passwordConfirm && password !== passwordConfirm) {
+                $('#subscriber_password_confirm_err').text('Passwords do not match');
+                hasError = true;
+            }
         }
+
 
 
 
@@ -104,16 +121,18 @@ export const checkoutHandler = async () => {
             return;
         }
 
-        let billingName = $('#subscriber_cardholder_name').val();
-        if(!billingName){
-            billingName = $('#subscriber_name').val()
+        const billingName = $('#subscriber_cardholder_name').val();
+        const firstName = $('#subscriber_name').val()
+        let name = billingName;
+        if(!name){
+            name = firstName;
         }
 
         const { paymentMethod, error: stripeError } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardNumber,
             billing_details: {
-                name:  billingName,
+                name:  name,
                 email: email,
                 phone: phone,
                 address: {
@@ -153,10 +172,11 @@ export const checkoutHandler = async () => {
             payment_method_id: paymentMethod.id,
             plan_id: plan,
             recaptcha_token: token,
-            subscriber_name: $('#subscriber_name').val(),
+            subscriber_name: firstName,
+            subscriber_cardholder_name: billingName,
             subscriber_email: $('#subscriber_email').val(),
             subscriber_phone: $('#subscriber_phone').val(),
-            subscriber_password: $('#subscriber_password').val(),
+            subscriber_password: password,
             subscriber_street_address: $('#subscriber_street_address').val(),
             subscriber_street_address_2: $('#subscriber_street_address_2').val(),
             subscriber_city: $('#subscriber_city').val(),
@@ -173,17 +193,25 @@ export const checkoutHandler = async () => {
                 console.log(response);
                 if (response.success) {
                     // 3D Secure
-                    if (response.data.requires_action) {
-                        const { error } = await stripe.confirmCardPayment(response.data.client_secret);
+                    if (response.data.client_secret) {
+                        const { error } = await stripe.confirmPayment({
+                            clientSecret: response.data.client_secret,
+                            confirmParams: {
+                                return_url: `${response.data.redirect_url}?token=${response.data.signup_token}`
+                            },
+                            redirect: 'if_required'
+                        });
                         if (error) {
-                            $('#card_number_err').text(error.message);
-                            $submit.prop('disabled', false);
-                        } else {
-                            window.location.href = response.data.redirect_url || '/checkout-success/';
+                            console.log(error.message);
+                            $('#card_number_err').text('Error occurred.');
+                            return;
                         }
+                        console.log('Payment processing…');
+                        window.location.href = `${response.data.redirect_url}?token=${response.data.signup_token}`;
+
                     }else if (response.data.redirect_url) {
                         // --- no 3D Secure ---
-                        window.location.href = response.data.redirect_url;
+                        window.location.href = `${response.data.redirect_url}?token=${response.data.signup_token}`;
                     }else {
                         $('#card_number_err').text('Payment successful, but redirect failed.');
                         $submit.prop('disabled', false);
