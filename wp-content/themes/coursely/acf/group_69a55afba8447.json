@@ -260,7 +260,7 @@
             {
                 "param": "user_role",
                 "operator": "==",
-                "value": "editor"
+                "value": "subscriber"
             }
         ]
     ],
@@ -273,5 +273,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1778757952
+    "modified": 1778836744
 }

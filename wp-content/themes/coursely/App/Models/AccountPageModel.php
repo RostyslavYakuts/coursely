@@ -40,7 +40,8 @@ class AccountPageModel implements ModelInterface
             'avatar' => $avatar,
             'logout_url'=>wp_logout_url(home_url()),
             'invoices' => $this->get_user_invoices($user_id) ?? [],
-            'active_subscription'=>$active_subscription,
+            'active_subscription'=>$active_subscription ?? [],
+            'plan_name'=>$active_subscription['plan_name'] ?? '',
             'active_subscription_price'=>$active_subscription_price,
             'activate_subscription_link'=>get_field('activate_subscription_link','options'),
             'next_payment' => !empty($active_subscription['current_period_end'])
@@ -93,7 +94,7 @@ class AccountPageModel implements ModelInterface
         );
     }
 
-    public function get_subscription_price_by_stripe_price_id($stripe_price_id){
+    public function get_subscription_price_by_stripe_price_id($stripe_price_id):string{
         $plans = get_field('plans','options') ?? [];
         $price = '';
         if($plans){

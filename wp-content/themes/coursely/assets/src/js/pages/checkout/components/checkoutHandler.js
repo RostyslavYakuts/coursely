@@ -128,6 +128,10 @@ export const checkoutHandler = async () => {
             name = firstName;
         }
 
+        const $select = $('#subscriber_country');
+        const countryCode = $select.val();
+        const country  = $select.find('option:selected').text();
+
         const { paymentMethod, error: stripeError } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardNumber,
@@ -141,7 +145,7 @@ export const checkoutHandler = async () => {
                     city: $('#subscriber_city').val(),
                     state: $('#subscriber_state').val(),
                     postal_code: $('#subscriber_zip').val(),
-                    country: $('#subscriber_country').val(),
+                    country: countryCode,
                 }
             }
         });
@@ -166,6 +170,8 @@ export const checkoutHandler = async () => {
             return;
         }
 
+
+
         const formData = {
             action: localizedScript.checkout_action,
             nonce: localizedScript.checkout_nonce,
@@ -182,7 +188,8 @@ export const checkoutHandler = async () => {
             subscriber_city: $('#subscriber_city').val(),
             subscriber_state: $('#subscriber_state').val(),
             subscriber_zip: $('#subscriber_zip').val(),
-            subscriber_country: $('#subscriber_country').val(),
+            subscriber_country: country,
+            subscriber_country_code: countryCode,
         };
 
         $.ajax({

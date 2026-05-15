@@ -27,7 +27,10 @@ class AjaxCheckoutStatus
             $signupData = get_transient('coursely_signup_' . $token);
 
             if (!$signupData) {
-                wp_send_json_success(['ready' => false]);
+                wp_send_json_success([
+                    'signup_data'=>$signupData,
+                    'ready' => false,
+                ]);
             }
 
             $userId = email_exists($signupData['email']);
@@ -40,7 +43,9 @@ class AjaxCheckoutStatus
             // auto login
             wp_set_current_user($userId);
             wp_set_auth_cookie($userId, true);
-
+            if ($token) {
+                delete_transient('coursely_signup_' . $token);
+            }
             wp_send_json_success([
                 'ready' => true,
                 'redirect_url' => home_url('/account/')

@@ -11,7 +11,7 @@
     <div class="border border-gray rounded-[8px] p-4 mt-8">
         <span class="text-lg text-brand-text">{{__('Current plan','coursely')}}:</span>
         <div class="mt-2 flex flex-row gap-2 text-[20px]">
-            <b class="">{{$data['active_subscription']['plan_name']}}</b>
+            <b class="">{{$data['plan_name']}}</b>
             <span class="text-brand">(${{$data['active_subscription_price']}})</span>
         </div>
         <div class="flex flex-col gap-8 md:flex-row md:justify-between md:items-center mt-2">
@@ -68,7 +68,11 @@
         @if($data['invoices'])
             @foreach($data['invoices'] as $invoice)
                 <div class="invoice grid grid-cols-5 text-sm">
-                    <div class="p-3">{{$invoice['stripe_invoice_id']}}</div>
+                    <div class="p-3">
+                        <span class="block max-w-[160px] truncate cursor-pointer" title="{{$invoice['stripe_invoice_id']}}">
+                         {{$invoice['stripe_invoice_id']}}
+                        </span>
+                    </div>
                     <div class="p-3">
                         @php
                             $created_date = new \DateTime($invoice['created_at']);

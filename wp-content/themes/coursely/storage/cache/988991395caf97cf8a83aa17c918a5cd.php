@@ -12,7 +12,7 @@
     <div class="border border-gray rounded-[8px] p-4 mt-8">
         <span class="text-lg text-brand-text"><?php echo e(__('Current plan','coursely')); ?>:</span>
         <div class="mt-2 flex flex-row gap-2 text-[20px]">
-            <b class=""><?php echo e($data['active_subscription']['plan_name']); ?></b>
+            <b class=""><?php echo e($data['plan_name']); ?></b>
             <span class="text-brand">($<?php echo e($data['active_subscription_price']); ?>)</span>
         </div>
         <div class="flex flex-col gap-8 md:flex-row md:justify-between md:items-center mt-2">
@@ -71,7 +71,12 @@
         <?php if($data['invoices']): ?>
             <?php $__currentLoopData = $data['invoices']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $invoice): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="invoice grid grid-cols-5 text-sm">
-                    <div class="p-3"><?php echo e($invoice['stripe_invoice_id']); ?></div>
+                    <div class="p-3">
+                        <span class="block max-w-[160px] truncate cursor-pointer" title="<?php echo e($invoice['stripe_invoice_id']); ?>">
+                         <?php echo e($invoice['stripe_invoice_id']); ?>
+
+                        </span>
+                    </div>
                     <div class="p-3">
                         <?php
                             $created_date = new \DateTime($invoice['created_at']);

@@ -43,6 +43,7 @@ class CheckoutHelper
                 'state' => sanitize_text_field(wp_unslash($_POST['subscriber_state'] ?? '')),
                 'postal_code' => sanitize_text_field(wp_unslash($_POST['subscriber_zip'] ?? '')),
                 'country' => sanitize_text_field(wp_unslash($_POST['subscriber_country'] ?? '')),
+                'country_code' => sanitize_text_field(wp_unslash($_POST['subscriber_country_code'] ?? '')),
             ],
         ];
     }
@@ -82,6 +83,20 @@ class CheckoutHelper
         $plans = get_field('plans', 'options');
         foreach ($plans as $plan) {
             if ($plan['get_parameter_plan_key'] === $planId) {
+                return $plan;
+            }
+        }
+        throw new \Exception('Invalid plan');
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function getPlanByPlanStripePriceId(string $stripe_price_id): array
+    {
+        $plans = get_field('plans', 'options');
+        foreach ($plans as $plan) {
+            if ($plan['stripe_price_id'] === $stripe_price_id) {
                 return $plan;
             }
         }

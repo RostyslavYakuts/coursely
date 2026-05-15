@@ -2,6 +2,7 @@
 
 namespace coursely\App\Core\Webhooks;
 
+use coursely\App\Core\Helpers\CheckoutHelper;
 use Stripe\StripeClient;
 
 class StripeWebhookHelper
@@ -28,10 +29,10 @@ class StripeWebhookHelper
      * EVENT: payment_intent.succeeded
      * ==============================
      */
-    public function handlePaymentSuccess(object $paymentIntent): void
+    public function handlePaymentIntentSucceeded(object $paymentIntent): void
     {
-        error_log('PAYMENT SUCCESS');
-        error_log(print_r($paymentIntent, true));
+        error_log('Payment Intent Succeeded');
+        //error_log(print_r($paymentIntent, true));
     }
 
     /**
@@ -111,11 +112,14 @@ class StripeWebhookHelper
         update_field('state', $data['address']['state'], 'user_' . $userId);
         update_field('postal_code', $data['address']['postal_code'], 'user_' . $userId);
         update_field('country', $data['address']['country'], 'user_' . $userId);
+        update_field('country_code', $data['address']['country_code'], 'user_' . $userId);
+
 
         $this->syncSubscription($userId, $subscription);
+        $this->saveInvoice($invoice, $subscription, $userId);
 
         if ($signupToken) {
-            delete_transient('coursely_signup_' . $signupToken);
+            //delete_transient('coursely_signup_' . $signupToken);
         }
     }
 
@@ -188,28 +192,28 @@ class StripeWebhookHelper
      * ==============================
      * SYNC DB
      * ==============================
+     * @throws \Exception
      */
     private function syncSubscription(int $userId, object $subscription): void
     {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
-        if (empty($subscription->items->data[0])) {
-            return;
-        }
+
         $priceData = $subscription->items->data[0]->price;
         $priceId = $priceData->id;
-        $planName = $priceId;
-        // If need $stripe->products->retrieve($priceData->product);
+        $planName = CheckoutHelper::getPlanByPlanStripePriceId($priceId)['name'];
+        error_log("Plan Name: " . $planName);
+
         $data = [
             'user_id' => $userId,
             'stripe_subscription_id' => $subscription->id,
             'stripe_customer_id' => $subscription->customer,
             'stripe_price_id' => $priceId,
-            'plan_name' => $priceId,
+            'plan_name' => $planName,
             'plan_interval' => $subscription->items->data[0]->price->recurring->interval,
             'status' => $subscription->status,
-            'current_period_start' => date('Y-m-d H:i:s', $subscription->current_period_start),
-            'current_period_end' => date('Y-m-d H:i:s', $subscription->current_period_end),
+            'current_period_start' => date('Y-m-d H:i:s', $subscription->items->data[0]->current_period_start),
+            'current_period_end'   => date('Y-m-d H:i:s', $subscription->items->data[0]->current_period_end),
             'cancel_at_period_end' => $subscription->cancel_at_period_end ? 1 : 0,
         ];
 
@@ -223,6 +227,51 @@ class StripeWebhookHelper
         } else {
             $wpdb->insert($table, $data);
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function saveInvoice(object $invoice, $subscription, $userId): void
+    {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'coursely_invoices';
+        $item = $subscription->items->data[0] ?? null;
+        $data = [
+            'user_id' => $this->getUserIdByCustomerId($invoice->customer) ?? $userId, //must match wp user id
+            'stripe_invoice_id' => $invoice->id,
+            'stripe_payment_intent_id' => $invoice->payment_intent ?? null,
+            'stripe_subscription_id' => $invoice->subscription ?? null,
+            'total' => $invoice->amount_paid / 100,
+            'currency' => $invoice->currency,
+            'status' => $invoice->status,
+            'type' => $invoice->billing_reason ?? null,
+            'invoice_url' => $invoice->invoice_pdf ?? null,
+            'hosted_invoice_url' => $invoice->hosted_invoice_url ?? null,
+            'metadata' => maybe_serialize($invoice->metadata ?? []),
+            'paid_at' => !empty($invoice->status_transitions->paid_at)
+                ? date('Y-m-d H:i:s', $invoice->status_transitions->paid_at)
+                : null,
+            'refunded_at' => null,
+            'plan_name' => $item
+                ? CheckoutHelper::getPlanByPlanStripePriceId($item->price->id)['name']
+                : null,
+            'plan_interval' => $item?->price?->recurring?->interval,
+        ];
+
+        $wpdb->insert($table, $data);
+    }
+
+    private function getUserIdByCustomerId(string $customerId): ?int
+    {
+        $users = get_users([
+            'meta_key' => 'stripe_customer_id',
+            'meta_value' => $customerId,
+            'number' => 1
+        ]);
+
+        return $users[0]->ID ?? null;
     }
 
     private function syncSubscriptionByStripe(object $subscription): void

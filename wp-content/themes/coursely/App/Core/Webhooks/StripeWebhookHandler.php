@@ -27,7 +27,6 @@ class StripeWebhookHandler
     public function handleWebhook(\WP_REST_Request $request): void
     {
         error_log('WEBHOOK HIT');
-        error_log(print_r($request, true));
         //$payload = file_get_contents('php://input');
         $payload = $request->get_body();
         $signature = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
@@ -69,7 +68,7 @@ class StripeWebhookHandler
         switch ($event->type) {
 
             case 'payment_intent.succeeded':
-                $this->helper->handlePaymentSuccess($event->data->object);
+                $this->helper->handlePaymentIntentSucceeded($event->data->object);
                 break;
 
             case 'payment_intent.canceled':
