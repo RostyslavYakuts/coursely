@@ -24,15 +24,22 @@ class StripeWebhookHandler
         ]);
     }
 
-    public function handleWebhook(): void
+    public function handleWebhook(\WP_REST_Request $request): void
     {
-        $payload = file_get_contents('php://input');
+        error_log('WEBHOOK HIT');
+        error_log(print_r($request, true));
+        //$payload = file_get_contents('php://input');
+        $payload = $request->get_body();
         $signature = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
         $secret = $this->helper->getWebhookSecret();
 
         try {
             $event = Webhook::constructEvent($payload, $signature, $secret);
         } catch (\Throwable $e) {
+            error_log('PAYLOAD: ' . $payload);
+            error_log('SIG: ' . $signature);
+            error_log('SECRET: ' . $secret);
+            error_log($e->getMessage());
             error_log('Stripe Webhook Signature Verification Failed: ' . $e->getMessage());
             status_header(400);
             exit;
@@ -60,6 +67,14 @@ class StripeWebhookHandler
     private function process(object $event): void
     {
         switch ($event->type) {
+
+            case 'payment_intent.succeeded':
+                $this->helper->handlePaymentSuccess($event->data->object);
+                break;
+
+            case 'payment_intent.canceled':
+                $this->helper->handlePaymentCanceled($event->data->object);
+                break;
 
             case 'invoice.paid':
                 $this->helper->handleInvoicePaid($event->data->object);

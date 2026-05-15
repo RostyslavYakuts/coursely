@@ -90,13 +90,8 @@
                     <?php if($plan['features']): ?>
                         <?php $__currentLoopData = $plan['features']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $feature): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="flex flex-row gap-3 items-center text-brand-text">
-                                <?php if($plan['is_popular']): ?>
-                                    <?php echo $feature_svg_popular; ?>
+                                <?php echo $feature_svg; ?>
 
-                                <?php else: ?>
-                                    <?php echo $feature_svg; ?>
-
-                                <?php endif; ?>
                                 <span><?php echo e($feature['feature']); ?></span>
                             </div>
 

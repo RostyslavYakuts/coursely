@@ -65,6 +65,19 @@ services:
     depends_on:
       - db
 
+  stripe:
+    image: stripe/stripe-cli
+    container_name: stripe
+    entrypoint: ["stripe"]
+    command: >
+      listen
+      --api-key ${STRIPE_SECRET}
+      --forward-to http://nginx/wp-json/coursely/v1/stripe/webhook
+      --skip-update
+      --skip-verify
+    depends_on:
+      - nginx
+
 volumes:
   db-data:
   redis-data:

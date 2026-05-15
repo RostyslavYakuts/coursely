@@ -81,11 +81,7 @@
                     @if($plan['features'])
                         @foreach($plan['features'] as $feature)
                             <div class="flex flex-row gap-3 items-center text-brand-text">
-                                @if($plan['is_popular'])
-                                    {!! $feature_svg_popular !!}
-                                @else
-                                    {!! $feature_svg !!}
-                                @endif
+                                {!! $feature_svg !!}
                                 <span>{{$feature['feature']}}</span>
                             </div>
 

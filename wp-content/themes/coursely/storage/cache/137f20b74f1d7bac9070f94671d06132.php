@@ -1,6 +1,6 @@
 
 <section class="container ">
-    <div class="mt-10 bg-white rounded-[20px] brand-shadow px-6 py-10 flex justify-between items-center gap-5">
+    <div class="mt-10 bg-white rounded-[20px] brand-shadow px-6 py-10 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-5">
         <div class="flex flex-col gap-5 justify-center items-center">
             <svg width="54" height="54" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="54" height="54" rx="27" fill="#1C55E0" fill-opacity="0.1"/>

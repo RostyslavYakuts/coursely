@@ -25,6 +25,28 @@ class StripeWebhookHelper
 
     /**
      * ==============================
+     * EVENT: payment_intent.succeeded
+     * ==============================
+     */
+    public function handlePaymentSuccess(object $paymentIntent): void
+    {
+        error_log('PAYMENT SUCCESS');
+        error_log(print_r($paymentIntent, true));
+    }
+
+    /**
+     * ==============================
+     * EVENT: payment_intent.canceled
+     * ==============================
+     */
+    public function handlePaymentCanceled(object $paymentIntent): void
+    {
+        error_log('PAYMENT CANCELED');
+        error_log(print_r($paymentIntent, true));
+    }
+
+    /**
+     * ==============================
      * EVENT: invoice.paid
      * ==============================
      */

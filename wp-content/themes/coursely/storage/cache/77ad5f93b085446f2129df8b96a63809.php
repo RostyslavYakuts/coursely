@@ -1,9 +1,5 @@
 
-<?php
-    use coursely\App\Core\Helpers\CheckoutHelper;
-    $plan = CheckoutHelper::getPlanByPlanId('quarterly');
-    var_dump($plan);
-?>
+
 <section class="w-full container">
     <h1 class="font-bold text-center text-[32px] lgx:text-[48px]  mt-10">
         <?php echo e($data['h1']); ?>
