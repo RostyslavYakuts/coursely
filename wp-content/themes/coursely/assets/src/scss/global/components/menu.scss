@@ -39,7 +39,11 @@
 		align-items: center;
 		flex-direction: column;
 		.mobile-login{
-			padding-bottom: 35px;
+			.mobile-login-link{
+				backdrop-filter: blur(48px)
+			}
+
+			margin-bottom: 35px;
 		}
 	}
 }

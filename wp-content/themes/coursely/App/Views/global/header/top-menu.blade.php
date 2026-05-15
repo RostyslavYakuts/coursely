@@ -13,7 +13,7 @@ l:relative l:flex l:items-center top-0 left-0 w-full l:w-auto l:top-inherit l:le
 	</div>
 	<div class="mobile-login w-full flex lgx:hidden gap-x-2 justify-center items-center text-sm">
 		@if(is_user_logged_in())
-			<a href="{{$home}}/account">
+			<a class="mobile-login-link w-full p-1.5 rounded-full flex justify-center items-center gap-2 " href="{{$home}}/account">
 				@php
 					$user_id = get_current_user_id();
                     $user_photo = get_field('user_photo','user_'.$user_id) ?? [];
@@ -26,6 +26,7 @@ l:relative l:flex l:items-center top-0 left-0 w-full l:w-auto l:top-inherit l:le
 				@else
 					{!! $avatar !!}
 				@endif
+				{{__('My account','coursely')}}
 			</a>
 		@else
 			<button class="login-js brand-btn w-full h-[41px] text-white bg-[#FFFFFF22] hover:bg-brand border border-[#FFFFFF33]">
