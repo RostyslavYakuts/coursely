@@ -67,7 +67,7 @@
         </div>
        {!! $data['thumbnail'] !!}
     </div>
-    <div class="px-8 content gap-5 flex flex-col lgx:flex-row items-start ">
+    <div class="lgx:px-8 content gap-5 flex flex-col lgx:flex-row items-start ">
         <div class="gutenberg-content prose prose-base w-full flex flex-col gap-0">
             {!! $data['content'] !!}
             @include('single.course.modules')
