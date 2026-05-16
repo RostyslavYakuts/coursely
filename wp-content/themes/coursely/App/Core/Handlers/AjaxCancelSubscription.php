@@ -47,10 +47,12 @@ class AjaxCancelSubscription
             $updatedSubscription = $this->stripe->subscriptions->update($subscriptionId, [
                 'cancel_at_period_end' => true
             ]);
+            $cancelDate = $updatedSubscription->current_period_end
+                ?? ($updatedSubscription->items->data[0]->current_period_end ?? null);
 
-            $this->updateLocalSubscription($subscriptionId, $updatedSubscription->cancel_at_period_end);
 
-            $cancelDate = $updatedSubscription->current_period_end;
+            $this->updateLocalSubscription($subscriptionId, $cancelDate);
+
 
             wp_send_json_success([
                 'message' => 'Subscription scheduled for cancellation.',

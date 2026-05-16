@@ -177,7 +177,7 @@ class StripeWebhookHelper
      * ==============================
      * @throws \Exception
      */
-    public function handleSubscriptionUpdated(object $subscription): void
+    public function handleSubscriptionUpdated1(object $subscription): void
     {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
@@ -213,6 +213,76 @@ class StripeWebhookHelper
             }
         }
     }
+    public function handleSubscriptionUpdated(object $subscription): void
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . self::TABLE;
+
+        $userId = $wpdb->get_var($wpdb->prepare(
+            "SELECT user_id FROM $table WHERE stripe_subscription_id = %s",
+            $subscription->id
+        ));
+
+        error_log('handleSubscriptionUpdated userId: ' . $userId);
+
+        if (!$userId) {
+            return;
+        }
+
+        // 1. sync subscription state always
+        $this->syncSubscription($userId, $subscription);
+
+        /**
+         * ==========================
+         * CANCEL FLOW
+         * ==========================
+         */
+        if (!empty($subscription->cancel_at_period_end)) {
+            error_log('Subscription scheduled cancel: ' . $subscription->id);
+
+            $wpdb->update(
+                $table,
+                [
+                    'status' => 'cancel_scheduled',
+                    'current_period_end' => $subscription->current_period_end ?? null,
+                ],
+                ['stripe_subscription_id' => $subscription->id]
+            );
+
+            return; // ❗ важливо: не обробляємо invoice
+        }
+
+        /**
+         * ==========================
+         * UPGRADE / DOWNGRADE FLOW
+         * ==========================
+         */
+        if (!empty($subscription->latest_invoice)) {
+
+            try {
+                $stripe = $this->getStripeClient();
+
+                $invoiceId = is_string($subscription->latest_invoice)
+                    ? $subscription->latest_invoice
+                    : $subscription->latest_invoice->id;
+
+                $invoice = $stripe->invoices->retrieve(
+                    $invoiceId,
+                    [
+                        'expand' => ['payment_intent']
+                    ]
+                );
+
+                // ❗ зберігаємо тільки реальні платежі
+                if (($invoice->amount_paid ?? 0) > 0 && $invoice->status === 'paid') {
+                    $this->saveInvoice($invoice, $subscription, $userId);
+                }
+
+            } catch (\Exception $e) {
+                error_log('Failed to save invoice on subscription update: ' . $e->getMessage());
+            }
+        }
+    }
 
     /**
      * ==============================
@@ -221,10 +291,13 @@ class StripeWebhookHelper
      */
     public function handleSubscriptionDeleted(object $subscription): void
     {
+        $end = $subscription->current_period_end
+            ?? ($subscription->items->data[0]->current_period_end ?? null);
+
         $this->updateStatusBySubscription(
             $subscription->id,
             'canceled',
-            $subscription->canceled_at ?? current_time('timestamp')
+            $end ?: current_time('timestamp')
         );
     }
 
