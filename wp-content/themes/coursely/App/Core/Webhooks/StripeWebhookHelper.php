@@ -50,6 +50,7 @@ class StripeWebhookHelper
      * ==============================
      * EVENT: invoice.paid
      * ==============================
+     * @throws \Exception
      */
     public function handleInvoicePaid(object $invoice): void
     {
@@ -57,8 +58,9 @@ class StripeWebhookHelper
             return;
         }
 
-        global $wpdb;
+        $billingReason = $invoice->billing_reason ?? null;
         $stripe = $this->getStripeClient();
+
         try {
             $subscription = $stripe->subscriptions->retrieve($invoice->subscription);
         } catch (\Exception $e) {
@@ -67,49 +69,73 @@ class StripeWebhookHelper
         }
 
         $signupToken = $subscription->metadata->signup_token ?? null;
-        $data = $signupToken ? get_transient('coursely_signup_' . $signupToken) : null;
 
-        error_log('Webhook helper: $signupToken: ' . $signupToken);
-        error_log('Webhook helper: Data:' . print_r($data, true));
-
-        $userId = email_exists($data['email']);
-        if (!$userId) {
-            $userId = wp_insert_user([
-                'user_login'   => $data['email'],
-                'user_email'   => $data['email'],
-                'user_pass'    => $data['password'],
-                'display_name' => $data['name'],
-                'first_name'  => $data['name'],
-                'role'         => 'subscriber'
-            ]);
-            if (is_wp_error($userId)) {
-                error_log('User Creation Error: ' . $userId->get_error_message());
-                return;
+        // =========================
+        // NEW SUBSCRIPTION FLOW
+        // =========================
+        if ($billingReason === 'subscription_create') {
+            $data = $signupToken ? get_transient('coursely_signup_' . $signupToken) : null;
+            $userId = email_exists($data['email']);
+            if (!$userId) {
+                $userId = wp_insert_user([
+                    'user_login'   => $data['email'],
+                    'user_email'   => $data['email'],
+                    'user_pass'    => $data['password'],
+                    'display_name' => $data['name'],
+                    'first_name'  => $data['name'],
+                    'role'         => 'subscriber'
+                ]);
+                if (is_wp_error($userId)) {
+                    error_log('User Creation Error: ' . $userId->get_error_message());
+                    return;
+                }
+                if($data){
+                    $this->sendWelcomeEmail($data['email'],$data['password']);
+                }
             }
             if($data){
-                $this->sendWelcomeEmail($data['email'],$data['password']);
+                error_log(print_r($data,true));
+                update_field( 'stripe_customer_id', $subscription->customer,'user_'.$userId);
+                update_field('phone', $data['phone'], 'user_' . $userId);
+                update_field('cardholder_name', $data['cardholder_name'], 'user_' . $userId);
+                update_field('company', $data['company'], 'user_' . $userId);
+                update_field('address_line_1', $data['address']['line1'], 'user_' . $userId);
+                update_field('address_line_2', $data['address']['line2'], 'user_' . $userId);
+                update_field('city', $data['address']['city'], 'user_' . $userId);
+                update_field('state', $data['address']['state'], 'user_' . $userId);
+                update_field('postal_code', $data['address']['postal_code'], 'user_' . $userId);
+                update_field('country', $data['address']['country'], 'user_' . $userId);
+                update_field('country_code', $data['address']['country_code'], 'user_' . $userId);
             }
+
+            $this->syncSubscription($userId, $subscription);
+            $this->saveInvoice($invoice, $subscription, $userId);
         }
-        if($data){
-            error_log(print_r($data,true));
-            update_field( 'stripe_customer_id', $subscription->customer,'user_'.$userId);
-            update_field('phone', $data['phone'], 'user_' . $userId);
-            update_field('cardholder_name', $data['cardholder_name'], 'user_' . $userId);
-            update_field('company', $data['company'], 'user_' . $userId);
-            update_field('address_line_1', $data['address']['line1'], 'user_' . $userId);
-            update_field('address_line_2', $data['address']['line2'], 'user_' . $userId);
-            update_field('city', $data['address']['city'], 'user_' . $userId);
-            update_field('state', $data['address']['state'], 'user_' . $userId);
-            update_field('postal_code', $data['address']['postal_code'], 'user_' . $userId);
-            update_field('country', $data['address']['country'], 'user_' . $userId);
-            update_field('country_code', $data['address']['country_code'], 'user_' . $userId);
+        // =========================
+        // PLAN CHANGE / UPGRADE
+        // =========================
+        $userId = $this->findUserByStripeCustomer($subscription->customer);
+        if ($billingReason === 'subscription_update') {
+            if (!$userId) {
+                error_log('User not found for subscription_update');
+                return;
+            }
+            $this->syncSubscription($userId, $subscription);
+            $this->saveInvoice($invoice, $subscription, $userId);
+            return;
         }
 
-        $this->syncSubscription($userId, $subscription);
-        $this->saveInvoice($invoice, $subscription, $userId);
+        // =========================
+        // DEFAULT SAFE PATH
+        // =========================
 
+        if ($userId) {
+            $this->syncSubscription($userId, $subscription);
+            $this->saveInvoice($invoice, $subscription, $userId);
+        }
         if ($signupToken) {
             //delete_transient('coursely_signup_' . $signupToken);
+            error_log('Stripe Signup Token: ' . $signupToken);
         }
     }
 
@@ -160,7 +186,7 @@ class StripeWebhookHelper
             "SELECT user_id FROM $table WHERE stripe_subscription_id = %s",
             $subscription->id
         ));
-
+        error_log('handleSubscriptionUpdated' . $userId);
         if ($userId) {
             // 1. Оновлюємо саму підписку
             $this->syncSubscription($userId, $subscription);
@@ -260,7 +286,7 @@ class StripeWebhookHelper
             return;
         }
         if ($invoice->status !== 'paid' || ($invoice->amount_paid ?? 0) <= 0) {
-            return;
+            error_log('StripeWebhookHandler:  Save invoice(): $invoice->status !== paid' . print_r($invoice, true));
         }
         $item = $subscription->items->data[0] ?? null;
         $planName = '';
@@ -316,6 +342,29 @@ class StripeWebhookHelper
             ],
             ['stripe_subscription_id' => $subscription->id]
         );
+    }
+    private function findUserByStripeCustomer(string $stripeCustomerId): ?int
+    {
+        if (empty($stripeCustomerId)) {
+            return null;
+        }
+
+        global $wpdb;
+
+        // ACF field: stripe_customer_id stored in usermeta
+        $userId = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT user_id 
+             FROM {$wpdb->usermeta}
+             WHERE meta_key = %s
+             AND meta_value = %s
+             LIMIT 1",
+                'stripe_customer_id',
+                $stripeCustomerId
+            )
+        );
+
+        return $userId ? (int) $userId : null;
     }
 
     private function updateStatusBySubscription(string $subscriptionId, string $status, ?int $endedAt = null): void
