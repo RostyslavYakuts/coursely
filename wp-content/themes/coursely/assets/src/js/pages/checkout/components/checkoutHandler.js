@@ -237,9 +237,6 @@ export const checkoutHandler = async () => {
         });
     });
 
-
-
-
     function toggleStripeError(id, event) {
         const $el = $('#' + id);
 

@@ -124,7 +124,7 @@ $user_data = $data['user_data'];
                             <span id="card_expiry_err" class="input-error"></span>
                         </div>
                         <div class="input-block relative flex flex-col gap-1">
-                            <span class="font-medium">{{__('CVV','coursely')}}<sup class="text-brand">*</sup></span>
+                            <span class="font-medium">{{__('CVC','coursely')}}<sup class="text-brand">*</sup></span>
                             <div id="card_cvc" class="rounded-lg active:border-brand h-[44px] py-[10px] px-[12px] border border-gray"></div>
                             <span id="card_cvc_err" class="input-error"></span>
                         </div>

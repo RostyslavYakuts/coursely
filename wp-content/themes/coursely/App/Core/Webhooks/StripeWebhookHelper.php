@@ -94,6 +94,7 @@ class StripeWebhookHelper
                 'user_email'   => $data['email'],
                 'user_pass'    => $data['password'],
                 'display_name' => $data['name'],
+                'first_name'  => $data['name'],
                 'role'         => 'subscriber'
             ]);
             if (is_wp_error($userId)) {
@@ -159,18 +160,42 @@ class StripeWebhookHelper
      * ==============================
      * EVENT: subscription.updated
      * ==============================
+     * @throws \Exception
      */
     public function handleSubscriptionUpdated(object $subscription): void
     {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
+
         $userId = $wpdb->get_var($wpdb->prepare(
             "SELECT user_id FROM $table WHERE stripe_subscription_id = %s",
             $subscription->id
         ));
 
         if ($userId) {
+            // 1. Оновлюємо саму підписку
             $this->syncSubscription($userId, $subscription);
+
+            // 2. ЗБЕРІГАЄМО ІНВОЙС (Логіка для Upgrade/Downgrade)
+            if (!empty($subscription->latest_invoice)) {
+                try {
+                    $stripe = $this->getStripeClient();
+
+                    // latest_invoice може бути ID або об'єктом, приводимо до ID
+                    $invoiceId = is_string($subscription->latest_invoice)
+                        ? $subscription->latest_invoice
+                        : $subscription->latest_invoice->id;
+
+                    // Отримуємо повний об'єкт інвойсу
+                    $invoice = $stripe->invoices->retrieve($invoiceId);
+
+                    // Зберігаємо в таблицю coursely_invoices
+                    $this->saveInvoice($invoice, $subscription, $userId);
+
+                } catch (\Exception $e) {
+                    error_log('Failed to save invoice on subscription update: ' . $e->getMessage());
+                }
+            }
         }
     }
 
@@ -202,7 +227,6 @@ class StripeWebhookHelper
         $priceData = $subscription->items->data[0]->price;
         $priceId = $priceData->id;
         $planName = CheckoutHelper::getPlanByPlanStripePriceId($priceId)['name'];
-        error_log("Plan Name: " . $planName);
 
         $data = [
             'user_id' => $userId,
@@ -237,7 +261,25 @@ class StripeWebhookHelper
         global $wpdb;
 
         $table = $wpdb->prefix . 'coursely_invoices';
+
+        // Перевірка на дублікат, щоб не порушувати UNIQUE KEY stripe_invoice_id
+        $exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM $table WHERE stripe_invoice_id = %s",
+            $invoice->id
+        ));
+
+        // Якщо запис вже існує, нічого не робимо (клієнт попросив "додати", а не "апдейтити",
+        // але дублікат створити неможливо через структуру БД).
+        if ($exists) {
+            return;
+        }
+
         $item = $subscription->items->data[0] ?? null;
+        $planName = '';
+        if ($item) {
+            $planData = CheckoutHelper::getPlanByPlanStripePriceId($item->price->id);
+            $planName = $planData['name'] ?? '';
+        }
         $data = [
             'user_id' => $this->getUserIdByCustomerId($invoice->customer) ?? $userId, //must match wp user id
             'stripe_invoice_id' => $invoice->id,
@@ -254,9 +296,7 @@ class StripeWebhookHelper
                 ? date('Y-m-d H:i:s', $invoice->status_transitions->paid_at)
                 : null,
             'refunded_at' => null,
-            'plan_name' => $item
-                ? CheckoutHelper::getPlanByPlanStripePriceId($item->price->id)['name']
-                : null,
+            'plan_name' => $planName,
             'plan_interval' => $item?->price?->recurring?->interval,
         ];
 

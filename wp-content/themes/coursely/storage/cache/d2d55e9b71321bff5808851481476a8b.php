@@ -43,7 +43,7 @@
                         </label>
                         <div class="relative">
                             <input class="w-full border border-gray text-brand-light-gray py-2.5 px-3 rounded-lg" type="password" placeholder="<?php echo e(__('Enter password','coursely')); ?>" id="login_user_password" name="login_user_password">
-                            <button type="button" class="show-password-js absolute top-[14px] right-[14px]">
+                            <button type="button" data-input="login_user_password" class="togglePassword absolute top-[14px] right-[14px]">
                                 <svg width="22" height="17" viewBox="0 0 22 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M19.0508 16L4.05078 1M8.85078 6.94157C8.47736 7.35326 8.25078 7.89403 8.25078 8.48631C8.25078 9.77609 9.3253 10.8217 10.6508 10.8217C11.2619 10.8217 11.8197 10.5994 12.2434 10.2334M19.0896 10.8217C19.9158 9.58482 20.2508 8.57613 20.2508 8.57613C20.2508 8.57613 18.0662 1.6 10.6508 1.6C10.2345 1.6 9.83465 1.62199 9.45078 1.66349M16.0508 13.8494C14.6734 14.7281 12.9001 15.3495 10.6508 15.3127C3.3277 15.193 1.05078 8.57613 1.05078 8.57613C1.05078 8.57613 2.10864 5.19808 5.25078 3.14332" stroke="#0F051A" stroke-opacity="0.5" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="flex justify-end">
                             <button type="button" class="underline text-sm text-brand-light-gray hover:text-brand">
-                                <?php echo e(__('Forget your password','coursely')); ?>
+                                <?php echo e(__('Forgot your password','coursely')); ?>
 
                             </button>
                         </div>

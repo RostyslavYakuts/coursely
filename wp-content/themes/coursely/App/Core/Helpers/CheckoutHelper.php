@@ -107,5 +107,26 @@ class CheckoutHelper
     {
         return $subscription->items->data[0]->price->id === $priceId;
     }
-
+    public static function updateUserProfile(int $userId, array $data): void
+    {
+        $userData = [
+            'ID' => $userId,
+            'display_name' => $data['name'],
+            'first_name'   => $data['name'],
+            'user_email'   => $data['email'],
+        ];
+        wp_update_user($userData);
+        update_field('phone', $data['phone'] ?? '', 'user_' . $userId);
+        update_field('cardholder_name', $data['name'] ?? '', 'user_' . $userId);
+        update_field('company', $data['company'], 'user_' . $userId);
+        if (isset($data['address']) && is_array($data['address'])) {
+            update_field('address_line_1', $data['address']['line1'] ?? '', 'user_' . $userId);
+            update_field('address_line_2', $data['address']['line2'] ?? '', 'user_' . $userId);
+            update_field('city', $data['address']['city'] ?? '', 'user_' . $userId);
+            update_field('state', $data['address']['state'] ?? '', 'user_' . $userId);
+            update_field('postal_code', $data['address']['postal_code'] ?? '', 'user_' . $userId);
+            update_field('country', $data['address']['country'] ?? '', 'user_' . $userId);
+            update_field('country_code', $data['address']['country_code'] ?? '', 'user_' . $userId);
+        }
+    }
 }
