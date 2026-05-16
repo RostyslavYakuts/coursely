@@ -49,7 +49,7 @@ class AjaxCancelSubscription
             ]);
             $cancelDate = $updatedSubscription->current_period_end
                 ?? ($updatedSubscription->items->data[0]->current_period_end ?? null);
-
+            error_log('Cancel date: '.$cancelDate);
 
             $this->updateLocalSubscription($subscriptionId, $cancelDate);
 
@@ -89,23 +89,39 @@ class AjaxCancelSubscription
     /**
      * Renew db WordPress
      */
-    private function updateLocalSubscription(string $subscriptionId, bool $cancelAtPeriodEnd): void
+    private function updateLocalSubscription(string $subscriptionId, ?int $cancelDate): void
     {
         global $wpdb;
 
+        $data = [
+            'cancel_at_period_end' => 1,
+            'updated_at' => current_time('mysql'),
+        ];
+
+        if (!empty($cancelDate)) {
+            $data['current_period_end'] = date('Y-m-d H:i:s', $cancelDate);
+        }
+
+        $formats = [
+            '%d',
+            '%s',
+        ];
+
+        if (!empty($cancelDate)) {
+            $formats[] = '%s';
+        }
+
         $wpdb->update(
             $this->table,
-            [
-                'cancel_at_period_end' => $cancelAtPeriodEnd ? 1 : 0,
-            ],
+            $data,
             ['stripe_subscription_id' => $subscriptionId],
-            ['%d'], // format for cancel_at_period_end
-            ['%s']  // format for where clause
+            $formats,
+            ['%s']
         );
 
         if ($wpdb->last_error) {
             error_log('DB Update Error: ' . $wpdb->last_error);
-            throw new Exception('Failed to update local subscription record.');
+            throw new Exception($wpdb->last_error);
         }
     }
 }

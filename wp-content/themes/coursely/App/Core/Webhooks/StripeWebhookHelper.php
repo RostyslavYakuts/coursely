@@ -239,17 +239,7 @@ class StripeWebhookHelper
          */
         if (!empty($subscription->cancel_at_period_end)) {
             error_log('Subscription scheduled cancel: ' . $subscription->id);
-
-            $wpdb->update(
-                $table,
-                [
-                    'status' => 'cancel_scheduled',
-                    'current_period_end' => $subscription->current_period_end ?? null,
-                ],
-                ['stripe_subscription_id' => $subscription->id]
-            );
-
-            return; // ❗ важливо: не обробляємо invoice
+            return;
         }
 
         /**
@@ -325,9 +315,12 @@ class StripeWebhookHelper
             'plan_interval' => $subscription->items->data[0]->price->recurring->interval,
             'status' => $subscription->status,
             'current_period_start' => date('Y-m-d H:i:s', $subscription->items->data[0]->current_period_start),
-            'current_period_end'   => date('Y-m-d H:i:s', $subscription->items->data[0]->current_period_end),
             'cancel_at_period_end' => $subscription->cancel_at_period_end ? 1 : 0,
         ];
+        if (!$subscription->cancel_at_period_end) {
+            error_log('Updating subscription cancel date: ' .$subscription->cancel_at_period_end);
+            $data['current_period_end'] = date('Y-m-d H:i:s', $subscription->items->data[0]->current_period_end);
+        }
 
         $exists = $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM $table WHERE stripe_subscription_id = %s",
@@ -402,20 +395,6 @@ class StripeWebhookHelper
         return $users[0]->ID ?? null;
     }
 
-    private function syncSubscriptionByStripe(object $subscription): void
-    {
-        global $wpdb;
-        $table = $wpdb->prefix . self::TABLE;
-
-        $wpdb->update(
-            $table,
-            [
-                'status' => $subscription->status,
-                'current_period_end' => date('Y-m-d H:i:s', $subscription->current_period_end)
-            ],
-            ['stripe_subscription_id' => $subscription->id]
-        );
-    }
     private function findUserByStripeCustomer(string $stripeCustomerId): ?int
     {
         if (empty($stripeCustomerId)) {

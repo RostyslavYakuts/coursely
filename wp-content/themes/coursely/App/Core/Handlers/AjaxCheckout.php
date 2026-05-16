@@ -38,6 +38,7 @@ class AjaxCheckout
                 if(CheckoutHelper::isSamePlan($activeSub, $plan['stripe_price_id'])) {
                     if ($activeSub->cancel_at_period_end) {
                         $needsUpdate = true;
+                        error_log('$activeSub->cancel_at_period_end'.$activeSub->cancel_at_period_end);
                     } else {
                         wp_send_json_error([
                             'message' => 'This plan is already actual. No action needed',
@@ -50,8 +51,10 @@ class AjaxCheckout
             if($needsUpdate){
                 CheckoutHelper::updateUserProfile($userId, $data);
                 $result = $this->updateSubscription($stripe, $activeSub, $plan['stripe_price_id']);
+                error_log('Till here works - result');
                 $subscription = $result['subscription'];
                 $clientSecret = $result['client_secret'];
+                error_log('Till here works - end');
             } else {
                 $subscription = $this->createSubscription($stripe, $customer->id, $plan['stripe_price_id'], $data['payment_method_id'], $signupToken);
                 $clientSecret = $subscription->latest_invoice->confirmation_secret->client_secret ?? null;
