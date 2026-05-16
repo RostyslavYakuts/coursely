@@ -35,6 +35,7 @@ class CheckoutHelper
             'name' => sanitize_text_field(wp_unslash($_POST['subscriber_name'] ?? '')),
             'cardholder_name' => sanitize_text_field(wp_unslash($_POST['subscriber_cardholder_name'] ?? '')),
             'phone' => sanitize_text_field(wp_unslash($_POST['subscriber_phone'] ?? '')),
+            'company' => sanitize_text_field(wp_unslash($_POST['subscriber_company_name'] ?? '')),
             'password' => wp_unslash($_POST['subscriber_password'] ?? ''),
             'address' => [
                 'line1' => sanitize_text_field(wp_unslash($_POST['subscriber_street_address'] ?? '')),

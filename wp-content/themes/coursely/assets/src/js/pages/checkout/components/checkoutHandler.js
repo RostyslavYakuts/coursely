@@ -188,6 +188,7 @@ export const checkoutHandler = async () => {
             subscriber_city: $('#subscriber_city').val(),
             subscriber_state: $('#subscriber_state').val(),
             subscriber_zip: $('#subscriber_zip').val(),
+            subscriber_company_name: $('#subscriber_company_name').val(),
             subscriber_country: country,
             subscriber_country_code: countryCode,
         };
@@ -204,7 +205,12 @@ export const checkoutHandler = async () => {
                         const { error } = await stripe.confirmPayment({
                             clientSecret: response.data.client_secret,
                             confirmParams: {
-                                return_url: `${response.data.redirect_url}?token=${response.data.signup_token}`
+                                return_url: `${response.data.redirect_url}?token=${response.data.signup_token}`,
+                                payment_method_data : {
+                                    billing_details : {
+                                        email: $('#subscriber_email').val()
+                                    }
+                                }
                             },
                             redirect: 'if_required'
                         });
@@ -213,7 +219,6 @@ export const checkoutHandler = async () => {
                             $('#card_number_err').text('Error occurred.');
                             return;
                         }
-
                         window.location.href = `${response.data.redirect_url}?token=${response.data.signup_token}`;
 
                     }else if (response.data.redirect_url) {

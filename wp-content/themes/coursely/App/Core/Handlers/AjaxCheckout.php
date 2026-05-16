@@ -44,10 +44,15 @@ class AjaxCheckout
                 }
             }
             if ($activeSub) {
+                error_log('Is active subscriber: ' . $activeSub->id);
                 $subscription = $this->updateSubscription($stripe, $activeSub, $plan['stripe_price_id'], $data['payment_method_id']);
                 CheckoutHelper::updateUserProfile($userId, $data);
+                $invoice = $subscription->latest_invoice ?? null;
+                $clientSecret = $invoice->payment_intent?->client_secret ?? null;
             } else {
+                error_log('Is new comer: ' . $customer->id);
                 $subscription = $this->createSubscription($stripe, $customer->id, $plan['stripe_price_id'], $data['payment_method_id'], $signupToken);
+                $clientSecret = $subscription->latest_invoice->confirmation_secret->client_secret ?? null;
             }
 
             $response = [
@@ -57,10 +62,9 @@ class AjaxCheckout
                 'customer' => $customer,
                 'subscription' => $subscription,
                 'status' => 'payment_started',
-                'subscription_id' => $subscription->id,
-                'invoice'=>$subscription->latest_invoice,
-                'client_secret' => $subscription->latest_invoice->confirmation_secret->client_secret ?? null
+                'client_secret' => $clientSecret
             ];
+           // error_log('WP AJAX handler: '. print_r($response,true));
             wp_send_json_success($response);
 
         } catch (\Throwable $e) {
@@ -85,6 +89,7 @@ class AjaxCheckout
 
                 //'proration_behavior' => 'create_prorations',
                 'expand' => ['latest_invoice.confirmation_secret'],
+                //'expand' => ['pending_setup_intent'],
                 'metadata' => [
                     'signup_token' => $signupToken,
                     'price_id' => $priceId
@@ -103,16 +108,17 @@ class AjaxCheckout
                 'id' => $itemId,
                 'price' => $newPriceId
             ]],
-            'default_payment_method' => $paymentMethodId,
             'proration_behavior' => 'always_invoice',
-            'payment_behavior' => 'pending_if_incomplete',
-            'cancel_at_period_end' => false, // IMPORTANT: If the user previously canceled, this reactivates the subscription
-            'expand' => ['latest_invoice.confirmation_secret'],
+            'payment_behavior' => 'default_incomplete',
+           // 'payment_behavior' => 'allow_incomplete',
+           // 'payment_behavior' => 'pending_if_incomplete',
+            //'cancel_at_period_end' => false, // IMPORTANT: If the user previously canceled, this reactivates the subscription
+            'expand' => ['latest_invoice.payment_intent'],
         ];
         try{
             return $stripe->subscriptions->update($subscription->id, $params);
         }catch (\Exception $e){
-            error_log('UPDATE ERROR: ' . $e->getMessage());
+            error_log('AJAX CHECKOUT --- UPDATE ERROR: ' . $e->getMessage());
         }
     }
     private function getOrCreateCustomer(StripeClient $stripe, array $data, int $userId): object{

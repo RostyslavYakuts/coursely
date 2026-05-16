@@ -69,23 +69,8 @@ class StripeWebhookHelper
         $signupToken = $subscription->metadata->signup_token ?? null;
         $data = $signupToken ? get_transient('coursely_signup_' . $signupToken) : null;
 
-        // 2. FALLBACK: data from Stripe Customer
-        if (!$data) {
-            try {
-                $customer = $stripe->customers->retrieve($subscription->customer);
-                $plainPassword = wp_generate_password(12, true);
-
-                $data = [
-                    'email' => $customer->email,
-                    'name' => $customer->name,
-                    'password_hash' => wp_hash_password($plainPassword),
-                    'plain_password' => $plainPassword
-                ];
-            } catch (\Exception $e) {
-                error_log('Stripe Customer Retrieve Error: ' . $e->getMessage());
-                return;
-            }
-        }
+        error_log('Webhook helper: $signupToken: ' . $signupToken);
+        error_log('Webhook helper: Data:' . print_r($data, true));
 
         $userId = email_exists($data['email']);
         if (!$userId) {
@@ -101,20 +86,24 @@ class StripeWebhookHelper
                 error_log('User Creation Error: ' . $userId->get_error_message());
                 return;
             }
-            $this->sendWelcomeEmail($data['email'],$data['password']);
+            if($data){
+                $this->sendWelcomeEmail($data['email'],$data['password']);
+            }
         }
-
-        update_field( 'stripe_customer_id', $subscription->customer,'user_'.$userId);
-        update_field('phone', $data['phone'], 'user_' . $userId);
-        update_field('cardholder_name', $data['cardholder_name'], 'user_' . $userId);
-        update_field('address_line_1', $data['address']['line1'], 'user_' . $userId);
-        update_field('address_line_2', $data['address']['line2'], 'user_' . $userId);
-        update_field('city', $data['address']['city'], 'user_' . $userId);
-        update_field('state', $data['address']['state'], 'user_' . $userId);
-        update_field('postal_code', $data['address']['postal_code'], 'user_' . $userId);
-        update_field('country', $data['address']['country'], 'user_' . $userId);
-        update_field('country_code', $data['address']['country_code'], 'user_' . $userId);
-
+        if($data){
+            error_log(print_r($data,true));
+            update_field( 'stripe_customer_id', $subscription->customer,'user_'.$userId);
+            update_field('phone', $data['phone'], 'user_' . $userId);
+            update_field('cardholder_name', $data['cardholder_name'], 'user_' . $userId);
+            update_field('company', $data['company'], 'user_' . $userId);
+            update_field('address_line_1', $data['address']['line1'], 'user_' . $userId);
+            update_field('address_line_2', $data['address']['line2'], 'user_' . $userId);
+            update_field('city', $data['address']['city'], 'user_' . $userId);
+            update_field('state', $data['address']['state'], 'user_' . $userId);
+            update_field('postal_code', $data['address']['postal_code'], 'user_' . $userId);
+            update_field('country', $data['address']['country'], 'user_' . $userId);
+            update_field('country_code', $data['address']['country_code'], 'user_' . $userId);
+        }
 
         $this->syncSubscription($userId, $subscription);
         $this->saveInvoice($invoice, $subscription, $userId);
@@ -262,24 +251,24 @@ class StripeWebhookHelper
 
         $table = $wpdb->prefix . 'coursely_invoices';
 
-        // Перевірка на дублікат, щоб не порушувати UNIQUE KEY stripe_invoice_id
+        // Check UNIQUE KEY stripe_invoice_id
         $exists = $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM $table WHERE stripe_invoice_id = %s",
             $invoice->id
         ));
-
-        // Якщо запис вже існує, нічого не робимо (клієнт попросив "додати", а не "апдейтити",
-        // але дублікат створити неможливо через структуру БД).
         if ($exists) {
             return;
         }
-
+        if ($invoice->status !== 'paid' || ($invoice->amount_paid ?? 0) <= 0) {
+            return;
+        }
         $item = $subscription->items->data[0] ?? null;
         $planName = '';
         if ($item) {
             $planData = CheckoutHelper::getPlanByPlanStripePriceId($item->price->id);
             $planName = $planData['name'] ?? '';
         }
+        error_log('StripeWebhookHandler:  Save invoice(): ' . print_r($invoice, true));
         $data = [
             'user_id' => $this->getUserIdByCustomerId($invoice->customer) ?? $userId, //must match wp user id
             'stripe_invoice_id' => $invoice->id,

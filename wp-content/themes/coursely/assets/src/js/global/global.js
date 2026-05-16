@@ -15,16 +15,7 @@ export const global = ()=>{
 	authHandler();
 	showPassword();
 	cancelSubscription();
-	recaptchaBinder([
-		'card_number',
-		'card_expiry',
-		'card_cvc'
-	]);
-	/*document.querySelectorAll('form input, form textarea').forEach(el => {
-		el.addEventListener('focus', () => {
-			recaptcha();
-		}, { once: true });
-	});*/
+	recaptchaBinder();
 }
 
 

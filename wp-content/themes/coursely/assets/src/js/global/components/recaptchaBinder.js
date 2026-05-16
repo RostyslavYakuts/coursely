@@ -2,30 +2,26 @@ import {recaptcha} from "@/js/global/components/recaptcha";
 
 let recaptchaShown = false;
 
-function triggerRecaptchaOnce() {
+function initLoggedUser() {
     if (recaptchaShown) return;
     recaptchaShown = true;
     recaptcha();
 }
 
-function bindFormFields() {
-    document.querySelectorAll('form input, form textarea, form select')
-        .forEach(el => {
-            el.addEventListener('focus', triggerRecaptchaOnce, { once: true });
-        });
-}
-
-function bindStripeFields(fields) {
-    fields.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-
-        el.addEventListener('click', triggerRecaptchaOnce, { once: true });
-        el.addEventListener('focusin', triggerRecaptchaOnce, { once: true });
+function initGuestUser() {
+    document.querySelectorAll('form input, form textarea, form select').forEach(el => {
+        el.addEventListener('focus', () => {
+            recaptcha();
+        }, { once: true });
     });
 }
 
-export const recaptchaBinder = (stripeFieldIds = []) => {
-    bindFormFields();
-    bindStripeFields(stripeFieldIds);
+export const recaptchaBinder = () => {
+    const isLoggedIn = typeof window.userLocalizedScript !== 'undefined';
+
+    if (isLoggedIn) {
+        initLoggedUser();
+    } else {
+        initGuestUser();
+    }
 };
