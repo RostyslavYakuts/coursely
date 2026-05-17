@@ -73,11 +73,21 @@
 
                         </a>
                     <?php else: ?>
-                         <button data-nonce="<?php echo e(wp_create_nonce('cancel_subscription')); ?>"  data-subscription_id="<?php echo e($stripe_subscription_id); ?>" data-stripe_price_id="<?php echo e($plan['stripe_price_id']); ?>"
-                               class="cancel-subscription-js bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
-                                <?php echo e(__('Cancel subscription','coursely')); ?>
+                        <?php //var_dump($active_plan); ?>
+                        <?php if($active_plan->cancel_at_period_end): ?>
+                                <a href="<?php echo e(get_home_url().'/checkout?price_id='.$plan['get_parameter_plan_key']); ?>"
+                                   data-plan-type="<?php echo e($plan['type']); ?>"
+                                   class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
+                                    <?php echo e(__('Canceled. Get back','coursely')); ?>
 
-                         </button>
+                                </a>
+                        <?php else: ?>
+                                <button data-nonce="<?php echo e(wp_create_nonce('cancel_subscription')); ?>"  data-subscription_id="<?php echo e($stripe_subscription_id); ?>" data-stripe_price_id="<?php echo e($plan['stripe_price_id']); ?>"
+                                        class="cancel-subscription-js bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
+                                        <?php echo e(__('Cancel subscription','coursely')); ?>
+
+                                </button>
+                         <?php endif; ?>
                     <?php endif; ?>
 
                     <div class="w-full h-[1px] bg-brand-gray"></div>

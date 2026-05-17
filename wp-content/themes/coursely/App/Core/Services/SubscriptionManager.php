@@ -46,6 +46,8 @@ class SubscriptionManager
             'stripe_price_id' => $subscription->stripe_price_id,
             'expires_at' => $subscription->current_period_end,
             'stripe_subscription_id' => $subscription->stripe_subscription_id,
+            'cancel_at_period_end' => $subscription->cancel_at_period_end,
+            'current_period_end' => $subscription->current_period_end,
         ];
     }
 }

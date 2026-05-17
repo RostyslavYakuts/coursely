@@ -27,6 +27,12 @@ class AccountPageModel implements ModelInterface
         $active_subscription = $this->get_active_subscription($user_id);
         $stripe_price_id = $active_subscription['stripe_price_id'] ?? '';
         $active_subscription_price = $this->get_subscription_price_by_stripe_price_id($stripe_price_id);
+        $is_canceled = $active_subscription['cancel_at_period_end'];
+        $current_period_end = !empty($active_subscription['current_period_end']) ? new \DateTime($active_subscription['current_period_end'])->format('m/d/y') : '';
+        $next_payment = $current_period_end;
+        if($is_canceled){
+            $next_payment = '';
+        }
         return [
             'id'=>$id,
             'title'=>get_the_title($id),
@@ -42,11 +48,11 @@ class AccountPageModel implements ModelInterface
             'invoices' => $this->get_user_invoices($user_id) ?? [],
             'active_subscription'=>$active_subscription ?? [],
             'plan_name'=>$active_subscription['plan_name'] ?? '',
+            'is_canceled'=>$is_canceled,
             'active_subscription_price'=>$active_subscription_price,
             'activate_subscription_link'=>get_field('activate_subscription_link','options'),
-            'next_payment' => !empty($active_subscription['current_period_end'])
-                ? new \DateTime($active_subscription['current_period_end'])->format('m/d/y')
-                : '',
+            'next_payment' => $next_payment,
+            'current_period_end' => $current_period_end,
         ];
     }
 
@@ -93,6 +99,7 @@ class AccountPageModel implements ModelInterface
             ARRAY_A
         );
     }
+
 
     public function get_subscription_price_by_stripe_price_id($stripe_price_id):string{
         $plans = get_field('plans','options') ?? [];

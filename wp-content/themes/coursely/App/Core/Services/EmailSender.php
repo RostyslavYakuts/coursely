@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 class EmailSender
 {
 
-    public static function send_data(array $sending_data, string $contact): bool
+    public static function send_contact_us_data(array $sending_data, string $contact): bool
     {
         $html = file_get_contents(EMAIL_PATH . 'email.html');
         $src = IMAGES_PATH;
@@ -32,7 +32,7 @@ class EmailSender
         ], $html);
         $headers = self::getEmailHeaders();
 
-        return  wp_mail($contact, $subject, $message, $headers);
+        return  wp_mail($contact, $subject, $html, $headers);
 
     }
     /**
@@ -48,4 +48,7 @@ class EmailSender
         $headers .= "Content-type: text/html; charset=utf8\r\n";
         return $headers;
     }
+
+
+
 }

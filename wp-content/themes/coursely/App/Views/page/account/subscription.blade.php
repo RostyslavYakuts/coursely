@@ -16,7 +16,11 @@
         </div>
         <div class="flex flex-col gap-8 md:flex-row md:justify-between md:items-center mt-2">
                           <span class="w-full text-lg text-brand-text">
-                                {{__('Next payment','coursely')}} {{$data['next_payment'] }}
+                              @if($data['next_payment'])
+                                {{__('Next payment:','coursely')}} {{$data['next_payment'] }}
+                              @else
+                                {{__('Canceled, active till:','coursely')}} {{$data['current_period_end'] }}
+                              @endif
                           </span>
             <a href="{{$data['activate_subscription_link']}}" class="min-w-[250px] bg-white flex justify-center items-center gap-2 p-3 rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                 {{__('Manage subscription','coursely')}}

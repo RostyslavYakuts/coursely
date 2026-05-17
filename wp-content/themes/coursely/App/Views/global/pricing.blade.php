@@ -66,10 +66,19 @@
                             {{__('Change','coursely')}}
                         </a>
                     @else
-                         <button data-nonce="{{ wp_create_nonce('cancel_subscription') }}"  data-subscription_id="{{ $stripe_subscription_id }}" data-stripe_price_id="{{$plan['stripe_price_id']}}"
-                               class="cancel-subscription-js bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
-                                {{__('Cancel subscription','coursely')}}
-                         </button>
+                        @php //var_dump($active_plan); @endphp
+                        @if($active_plan->cancel_at_period_end)
+                                <a href="{{get_home_url().'/checkout?price_id='.$plan['get_parameter_plan_key']}}"
+                                   data-plan-type="{{$plan['type']}}"
+                                   class="bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
+                                    {{__('Canceled. Get back','coursely')}}
+                                </a>
+                        @else
+                                <button data-nonce="{{ wp_create_nonce('cancel_subscription') }}"  data-subscription_id="{{ $stripe_subscription_id }}" data-stripe_price_id="{{$plan['stripe_price_id']}}"
+                                        class="cancel-subscription-js bg-white flex justify-center items-center gap-2 p-3 w-full rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
+                                        {{__('Cancel subscription','coursely')}}
+                                </button>
+                         @endif
                     @endif
 
                     <div class="w-full h-[1px] bg-brand-gray"></div>

@@ -65,7 +65,7 @@ class AjaxHandler
         // Send email
         $admin_email = get_field('admin_email','options') ?? '';
         $name = $name ?? 'User without name';
-        $sent = EmailSender::send_data( [
+        $sent = EmailSender::send_contact_us_data( [
             'user_name'=>$name,
             'user_email'=>$email,
             'user_message'=>$message

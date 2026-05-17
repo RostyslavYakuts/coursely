@@ -37,14 +37,13 @@
              <br>
              <span>Our team will review your request and get back to you shortly with a response.</span>
              <br><br>
-             <span>We’re always happy to help with web development, improvements, and support for your website or project.
-             And we’re always glad to see you at <a style="font-weight:bold;color:#E93C35" target="_blank" href="https://coursely.com/"><i>coursely</i></a>.</span>
+             <span>We’re always happy to help you and we’re always glad to see you at <a style="font-weight:bold;color:#E93C35" target="_blank" href="https://coursely.com/"><i>coursely</i></a>.</span>
            </mj-text>
          </mj-column>
         <mj-column width="100%" background-color="#ffffff" border-radius="0px 0px 4px 4px" padding="0px 32px 32px 32px">
            <mj-text font-family="Arial" padding="0" font-size="16px" color="#333333" line-height="24px">
              <p style="color:#333333;">Best regards,<br/>
-             <b style="color:#627C8C;"><i>coursely</i></b> team</p>
+             <b style="color:#627C8C;"><i>Coursely</i></b> team</p>
            </mj-text>
          </mj-column>
 

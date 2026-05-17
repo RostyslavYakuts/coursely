@@ -3,6 +3,7 @@
 namespace coursely\App\Core\Handlers;
 
 use coursely\App\Core\Helpers\CheckoutHelper;
+use coursely\App\Core\Helpers\UserIpDetector;
 use Stripe\StripeClient;
 use Stripe\Exception\ApiErrorException;
 use coursely\App\Core\Helpers\NonceChecker;
@@ -17,6 +18,24 @@ class AjaxCheckout
     }
     public function handle(): void
     {
+        if ( ! is_user_logged_in() ) {
+            $user_identifier = UserIpDetector::get_client_ip();
+            $rate_limit_key = 'strp_sub_checkout_limit_' . md5( $user_identifier );
+
+            if ( get_transient( $rate_limit_key ) ) {
+                error_log( 'Rate limit triggered for guest identifier: ' . substr( hash( 'sha256', $user_identifier ), 0, 12 ) );
+                wp_send_json_error( array(
+                    'message' => __( 'You are trying to start a new payment too quickly. Please wait a moment and try again.', 'coursely' )
+                ) );
+                return;
+            }
+
+            // Set rate limit (10 seconds cooldown for guests only)
+            set_transient( $rate_limit_key, true, 10 );
+        }
+
+
+
         try {
             NonceChecker::check('checkout_action');
             RecaptchaChecker::check();

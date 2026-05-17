@@ -17,8 +17,13 @@
         </div>
         <div class="flex flex-col gap-8 md:flex-row md:justify-between md:items-center mt-2">
                           <span class="w-full text-lg text-brand-text">
-                                <?php echo e(__('Next payment','coursely')); ?> <?php echo e($data['next_payment']); ?>
+                              <?php if($data['next_payment']): ?>
+                                <?php echo e(__('Next payment:','coursely')); ?> <?php echo e($data['next_payment']); ?>
 
+                              <?php else: ?>
+                                <?php echo e(__('Canceled, active till:','coursely')); ?> <?php echo e($data['current_period_end']); ?>
+
+                              <?php endif; ?>
                           </span>
             <a href="<?php echo e($data['activate_subscription_link']); ?>" class="min-w-[250px] bg-white flex justify-center items-center gap-2 p-3 rounded-full border border-brand-gray text-lg hover:text-white hover:bg-brand-dark brand-btn-light">
                 <?php echo e(__('Manage subscription','coursely')); ?>
