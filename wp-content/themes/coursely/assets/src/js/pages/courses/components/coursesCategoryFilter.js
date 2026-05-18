@@ -27,6 +27,11 @@ export const coursesCategoryFilter = () => {
             }
         );
 
+        if (!res.ok) {
+            loading = false;
+            return;
+        }
+
         const data = await res.json();
 
         hasMore = data.has_more;
@@ -71,6 +76,11 @@ export const coursesCategoryFilter = () => {
 
         tab.classList.add('active');
 
+        // RESET USER FILTER TABS
+        document
+            .querySelectorAll('.user-courses-filter-item')
+            .forEach(el => el.classList.remove('active'));
+
         const termId = tab.dataset.id || 'all';
 
         currentTerm = termId;
@@ -100,6 +110,52 @@ export const coursesCategoryFilter = () => {
         container.classList.remove('loading');
 
         observeLast(); // only for all tab
+    });
+
+    // ======================
+    // USER COURSES TAB CLICK
+    // ======================
+    document.addEventListener('click', async e => {
+
+        const tab = e.target.closest('.user-courses-filter-item');
+        if (!tab) return;
+
+        document
+            .querySelectorAll('.user-courses-filter-item')
+            .forEach(el => el.classList.remove('active'));
+
+        tab.classList.add('active');
+
+
+        // RESET CATEGORY TABS
+        document
+            .querySelectorAll('.course-tab-js')
+            .forEach(el => el.classList.remove('active'));
+        currentTerm = 'all';
+        const userFilter = tab.dataset.filter || 'all';
+
+        page = 1;
+        hasMore = userFilter === 'all';
+
+        container.classList.add('loading');
+
+        const res = await fetch(
+            `/wp-json/courses/v1/filter?term_id=${currentTerm}&user_filter=${userFilter}&per_page=12`,
+            {
+                credentials: 'same-origin',
+                headers: {
+                    'X-WP-Nonce': localizedScript.wp_rest_filter_nonce
+                }
+            }
+        );
+
+        const data = await res.json();
+
+        container.innerHTML = data.html;
+
+        container.classList.remove('loading');
+
+        observeLast();
     });
 
     // ======================

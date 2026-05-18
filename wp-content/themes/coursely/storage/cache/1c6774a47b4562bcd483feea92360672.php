@@ -15,7 +15,9 @@ use coursely\App\Core\Helpers\CourseCard;
       <?php echo e($data['h1']); ?>
 
   </h1>
-
+  <?php if($data['is_user_logged_in']): ?>
+      <?php echo $__env->make('page.courses.user-courses-filter', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+  <?php endif; ?>
   <div class="course-categories-js mt-5 flex flex-row flex-wrap gap-4 justify-center items-center">
       <div data-id="all" class="active course-tab-js course-category rounded-full text-center lgx:text-lg p-3">
           <?php echo e(__('All categories','coursely')); ?>

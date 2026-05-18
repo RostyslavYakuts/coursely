@@ -48,6 +48,8 @@ class RestAPISetup
         $term_id = $request->get_param('term_id') ?? 'all';
         $order_by = $request->get_param('order_by') ?? 'ID';
 
+        $user_filter = $request->get_param('user_filter') ?? 'all';
+
         $params = [
             'page' => $page,
             'per_page' => $per_page,
@@ -64,7 +66,7 @@ class RestAPISetup
 
         $is_user_logged_in = get_current_user_id() > 0;
 
-        $data = $this->query_courses($params,$is_user_logged_in);
+        $data = $this->query_courses($params,$is_user_logged_in, $user_filter);
 
         $html = '';
 
@@ -79,7 +81,7 @@ class RestAPISetup
         ]);
     }
 
-    private function query_courses(array $params = [], $is_user_logged_in = false): array
+    private function query_courses(array $params = [], $is_user_logged_in = false, string $user_filter = 'all'): array
     {
         $is_default = ($params['term_id'] ?? 'all') === 'all';
 
@@ -97,7 +99,6 @@ class RestAPISetup
                 'order'     => $params['order']
             ];
         }
-
 
         // Pagination only for all tab
         if ($is_default) {
@@ -117,20 +118,45 @@ class RestAPISetup
                 ]
             ];
         }
+        // For user specific filter case - no pagination
+        if($user_filter === 'completed' || $user_filter === 'active' || $user_filter === 'not_started') {
+            $args['posts_per_page'] = -1;
+            unset($args['paged']);
+        }
 
         $query = new \WP_Query($args);
-
         $courses = [];
-
         $completed_lessons = [];
+
         if($is_user_logged_in){
             $user_id = get_current_user_id();
             $completed_lessons = SubscriptionManager::getUserCompletedLessonsMap($user_id);
         }
 
         foreach ($query->posts as $post) {
+
             // mapping
             $completed_lessons_count = $completed_lessons[$post->ID] ?? 0;
+            $lessons_count = (int) get_field('lessons_count', $post->ID);
+
+            $is_completed = $lessons_count > 0 && $completed_lessons_count >= $lessons_count;
+            $is_active = $completed_lessons_count > 0 && $completed_lessons_count < $lessons_count;
+            $not_started = $completed_lessons_count === 0;
+
+            // ======================
+            // USER FILTER APPLY
+            // ======================
+
+            if (!$is_user_logged_in) {continue;}
+            if ($user_filter === 'completed' && !$is_completed) {
+                continue;
+            }
+            if ($user_filter === 'active' && !$is_active) {
+                continue;
+            }
+            if ($user_filter === 'not_started' && !$not_started) {
+                continue;
+            }
             $courses[] = [
                 'id' => $post->ID,
                 'title' => get_the_title($post->ID),

@@ -14,7 +14,9 @@ use coursely\App\Core\Helpers\CourseCard;
   <h1 class="font-bold text-center text-[32px] lgx:text-[48px]  mt-10">
       {{$data['h1']}}
   </h1>
-
+  @if($data['is_user_logged_in'])
+      @include('page.courses.user-courses-filter')
+  @endif
   <div class="course-categories-js mt-5 flex flex-row flex-wrap gap-4 justify-center items-center">
       <div data-id="all" class="active course-tab-js course-category rounded-full text-center lgx:text-lg p-3">
           {{ __('All categories','coursely') }}

@@ -1,2 +1,37 @@
 @import "../../variables";
 @import "../../mixins";
+
+.user-courses-filter-items{
+  .user-courses-filter-item{
+    &:hover{
+      color:$brand;
+      position:relative;
+      &:after{
+        content:'';
+        width:100%;
+        height:2px;
+        background: $brand;
+        left:0;
+        bottom:-1px;
+        position: absolute;
+        z-index: 2;
+      }
+    }
+  }
+  .user-courses-filter-item.active{
+    color:$brand;
+    position:relative;
+    &:after{
+      content:'';
+      width:100%;
+      height:2px;
+      background: $brand;
+      left:0;
+      bottom:-1px;
+      position: absolute;
+      z-index: 2;
+    }
+  }
+
+
+}

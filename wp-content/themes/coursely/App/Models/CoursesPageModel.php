@@ -21,6 +21,12 @@ class CoursesPageModel implements ModelInterface
         if($is_user_logged_in){
             $h1 = __('My Courses', 'coursely');
         }
+        $user_course_filter_items = [];
+        if($is_user_logged_in){
+            $user_id = get_current_user_id();
+            $completed_lessons = SubscriptionManager::getUserCompletedLessonsMap($user_id);
+            $user_course_filter_items = $this->buildUserCourseFilterItems($completed_lessons);
+        }
         return [
             'id'=>$id,
             'title'=>get_the_title($id),
@@ -30,6 +36,66 @@ class CoursesPageModel implements ModelInterface
             'course_categories' => $course_categories,
             'default_courses' => $this->get_selected_courses($is_user_logged_in),
             'is_user_logged_in' => $is_user_logged_in,
+            'user_course_filter_items'=>$user_course_filter_items,
+        ];
+    }
+
+    private function buildUserCourseFilterItems(array $completed_lessons): array
+    {
+        $course_ids = get_posts([
+            'post_type'      => 'course',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+        ]);
+
+        $lessons_map = [];
+        foreach ($course_ids as $course_id) {
+            $lessons_map[$course_id] = (int) get_field('lessons_count', $course_id);
+        }
+
+        $not_started = 0;
+        $active = 0;
+        $completed = 0;
+
+        foreach ($course_ids as $course_id) {
+
+            $done = (int) ($completed_lessons[$course_id] ?? 0);
+            $total = $lessons_map[$course_id] ?? 0;
+
+            if ($done === 0) {
+                $not_started++;
+                continue;
+            }
+
+            if ($total > 0 && $done >= $total) {
+                $completed++;
+                continue;
+            }
+
+            $active++;
+        }
+
+        return [
+            [
+                'title' => __('All Courses', 'coursely'),
+                'data_name' => 'all',
+                'value' => count($course_ids),
+            ],
+            [
+                'title' => __('Not yet started courses', 'coursely'),
+                'data_name' => 'not_started',
+                'value' => $not_started,
+            ],
+            [
+                'title' => __('Active courses', 'coursely'),
+                'data_name' => 'active',
+                'value' => $active,
+            ],
+            [
+                'title' => __('Completed courses', 'coursely'),
+                'data_name' => 'completed',
+                'value' => $completed,
+            ],
         ];
     }
 
