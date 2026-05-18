@@ -2,6 +2,7 @@
 
 namespace coursely\App\Core\Webhooks;
 
+use Stripe\Exception\SignatureVerificationException;
 use Stripe\Webhook;
 
 class StripeWebhookHandler
@@ -24,30 +25,53 @@ class StripeWebhookHandler
         ]);
     }
 
-    public function handleWebhook(\WP_REST_Request $request): void
+    public function handleWebhook(\WP_REST_Request $request): \WP_REST_Response
     {
-        error_log('WEBHOOK HIT');
         //$payload = file_get_contents('php://input');
         $payload = $request->get_body();
-        $signature = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
+        $sig_header = $request->get_header( 'stripe_signature' );
+        if ( empty( $sig_header ) ) {
+            $sig_header = $request->get_header( 'stripe-signature' );
+        }
+        if ( empty( $sig_header ) ) {
+            // Fallback to raw $_SERVER headers
+            $sig_header = isset( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) ) : '';
+        }
+
+        if ( empty( $sig_header ) ) {
+            error_log( 'Webhook signature header not found' );
+            return new \WP_REST_Response( array( 'error' => 'Invalid request' ), 400 );
+        }
+
+        $signature = $sig_header;
         $secret = $this->helper->getWebhookSecret();
+        if ( empty( $secret ) ) {
+           error_log( 'Webhook secret not configured' );
+            return new \WP_REST_Response( array( 'error' => 'Configuration error' ), 400 );
+        }
 
         try {
             $event = Webhook::constructEvent($payload, $signature, $secret);
-        } catch (\Throwable $e) {
+        } catch (\UnexpectedValueException $e) {
             error_log('PAYLOAD: ' . $payload);
             error_log('SIG: ' . $signature);
             error_log('SECRET: ' . $secret);
             error_log($e->getMessage());
             error_log('Stripe Webhook Signature Verification Failed: ' . $e->getMessage());
-            status_header(400);
-            exit;
+            return new \WP_REST_Response( array( 'error' => 'Invalid payload' ), 400 );
+        }catch ( SignatureVerificationException $e ) {
+            // Invalid signature
+            error_log( 'Invalid webhook signature: ' . $e->getMessage() );
+            error_log( 'Signature header present: ' . ( ! empty( $sig_header ) ? 'yes' : 'no' ) );
+            error_log( 'Webhook secret configured: ' . ( ! empty( $webhook_secret ) ? 'yes' : 'no' ) );
+            return new \WP_REST_Response( array( 'error' => 'Invalid signature' ), 400 );
         }
+
+        error_log( 'Received webhook event: ' . $event->type );
 
         // idempotency
         if ($this->helper->eventProcessed($event->id)) {
-            status_header(200);
-            exit;
+            return new \WP_REST_Response( array( 'error' => 'Idempotency limitation' ), 200 );
         }
 
         try {
@@ -55,14 +79,15 @@ class StripeWebhookHandler
             $this->helper->markProcessed($event->id);
         } catch (\Throwable $e) {
             error_log('Stripe webhook error: ' . $e->getMessage());
-            status_header(500);
-            exit;
+            return new \WP_REST_Response( array( 'error' => 'Stripe webhook error' ), 500 );
         }
 
-        status_header(200);
-        exit;
+        return new \WP_REST_Response(['status' => 'success'], 200);
     }
 
+    /**
+     * @throws \Exception
+     */
     private function process(object $event): void
     {
         switch ($event->type) {

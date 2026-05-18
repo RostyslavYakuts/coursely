@@ -110,9 +110,11 @@ class StripeWebhookHelper
 
             $this->syncSubscription($userId, $subscription);
             $this->saveInvoice($invoice, $subscription, $userId);
+            //TODO:: Add create order
         }
+
         // =========================
-        // PLAN CHANGE / UPGRADE
+        // PLAN CHANGE / UPGRADE FLOW
         // =========================
         $userId = $this->findUserByStripeCustomer($subscription->customer);
         if ($billingReason === 'subscription_update') {
@@ -122,6 +124,7 @@ class StripeWebhookHelper
             }
             $this->syncSubscription($userId, $subscription);
             $this->saveInvoice($invoice, $subscription, $userId);
+            //TODO:: Add create order
             return;
         }
 
