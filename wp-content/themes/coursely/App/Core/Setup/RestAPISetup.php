@@ -3,6 +3,7 @@
 namespace coursely\App\Core\Setup;
 
 use coursely\App\Core\Helpers\CourseCard;
+use coursely\App\Core\Services\SubscriptionManager;
 
 class RestAPISetup
 {
@@ -26,9 +27,18 @@ class RestAPISetup
             [
                 'methods' => 'GET',
                 'callback' => [$this,'filter_courses'],
-                'permission_callback' => '__return_true',
+                'permission_callback' => [$this,'check_nonce'],
             ]
         );
+    }
+
+    public function check_nonce(\WP_REST_Request $request): false|int
+    {
+        $nonce = $request->get_header('X-WP-Nonce');
+        if (!$nonce) {
+            return false;
+        }
+        return wp_verify_nonce($nonce, 'wp_rest');
     }
 
     public function filter_courses(\WP_REST_Request $request): \WP_REST_Response
@@ -52,13 +62,15 @@ class RestAPISetup
             $params['orderby'] = 'ID';
         }
 
+        $is_user_logged_in = get_current_user_id() > 0;
 
-        $data = $this->query_courses($params);
+        $data = $this->query_courses($params,$is_user_logged_in);
 
         $html = '';
 
+
         foreach ($data['items'] as $course) {
-            $html .= CourseCard::render($course);
+            $html .= CourseCard::render($course,$is_user_logged_in);
         }
 
         return new \WP_REST_Response([
@@ -67,11 +79,11 @@ class RestAPISetup
         ]);
     }
 
-    private function query_courses(array $params = []): array
+    private function query_courses(array $params = [], $is_user_logged_in = false): array
     {
         $is_default = ($params['term_id'] ?? 'all') === 'all';
 
-        if($params['order_by'] === 'ID') {
+        if($params['orderby'] === 'ID') {
             $args = [
                 'post_type' => 'course',
                 'orderby'   => $params['orderby'],
@@ -110,8 +122,15 @@ class RestAPISetup
 
         $courses = [];
 
+        $completed_lessons = [];
+        if($is_user_logged_in){
+            $user_id = get_current_user_id();
+            $completed_lessons = SubscriptionManager::getUserCompletedLessonsMap($user_id);
+        }
+
         foreach ($query->posts as $post) {
             // mapping
+            $completed_lessons_count = $completed_lessons[$post->ID] ?? 0;
             $courses[] = [
                 'id' => $post->ID,
                 'title' => get_the_title($post->ID),
@@ -122,6 +141,7 @@ class RestAPISetup
                 'duration' => get_field('duration', $post->ID),
                 'lessons_count' => get_field('lessons_count', $post->ID),
                 'category' => $this->get_parent_category($post->ID),
+                'completed_lessons_count' => $completed_lessons_count
             ];
         }
 

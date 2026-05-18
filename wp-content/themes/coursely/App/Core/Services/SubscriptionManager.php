@@ -50,4 +50,55 @@ class SubscriptionManager
             'current_period_end' => $subscription->current_period_end,
         ];
     }
+
+    /**
+     * [
+     * [
+     * 'course_id' => 313,
+     * 'completed_lessons' => 5
+     * ],
+     * [
+     * 'course_id' => 271,
+     * 'completed_lessons' => 1
+     * ]
+     * ]
+     * @param int $user_id
+     * @return array
+     */
+    public static function getAllUserCourses(int $user_id): array
+    {
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'coursely_lesson_progress';
+
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
+            SELECT 
+                course_id,
+                COUNT(*) as completed_lessons
+            FROM {$table}
+            WHERE user_id = %d
+            AND status = 'completed'
+            GROUP BY course_id
+            ",
+                $user_id
+            ),
+            ARRAY_A
+        );
+    }
+    public static function getUserCompletedLessonsMap(int $user_id): array
+    {
+        $user_courses = self::getAllUserCourses($user_id);
+
+        if (empty($user_courses)) {
+            return [];
+        }
+
+        return array_column(
+            $user_courses,
+            'completed_lessons',
+            'course_id'
+        );
+    }
 }

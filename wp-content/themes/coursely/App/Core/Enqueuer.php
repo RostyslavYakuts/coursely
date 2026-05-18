@@ -357,6 +357,8 @@ class Enqueuer
                 'spk' => get_field('stripe_public_key', 'options'),
                 'is_user_logged_in' => is_user_logged_in(),
 
+                'wp_rest_filter_nonce' => wp_create_nonce('wp_rest'),
+
                 'checkout_action'=>'checkout_action',
                 'checkout_nonce'=>wp_create_nonce('checkout_action'),
 

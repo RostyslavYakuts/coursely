@@ -24,7 +24,13 @@ export const homeCategoryFilter = ()=>{
 
 
         const res = await fetch(
-            `/wp-json/courses/v1/filter?term_id=${termId}&per_page=${perPage}&order_by=rating`
+            `/wp-json/courses/v1/filter?term_id=${termId}&per_page=${perPage}&order_by=rating`,
+            {
+                credentials: 'same-origin',
+                headers:{
+                    'X-WP-Nonce': localizedScript.wp_rest_filter_nonce
+                }
+            }
         );
 
         const data = await res.json();

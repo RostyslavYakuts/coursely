@@ -2,6 +2,8 @@
 
 namespace coursely\App\Models;
 
+use coursely\App\Core\Services\SubscriptionManager;
+
 class CoursesPageModel implements ModelInterface
 {
     public \WP_Post $post;
@@ -14,19 +16,24 @@ class CoursesPageModel implements ModelInterface
         $id = $this->post->ID;
         $content = apply_filters('the_content', get_the_content());
         $course_categories = CustomEntityModels::get_custom_terms('course_category') ?? [];
-
+        $is_user_logged_in = is_user_logged_in();
+        $h1 = get_field('h1', $id) ?? '';
+        if($is_user_logged_in){
+            $h1 = __('My Courses', 'coursely');
+        }
         return [
             'id'=>$id,
             'title'=>get_the_title($id),
             'thumbnail' => get_the_post_thumbnail(),
             'content' => $content,
-            'h1'=>get_field('h1', $id) ?? '',
+            'h1'=>$h1,
             'course_categories' => $course_categories,
-            'default_courses' => $this->get_selected_courses(),
+            'default_courses' => $this->get_selected_courses($is_user_logged_in),
+            'is_user_logged_in' => $is_user_logged_in,
         ];
     }
 
-    private function get_selected_courses(int $page = 1): array
+    private function get_selected_courses($is_user_logged_in, int $page = 1): array
     {
         $query = new \WP_Query([
             'post_type'      => 'course',
@@ -44,33 +51,34 @@ class CoursesPageModel implements ModelInterface
 
         $courses = [];
 
+        $completed_lessons = [];
+        if($is_user_logged_in){
+            $user_id = get_current_user_id();
+            $completed_lessons = SubscriptionManager::getUserCompletedLessonsMap($user_id);
+        }
+
         foreach ($query->posts as $post) {
 
             $terms = get_the_terms($post->ID, 'course_category');
-
             $parent_category = '';
-
             if ($terms && !is_wp_error($terms)) {
-
                 foreach ($terms as $term) {
-
                     // parent category
                     if ($term->parent) {
-
                         $parent = get_term($term->parent);
-
                         if ($parent && !is_wp_error($parent)) {
                             $parent_category = $parent->name;
                             break;
                         }
                     }
-
                     // fallback
                     if (!$term->parent) {
                         $parent_category = $term->name;
                     }
                 }
             }
+
+            $completed_lessons_count = $completed_lessons[$post->ID] ?? 0;
 
             $courses[] = [
                 'id' => $post->ID,
@@ -81,7 +89,8 @@ class CoursesPageModel implements ModelInterface
                 'rating' => get_field('rating', $post->ID),
                 'duration' => get_field('duration', $post->ID),
                 'lessons_count' => get_field('lessons_count', $post->ID),
-                'category' => $parent_category
+                'category' => $parent_category,
+                'completed_lessons_count' => $completed_lessons_count
             ];
         }
 

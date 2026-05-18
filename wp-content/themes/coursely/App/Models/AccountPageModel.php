@@ -93,6 +93,7 @@ class AccountPageModel implements ModelInterface
             $wpdb->prepare(
                 "SELECT * FROM {$table}
              WHERE user_id = %d AND status = 'active'
+             AND current_period_end > NOW() 
              LIMIT 1",
                 $userId
             ),

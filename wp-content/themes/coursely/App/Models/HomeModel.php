@@ -2,6 +2,8 @@
 
 namespace coursely\App\Models;
 
+use coursely\App\Core\Services\SubscriptionManager;
+
 class HomeModel implements ModelInterface
 {
     public \WP_Post$page;
@@ -15,7 +17,7 @@ class HomeModel implements ModelInterface
         $id = $this->page->ID;
         $h1 = get_field('h1', $id) ?: '';
         $course_categories = CustomEntityModels::get_custom_terms('course_category') ?? [];
-
+        $is_user_logged_in = is_user_logged_in();
         return [
             'id' => $id,
             'h1'=> $h1,
@@ -33,7 +35,7 @@ class HomeModel implements ModelInterface
             'courses_section_cta'=>get_field('courses_section_cta',$id) ?? '',
             'courses_section_cta_link'=>get_field('courses_section_cta_link',$id) ?? '',
             'course_categories' => $course_categories,
-            'default_courses' => $this->get_featured_courses(),
+            'default_courses' => $this->get_featured_courses($is_user_logged_in),
 
             'why_section_title'=>get_field('why_section_title',$id) ?? '',
             'why_section_image'=>get_field('why_section_image',$id) ?? [],
@@ -53,12 +55,12 @@ class HomeModel implements ModelInterface
             'plans'=>get_field('plans', 'options') ?? [],
             'title' => get_the_title(),
             'content' => apply_filters('the_content', get_the_content()),
-
+            'is_user_logged_in' => $is_user_logged_in,
         ];
 
     }
 
-    private function get_featured_courses(): array
+    private function get_featured_courses($is_user_logged_in): array
     {
         $query = new \WP_Query([
             'post_type'      => 'course',
@@ -73,7 +75,11 @@ class HomeModel implements ModelInterface
         }
 
         $courses = [];
-
+        $completed_lessons = [];
+        if($is_user_logged_in){
+            $user_id = get_current_user_id();
+            $completed_lessons = SubscriptionManager::getUserCompletedLessonsMap($user_id);
+        }
         foreach ($query->posts as $post) {
 
             $terms = get_the_terms(
@@ -104,7 +110,7 @@ class HomeModel implements ModelInterface
                     }
                 }
             }
-
+            $completed_lessons_count = $completed_lessons[$post->ID] ?? 0;
             $courses[] = [
                 'id' => $post->ID,
                 'title' => get_the_title($post->ID),
@@ -114,7 +120,8 @@ class HomeModel implements ModelInterface
                 'rating' => get_field('rating', $post->ID),
                 'duration' => get_field('duration', $post->ID),
                 'lessons_count' => get_field('lessons_count', $post->ID),
-                'category' => $parent_category
+                'category' => $parent_category,
+                'completed_lessons_count' => $completed_lessons_count
             ];
         }
 

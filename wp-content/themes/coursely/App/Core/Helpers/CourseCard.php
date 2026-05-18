@@ -4,7 +4,7 @@ namespace coursely\App\Core\Helpers;
 
 class CourseCard
 {
-    public static function render(array $course): string
+    public static function render(array $course, $is_user_logged_in): string
     {
         ob_start();
         ?>
@@ -51,6 +51,15 @@ class CourseCard
                 <p class="text-brand-text lgx:text-lg">
                     <?= esc_html($course['excerpt']) ?>
                 </p>
+                <?php
+                if($is_user_logged_in){
+                    echo CourseProgress::render($course['completed_lessons_count']??0,$course['lessons_count']);
+                }
+                ?>
+
+
+
+
                 <button type="button" class="w-full rounded-full border border-gray text-center p-4 text-lg text-brand-dark">
                     <?= esc_html(__('View Course','coursely')) ?>
                 </button>

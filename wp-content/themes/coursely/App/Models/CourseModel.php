@@ -65,7 +65,7 @@ class CourseModel implements ModelInterface
             $cta_text = __('Continue learning','coursely');
             $cta_link = $next_lesson_link;
         }
-
+        $is_user_logged_in = is_user_logged_in();
 
         return [
             'id'=>$id,
@@ -73,7 +73,7 @@ class CourseModel implements ModelInterface
             'excerpt'=>get_the_excerpt($id),
             'thumbnail' => get_the_post_thumbnail($id,'full',['class'=>'w-[406px] h-[360px] object-cover rounded-[20px]']),
             'content' => $content,
-            'recommended'=>$this->get_other_items($id,$parent_ids,$parent_data),
+            'recommended'=>$this->get_other_items($id,$parent_ids,$parent_data,$is_user_logged_in),
             'categories'=>$parent_data,
             'rating'=>get_field('rating', $id) ?? 5,
             'lessons_count'=>$lessons_count,
@@ -88,12 +88,11 @@ class CourseModel implements ModelInterface
                  __('Cancel anytime','coursely'),
             ],
             'modules' =>  $modules,
-            'is_user_logged_in'=>is_user_logged_in(),
+            'is_user_logged_in'=>$is_user_logged_in,
             'current_user_id'=>$current_user_id,
             'is_user_subscription_active'=>SubscriptionManager::isActive($current_user_id),
             'cta_text'=>$cta_text,
-            'cta_link'=>$cta_link,
-
+            'cta_link'=>$cta_link
         ];
     }
 
@@ -116,7 +115,7 @@ class CourseModel implements ModelInterface
         $next_lesson_id = reset($remaining_lessons);
         return $next_lesson_id ? get_permalink((int) $next_lesson_id) : '';
     }
-    private function get_other_items($current_id,$parent_ids,$parent_data): array
+    private function get_other_items($current_id,$parent_ids,$parent_data,$is_user_logged_in): array
     {
 
         $args = [
@@ -138,11 +137,17 @@ class CourseModel implements ModelInterface
         $query = new \WP_Query($args);
 
         $items = [];
+        $completed_lessons = [];
+        if($is_user_logged_in){
+            $user_id = get_current_user_id();
+            $completed_lessons = SubscriptionManager::getUserCompletedLessonsMap($user_id);
+        }
 
         if ($query->have_posts()) {
             while ($query->have_posts()) {
                 $query->the_post();
                 $id = get_the_ID();
+                $completed_lessons_count = $completed_lessons[$id] ?? 0;
                 $items[] = [
                     'id' => $id,
                     'title' => get_the_title(),
@@ -152,7 +157,8 @@ class CourseModel implements ModelInterface
                     'rating' => get_field('rating', $id),
                     'duration' => get_field('duration', $id),
                     'lessons_count' => get_field('lessons_count', $id),
-                    'category' => $parent_data[0]['name']
+                    'category' => $parent_data[0]['name'],
+                    'completed_lessons_count' => $completed_lessons_count
                 ];
             }
         }

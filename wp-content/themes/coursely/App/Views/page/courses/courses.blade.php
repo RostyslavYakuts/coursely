@@ -27,7 +27,7 @@ use coursely\App\Core\Helpers\CourseCard;
   </div>
   <div class="courses-js mt-10 grid grid-cols-1 lgx:grid-cols-3 gap-8">
       @foreach($default_courses as $course)
-          {!! CourseCard::render($course) !!}
+          {!! CourseCard::render($course,$data['is_user_logged_in']) !!}
       @endforeach
   </div>
 

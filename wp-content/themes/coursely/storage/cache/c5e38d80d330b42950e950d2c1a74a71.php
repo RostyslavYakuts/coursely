@@ -17,7 +17,7 @@
 
     <div class="courses-js mt-10 grid grid-cols-1 lgx:grid-cols-3 gap-8">
         <?php $__currentLoopData = $data['recommended']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php echo CourseCard::render($course); ?>
+            <?php echo CourseCard::render($course,$data['is_user_logged_in']); ?>
 
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </div>

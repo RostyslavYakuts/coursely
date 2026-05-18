@@ -4,7 +4,6 @@ export const coursesCategoryFilter = () => {
     let hasMore = true;
     let loading = false;
     let currentTerm = 'all';
-
     const container = document.querySelector('.courses-js');
 
     if (!container) return;
@@ -19,7 +18,13 @@ export const coursesCategoryFilter = () => {
         page++;
 
         const res = await fetch(
-            `/wp-json/courses/v1/filter?term_id=${currentTerm}&page=${page}&per_page=12`
+            `/wp-json/courses/v1/filter?term_id=${currentTerm}&page=${page}&per_page=12`,
+            {
+                credentials: 'same-origin',
+                headers:{
+                    'X-WP-Nonce': localizedScript.wp_rest_filter_nonce
+                }
+            }
         );
 
         const data = await res.json();
@@ -79,7 +84,13 @@ export const coursesCategoryFilter = () => {
         container.classList.add('loading');
 
         const res = await fetch(
-            `/wp-json/courses/v1/filter?term_id=${termId}&per_page=12`
+            `/wp-json/courses/v1/filter?term_id=${termId}&per_page=12`,
+            {
+                credentials: 'same-origin',
+                headers:{
+                    'X-WP-Nonce': localizedScript.wp_rest_filter_nonce
+                }
+            }
         );
 
         const data = await res.json();
