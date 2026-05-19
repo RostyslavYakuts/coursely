@@ -108,6 +108,9 @@ h1,h2,h3,.h1,.h2,.h3{
 		transform: scale(0.7);
 	}
 }
+.grecaptcha-badge{
+	opacity:.1;
+}
 
 .translate-x-20 { transform: translateX(5rem); }
 .-translate-x-20 { transform: translateX(-5rem); }

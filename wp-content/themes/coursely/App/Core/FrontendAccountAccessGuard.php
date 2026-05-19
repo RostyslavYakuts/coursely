@@ -5,7 +5,7 @@ namespace coursely\App\Core;
 class FrontendAccountAccessGuard
 {
     // Frontend-only customer accounts must never access wp-admin.
-    private const BACKEND_CAPABILITY = 'manage_options';
+    private const string BACKEND_CAPABILITY = 'manage_options';
     public function __construct(){
         add_action('admin_init', [$this,'block_admin_access']);
         add_filter('show_admin_bar', [$this,'hide_admin_bar']);

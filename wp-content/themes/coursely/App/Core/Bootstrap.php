@@ -5,6 +5,8 @@ namespace coursely\App\Core;
 use coursely\App\Controllers\PaginationController;
 use coursely\App\Core\CPT\CPTRegistrar;
 use coursely\App\Core\CPT\CPTSlugRewrite;
+use coursely\App\Core\Cron\SubscriptionReminderCron;
+use coursely\App\Core\Cron\SubscriptionStatusCron;
 use coursely\App\Core\CT\CustomTaxonomyRegister;
 use coursely\App\Core\Handlers\AjaxAccountHandler;
 use coursely\App\Core\Handlers\AjaxAuthHandler;
@@ -63,6 +65,14 @@ class Bootstrap
         new FilterDataCustomisationHelper();
         new FrontendAccountAccessGuard();
         new CPTSlugRewrite('course', 'courses');
+
+        $reminderCron = new SubscriptionReminderCron();
+        $reminderCron->init();
+        $reminderCron->schedule();
+
+        $statusCron = new SubscriptionStatusCron();
+        $statusCron->init();
+        $statusCron->schedule();
     }
 
 }

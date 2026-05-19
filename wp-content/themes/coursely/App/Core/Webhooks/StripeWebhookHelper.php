@@ -107,6 +107,8 @@ class StripeWebhookHelper
                 update_field('country', $data['address']['country'], 'user_' . $userId);
                 update_field('country_code', $data['address']['country_code'], 'user_' . $userId);
             }
+            // mark false for be able to sent pay reminder
+            update_field('subscription_reminder_sent', false, 'user_' . $userId);
 
             $this->syncSubscription($userId, $subscription);
             $this->saveInvoice($invoice, $subscription, $userId);
@@ -124,6 +126,10 @@ class StripeWebhookHelper
             }
             $this->syncSubscription($userId, $subscription);
             $this->saveInvoice($invoice, $subscription, $userId);
+
+            // mark false for be able to sent pay reminder
+            update_field('subscription_reminder_sent', false, 'user_' . $userId);
+
             //TODO:: Add create order
             return;
         }

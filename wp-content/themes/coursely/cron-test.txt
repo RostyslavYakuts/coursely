@@ -1,0 +1,33 @@
+/*error_log('--- WP CRON CHECK START ---');
+
+$events = _get_cron_array();
+
+$foundReminder = false;
+$foundStatus = false;
+
+foreach ($events as $timestamp => $cronHooks) {
+
+    if (isset($cronHooks['coursely_subscription_reminder'])) {
+        $foundReminder = true;
+        error_log('FOUND: coursely_subscription_reminder at ' . date('Y-m-d H:i:s', $timestamp));
+    }
+
+    if (isset($cronHooks['coursely_subscription_status_check'])) {
+        $foundStatus = true;
+        error_log('FOUND: coursely_subscription_status_check at ' . date('Y-m-d H:i:s', $timestamp));
+    }
+}
+
+if (!$foundReminder) {
+    error_log('NOT FOUND: coursely_subscription_reminder');
+}
+
+if (!$foundStatus) {
+    error_log('NOT FOUND: coursely_subscription_status_check');
+}
+
+error_log('--- WP CRON CHECK END ---');*/
+error_log('NEXT RUN: ' . date(
+        'Y-m-d H:i:s',
+        wp_next_scheduled('coursely_subscription_reminder')
+    ));
